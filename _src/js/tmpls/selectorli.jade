@@ -1,0 +1,7 @@
+if list.length
+	each el, idx in list
+		li
+			a(data-id=el.id data-idx=idx class={active:idx === activeIdx}) !{el.label}
+else if !custom
+	li
+		a.emptyres no result for "#{query}"
