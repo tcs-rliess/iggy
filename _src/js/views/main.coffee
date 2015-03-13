@@ -1,6 +1,8 @@
 SubView = require( "./sub" )
 SelectorView = require( "./selector" )
 
+KEYCODES = require( "../utils/keycodes" )
+
 class MainView extends Backbone.View
 	template: require( "../tmpls/wrapper.jade" )
 	className: "iggy clearfix"
@@ -9,12 +11,10 @@ class MainView extends Backbone.View
 		"click .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
 
-	keys: 
-		"esc": "_exit"
-
 	initialize: =>
 		@el.className += @className
 		@render()
+		$( document ).on "keyup", @_onKey
 		return
 
 	render: =>
@@ -25,8 +25,11 @@ class MainView extends Backbone.View
 		@addFacet()
 		return
 
-	_exit: ( evnt )=>
-		@exit()
+	_onKey: ( evnt )=>
+		console.log "KEY", evnt
+		if evnt.keyCode in KEYCODES.ESC
+			@exit()
+			return
 		return
 	
 	exit: =>

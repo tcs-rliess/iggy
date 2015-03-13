@@ -1,5 +1,4 @@
 MainView = require( "./views/main" )
-
 Facets = require( "./models/backbone_sub" )
 FctString = require( "./models/facet_string" )
 FctArray = require( "./models/facet_array" )

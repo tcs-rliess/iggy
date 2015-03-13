@@ -1,8 +1,4 @@
-KEYCODES = 
-	"UP": 38
-	"DOWN": 40
-	"ESC": 229
-	"ENTER": 13
+KEYCODES = require( "../utils/keycodes" )
 
 class SelectorView extends Backbone.View
 	template: require( "../tmpls/selector.jade" )
@@ -16,7 +12,7 @@ class SelectorView extends Backbone.View
 	events: =>
 		"mousedown a": "_onClick"
 		"focus input##{@cid}": "open"
-		#"blur input##{@cid}": "close"
+		"blur input##{@cid}": "close"
 		"keydown input##{@cid}": "search"
 		"keyup input##{@cid}": "search"
 
