@@ -1,5 +1,7 @@
+.rm-facet-btn.btn.btn-default.btn-xs X
 span #{label}:
-if selected != undefined
-	.subresult #{selected}
-else
-	.subselect
+ul.subresults
+	if selected && selected.length
+		each el, idx in selected
+			li= el
+.subselect

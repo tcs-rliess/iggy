@@ -1,14 +1,12 @@
-class StringOption extends Backbone.Model
-	idAttribute: "value"
-	getLabel: =>
-		return @get( "label" ) or @get( "name" ) or "-"
+SubResults = require( "../../models/subresults" )
 
+class StringOption extends SubResults.model
 	match: ( crit )=>
 		_s =  @get( "value" ) + " " + @get( "label" )
 		found = _s.toLowerCase().indexOf( crit.toLowerCase() )
 		return found >= 0
 
-class StringOptions extends require( "../../models/backbone_sub" )
+class StringOptions extends SubResults
 	model: StringOption
 
 class FacetSubString extends require( "../selector" )
@@ -17,11 +15,17 @@ class FacetSubString extends require( "../selector" )
 		value: "-"
 		group: null
 
+	optColl: StringOptions
+
+
 	constructor: ( options )->
 		options.custom = true
 		@collection = @_createOptionCollection( options.model.get( "options" ) )
 		super( options )
 		return
+
+	getResults: =>
+		value: @result.first()?.id
 
 	_createOptionCollection: ( options )=>
 		if _.isFunction( options )
@@ -34,6 +38,6 @@ class FacetSubString extends require( "../selector" )
 			else if _.isObject(  )
 				_opts.push _.extend( {}, @optDefault, opt );
 
-		return new StringOptions( _opts )
+		return new @optColl( _opts )
 
 module.exports = FacetSubString

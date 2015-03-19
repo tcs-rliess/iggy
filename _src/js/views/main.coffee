@@ -11,13 +11,18 @@ class MainView extends Backbone.View
 		"click .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
 
-	initialize: =>
+	initialize: ( options )=>
+		@results = options.results
+
+		@collection.on "iggy:rem", @remFacet
+
 		@el.className += @className
 		@render()
 		$( document ).on "keyup", @_onKey
 		return
 
 	render: =>
+		console.log "RENDER"
 		@$el.html( @template() )
 		return
 
@@ -26,13 +31,13 @@ class MainView extends Backbone.View
 		return
 
 	_onKey: ( evnt )=>
-		console.log "KEY", evnt
 		if evnt.keyCode in KEYCODES.ESC
 			@exit()
 			return
 		return
 	
 	exit: =>
+		console.log  "EXIT"
 		if @selectview
 			@selectview.remove()
 			@selectview = null
@@ -40,6 +45,10 @@ class MainView extends Backbone.View
 		if @subview
 			@subview.remove()
 			@subview = null
+		return
+
+	remFacet: ( facetM )=>
+		@results.remove( facetM.get( "name" ) )
 		return
 
 	addFacet: =>
@@ -51,30 +60,42 @@ class MainView extends Backbone.View
 			@subview.focus()
 			return
 
+		if not @collection.length
+			return
+
 		@selectview = new SelectorView( collection: @collection, custom: false )
 
 		@$el.append( @selectview.render() )
 		@selectview.focus()
 
-		@selectview.on "selected", ( facetM )=>
+		@selectview.on "closed", ( results )=>
+			console.log "FACET SEL closed", results
 			@selectview.off()
 			@selectview.remove()
 			@selectview = null
-			
-			@subview = new SubView( model: facetM )
+			return
+
+		@selectview.on "selected", ( facetM )=>
+			console.log "FACET SEL selected",facetM
+
+			@subview = new SubView( model: facetM, collection: @collection )
 			@$el.append( @subview.render() )
 			@subview.open()
 
-			@subview.on "closed", =>
+			@subview.on "closed", ( results )=>
+				console.log "SUB SEL closed", results
 				@subview.off()
-				@subview.remove()
+				@subview.remove() if not results?.length
 				@subview = null
 				return 
 
-			@subview.on "selected", ( facetM, optM )=>
-				console.log "SELECTION complete",facetM, optM
-				@subview.off()
-				@subview = null
+			@subview.on "selected", ( facetM, results )=>
+				@collection.remove( facetM )
+				console.log "SUB SEL selected",facetM, results
+
+				@results.add( _.extend( results, { name: facetM.get( "name" ) } ), { merge: true } )
+				#@subview.off()
+				#@subview = null
 
 				return
 			return

@@ -2,15 +2,41 @@ class ViewSub extends Backbone.View
 	template: require( "../tmpls/sub.jade" )
 	className: "sub"
 
+	initialize: =>
+		@result = new Backbone.Collection()
+		return
+
+	events: 
+		"click .rm-facet-btn": "del"
+
 	render: ( optMdl )=>
-		@$el.html @template( label: @model.getLabel(), selected: @selected?.getLabel?() )
+		_list = []
+		for model, idx in @result.models
+			_list.push model.getLabel()
+
+		@$el.html @template( label: @model.getLabel(), selected: _list )
 		@$sub = @$( ".subselect" )
+		@$results = @$( ".subresults" )
 		return @el
 
+	del: ( evnt )=>
+		evnt.stopPropagation()
+		evnt.preventDefault()
+		console.log "DEL", evnt
+		@collection.trigger( "iggy:rem", @model )
+		@collection.add( @model )
+		@remove()
+		return false
+
 	selected: ( optMdl )=>
-		@selected = optMdl
-		@render()
-		@trigger( "selected", @model, @selected )
+		@result.add( optMdl )
+		
+		_list = []
+		for model, idx in @selectview.result.models
+			_list.push model.getLabel()
+		@$results.html( "<li>" + _list.join( "</li><li>" ) + "</li>" )
+		#@render()
+		@trigger( "selected", @model, @selectview.getResults() )
 		return
 
 	isOpen: =>
@@ -29,18 +55,17 @@ class ViewSub extends Backbone.View
 		@$el.append( @selectview.render() )
 		@selectview.focus()
 
-		@selectview.on "closed", =>
+		@selectview.on "closed", ( result )=>
+			console.log "SUB closed", result
 			@selectview.off()
-			@selectview.remove()
-			@selectview = null
-			@trigger "closed"
-			@remove()
+			@selectview.remove() if not result.length
+			#@selectview = null
+			@trigger( "closed", result )
+			@remove() if not result.length
 			return
 
 		@selectview.on "selected", ( mdl )=>
-			@selectview.off()
-			@selectview.remove()
-			@selectview = null
+			console.log "SUB selected"
 			if mdl
 				@selected( mdl )
 			return

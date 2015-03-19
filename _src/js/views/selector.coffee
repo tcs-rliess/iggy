@@ -1,8 +1,10 @@
 KEYCODES = require( "../utils/keycodes" )
 
-class SelectorView extends Backbone.View
+class SelectorView extends require( "./facets/base" )
 	template: require( "../tmpls/selector.jade" )
 	templateEl: require( "../tmpls/selectorli.jade" )
+	multiSelect: false
+
 	className: =>
 		cls = [ "add-facet" ]
 		if @custom
@@ -25,13 +27,22 @@ class SelectorView extends Backbone.View
 		
 	initialize: ( options )=>
 		@searchcoll = @collection.sub( ->true )
+		@result = new @collection.constructor()
+		@on "selected", ( result )=>
+			@searchcoll.remove( result )
+			@result.add( result )
+			return
 		#@listenTo( @searchcoll, "add", @renderRes )
-		#@listenTo( @searchcoll, "remove", @renderRes )
+		@listenTo( @searchcoll, "remove", @renderRes )
+		@listenTo( @searchcoll, "remove", @checkOptionsEmpty )
+		
 		return
 
+	getTemplateData: =>
+		return _.extend( super, custom: @custom )
+
 	render: =>
-		@$el.html( @template( custom: @custom, cid: @cid ) )
-		@$inp = @$el.find( "input##{@cid}" )
+		super
 		@$list = @$el.find( "##{@cid}typelist" )
 		@renderRes()
 		return @el
@@ -50,12 +61,20 @@ class SelectorView extends Backbone.View
 		@$list.append( @templateEl( list: _list, query: @currQuery, activeIdx: @activeIdx, custom: @custom ) )
 		return @$list
 
+	checkOptionsEmpty: =>
+		console.log "checkOptionsEmpty", @searchcoll.length
+		#if @searchcoll.length <= 0
+		#	@close()
+		return
+
 	_onClick: ( evnt )=>
 		evnt.stopPropagation()
 		evnt.preventDefault()
 
 		_id = @$( evnt.currentTarget ).data( "id" )
 		@trigger "selected", @collection.get( _id )
+		if not @multiSelect
+			@close()
 		return false
 
 
@@ -65,18 +84,6 @@ class SelectorView extends Backbone.View
 
 	focus: =>
 		@$inp.focus()
-		return
-
-	open: =>
-		@$el.addClass( "open" )
-		@isOpen = true
-		@trigger( "opened" )
-		return
-
-	close: =>
-		@$el.removeClass( "open" )
-		@isOpen = false
-		@trigger( "closed" )
 		return
 
 	search: ( evnt )=>
@@ -131,12 +138,14 @@ class SelectorView extends Backbone.View
 		return
 
 	select: =>
-		if @activeIdx >= 0
+		if @activeIdx >= 0 and @searchcoll.length
 			@trigger "selected", @collection.at( @activeIdx )
 		else
-			@trigger "selected", @currQuery
+			@trigger "selected", new @collection.model( value: @currQuery, custom: true )
 
-		@close()
+		console.log "CLOSE?", @constructor.name, @multiSelect
+		if not @multiSelect
+			@close()
 		return
 
 module.exports = SelectorView

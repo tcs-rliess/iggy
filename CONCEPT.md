@@ -243,26 +243,3 @@ $el.on "change.sui", ( event, queryArray )->
 	# process DB/Data search based on query `queryArray`
 	return
 ```
-### Zusammenfassung Issue Status
-
-**TCS:**
-
-@mpneuried `2` *( davon 1 für Migration )*
-@exinferis `4`
-@Nachbarshund `12`
-@smrchy  `4` *( davon 2 für Migration )*
-.......................................
-TCS Gesamt: `22` *( davon 3 für Migration )*
-
-
-**Milon:**
-
-@nicomuc `19`
-@hbraeunlein `16`
-@FlorianArzberger `9`
-@mdrogosch `1`
-.......................................
-Milon Gesamt: `45`
-
-:::::::::::::::::::::::::::::::::::::::
-**Gesamt: 67**

@@ -1,31 +1,33 @@
 .iggy
 	border 1px solid #ddd
-	padding 3px
+	padding 5px 0 0 5px
 	
 	.add-facet-btn
 	.add-facet
 	.sub
 		position relative
 		float left
+		margin 0 5px 5px 0
+		
+	.rm-facet-btn
+		margin-right 5px
+		border-radius 10px
 	
-	.add-facet
-	.sub
-		margin-left 10px
 	
 	input.selector-inp
-	input.selector-inp:focus
 		border 0
 		box-shadow none
 		outline none
+		display block
 		
 	.sub
 		background #eee
 		border-radius 2px
 		border 1px solid #ddd
-		padding 3px 10px
+		padding 4px 10px
 
 	.typelist
-		display block
+		display none
 		list-style none
 		padding 0
 		margin 0
@@ -40,7 +42,7 @@
 			background white
 			text-align left
 		a
-			padding 4px 10px
+			padding 4px 5px 4px 10px
 			display block
 			text-decoration none
 			white-space nowrap
@@ -48,27 +50,40 @@
 				color black
 		a.active
 			background #eee
-	
+		
 	.subselect
-	.subresult
+	.subresults
 		margin-left 5px
 		display inline-block
 		position relative
 		
 	.subselect
-		top -4px
+		top -5px
 		margin-bottom -2px
 		.typelist
 			right -11px
 		a
 			padding 4px 10px 4px
-	.subresult
+	.subresults
 		font-weight bold
+		display inline
+		list-style none
+		padding 0
+		margin 0 0 0 5px
+		li
+			display inline-block
+			margin-right 5px
+			
 	
 	.custom
 		.typelist
 			top 30px
 		
-	.add-facet.open .typelist
-		display block
+	.add-facet.open
+	.subselect.open 
+		.typelist
+			display block
+	.subselect.closed 
+		.selector-inp
+			display none
 		

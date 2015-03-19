@@ -2,10 +2,13 @@ MainView = require( "./views/main" )
 Facets = require( "./models/backbone_sub" )
 FctString = require( "./models/facet_string" )
 FctArray = require( "./models/facet_array" )
+FctNumber = require( "./models/facet_number" )
+Results = require( "./models/results" )
 
-class IGGY
+class IGGY extends Backbone.Events
 	$: jQuery
 	constructor: ( el, facets = [], options = {} )->
+		_.extend @, Backbone.Events
 		@_initErrors()
 		
 		# init element
@@ -15,8 +18,13 @@ class IGGY
 
 		# init facets
 		@facets = @_prepareFacets( facets )
+		@results = new Results()
 
-		new MainView( el: @$el, collection: @facets )
+		@results.on "add", @triggerChange
+		@results.on "remove", @triggerChange
+		@results.on "change", @triggerChange
+
+		new MainView( el: @$el, collection: @facets, results: @results )
 		return
 
 	_prepareEl: ( el )=>
@@ -62,6 +70,7 @@ class IGGY
 		switch facet.type.toLowerCase()
 			when "string" then return new FctString( facet )
 			when "array" then return new FctArray( facet )
+			when "number" then return new FctNumber( facet )
 
 	addFacet: ( facet )=>
 		if not @facets?
@@ -79,6 +88,13 @@ class IGGY
 		_err.name = type
 		_err.message = _msg
 		return _err
+
+	getQuery: =>
+		return @results
+
+	triggerChange: =>
+		@trigger( "change", @results )
+		return
 
 	_initErrors: =>
 		@errors = {}
