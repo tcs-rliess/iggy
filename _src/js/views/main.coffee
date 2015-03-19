@@ -22,7 +22,6 @@ class MainView extends Backbone.View
 		return
 
 	render: =>
-		console.log "RENDER"
 		@$el.html( @template() )
 		return
 
@@ -37,7 +36,6 @@ class MainView extends Backbone.View
 		return
 	
 	exit: =>
-		console.log  "EXIT"
 		if @selectview
 			@selectview.remove()
 			@selectview = null
@@ -69,21 +67,18 @@ class MainView extends Backbone.View
 		@selectview.focus()
 
 		@selectview.on "closed", ( results )=>
-			console.log "FACET SEL closed", results
 			@selectview.off()
 			@selectview.remove()
 			@selectview = null
 			return
 
 		@selectview.on "selected", ( facetM )=>
-			console.log "FACET SEL selected",facetM
 
 			@subview = new SubView( model: facetM, collection: @collection )
 			@$el.append( @subview.render() )
 			@subview.open()
 
 			@subview.on "closed", ( results )=>
-				console.log "SUB SEL closed", results
 				@subview.off()
 				@subview.remove() if not results?.length
 				@subview = null
@@ -91,7 +86,6 @@ class MainView extends Backbone.View
 
 			@subview.on "selected", ( facetM, results )=>
 				@collection.remove( facetM )
-				console.log "SUB SEL selected",facetM, results
 
 				@results.add( _.extend( results, { name: facetM.get( "name" ) } ), { merge: true } )
 				#@subview.off()

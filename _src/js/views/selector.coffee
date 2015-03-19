@@ -62,7 +62,6 @@ class SelectorView extends require( "./facets/base" )
 		return @$list
 
 	checkOptionsEmpty: =>
-		console.log "checkOptionsEmpty", @searchcoll.length
 		#if @searchcoll.length <= 0
 		#	@close()
 		return
@@ -79,7 +78,6 @@ class SelectorView extends require( "./facets/base" )
 
 
 	selected: =>
-		console.log "selected", arguments
 		return
 
 	focus: =>
@@ -143,7 +141,6 @@ class SelectorView extends require( "./facets/base" )
 		else
 			@trigger "selected", new @collection.model( value: @currQuery, custom: true )
 
-		console.log "CLOSE?", @constructor.name, @multiSelect
 		if not @multiSelect
 			@close()
 		return

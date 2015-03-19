@@ -24,7 +24,6 @@ class FacetSubsBase extends Backbone.View
 		return
 
 	close: ( evnt )=>
-		console.log "CLOSE", evnt
 		@$el.removeClass( "open" )
 		@$el.addClass( "closed" )
 		@isOpen = false
@@ -38,13 +37,14 @@ class FacetSubsBase extends Backbone.View
 		return @$inp.val()
 
 	getSelectModel: =>
-		return @result.model
+		return SubResults.prototype.model
 
 	select: =>
 		_ModelConst = @getSelectModel()
 		_model = new _ModelConst( value: @getValue(), custom: true )
 		@result.add( _model )
 		@trigger( "selected", _model )
+		@close()
 		return
 
 module.exports = FacetSubsBase

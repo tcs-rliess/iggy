@@ -18,11 +18,28 @@ class FacetSubsNumber extends require( "./base" )
 	events: =>
 		"keyup input##{@cid}": "input"
 		"keydown input##{@cid}": "input"
+		"change select##{@cid}op": "switchFocus"
 
-	constructor: ->
-		@setNumber = _.debounce( @_setNumber, 80 )
+	render: =>
 		super
+		if @model.get( "operators" )?.length
+			@$inpOp = @$el.find( "select##{@cid}op" )
 		return
+
+	switchFocus:=>
+		@focus( true )	
+		return
+		
+	focus: ( inp = false )=>
+		console.log "focus", inp or not @$inpOp?, inp, not @$inpOp?, @$inpOp
+		if inp or not @$inpOp?
+			super
+			return
+		@$inpOp.focus()
+		return
+
+	getTemplateData: =>
+		return _.extend( super, { operators: @model.get( "operators" ) } )
 
 	input: ( evnt )=>
 		if evnt.type is "keydown"
@@ -55,14 +72,21 @@ class FacetSubsNumber extends require( "./base" )
 
 		return
 
+	getResults: =>
+		if @$inpOp?
+			_ret = 
+				value: @getValue()
+				operator: @$inpOp.val()
+		else
+			_ret = 
+				value: @getValue()
+		return _ret
+
 	getValue: =>
 		_v = @$inp.val()
 		return parseInt( _v, 10 )
 
-	getSelectModel: =>
-		return Backbone.Model
-
-	_setNumber: ( _v )=>
+	setNumber: ( _v )=>
 		if isNaN( _v )
 			@$inp.val("")
 			return

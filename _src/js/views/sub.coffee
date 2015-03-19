@@ -22,7 +22,6 @@ class ViewSub extends Backbone.View
 	del: ( evnt )=>
 		evnt.stopPropagation()
 		evnt.preventDefault()
-		console.log "DEL", evnt
 		@collection.trigger( "iggy:rem", @model )
 		@collection.add( @model )
 		@remove()
@@ -56,7 +55,6 @@ class ViewSub extends Backbone.View
 		@selectview.focus()
 
 		@selectview.on "closed", ( result )=>
-			console.log "SUB closed", result
 			@selectview.off()
 			@selectview.remove() if not result.length
 			#@selectview = null
@@ -65,7 +63,6 @@ class ViewSub extends Backbone.View
 			return
 
 		@selectview.on "selected", ( mdl )=>
-			console.log "SUB selected"
 			if mdl
 				@selected( mdl )
 			return

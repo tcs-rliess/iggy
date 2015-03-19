@@ -1,6 +1,6 @@
 SubResults = require( "../../models/subresults" )
 
-class StringOption extends SubResults.model
+class StringOption extends SubResults.prototype.model
 	match: ( crit )=>
 		_s =  @get( "value" ) + " " + @get( "label" )
 		found = _s.toLowerCase().indexOf( crit.toLowerCase() )

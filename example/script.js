@@ -17,6 +17,15 @@ jQuery( function( $ ){
 		min: 0,
 		max: 100,
 		step: 5
+	},{
+		type: "number",
+		name: "numberop",
+		label: "Nummer-OP",
+		min: 0,
+		max: 100,
+		step: 1,
+		operators: [ "!=", "==" ]
+
 	}]
 
 	var _iggy = new IGGY( $( "#iggytest1" ), facets );
