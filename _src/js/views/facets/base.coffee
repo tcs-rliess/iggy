@@ -9,6 +9,13 @@ class FacetSubsBase extends Backbone.View
 		@$inp.focus()
 		return
 
+	renderResult: =>
+		_list = []
+		for model, idx in @result.models
+			_list.push model.getLabel()
+
+		return "<li>" + _list.join( "</li><li>" ) + "</li>"
+		
 	open: =>
 		@$el.addClass( "open" )
 		@isOpen = true

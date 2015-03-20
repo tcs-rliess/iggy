@@ -87,7 +87,7 @@ class MainView extends Backbone.View
 			@subview.on "selected", ( facetM, results )=>
 				@collection.remove( facetM )
 
-				@results.add( _.extend( results, { name: facetM.get( "name" ) } ), { merge: true } )
+				@results.add( _.extend( results, { name: facetM.get( "name" ), type: facetM.get( "type" ) } ), { merge: true } )
 				#@subview.off()
 				#@subview = null
 

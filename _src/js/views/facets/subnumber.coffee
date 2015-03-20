@@ -26,12 +26,25 @@ class FacetSubsNumber extends require( "./base" )
 			@$inpOp = @$el.find( "select##{@cid}op" )
 		return
 
-	switchFocus:=>
-		@focus( true )	
+	renderResult: =>
+		_res = @getResults()
+
+		_s = "<li>"
+		_s += _res.operator + " " if _res.operator?
+		_s += _res.value
+		_s += "</li>"
+
+		return _s
+
+	switchFocus: ( type="in" )=>
+		if type is "op"
+			@focus()
+		else
+			@focus( true )
 		return
-		
+
 	focus: ( inp = false )=>
-		console.log "focus", inp or not @$inpOp?, inp, not @$inpOp?, @$inpOp
+		#console.log "focus", inp or not @$inpOp?, inp, not @$inpOp?, @$inpOp
 		if inp or not @$inpOp?
 			super
 			return
@@ -43,12 +56,19 @@ class FacetSubsNumber extends require( "./base" )
 
 	input: ( evnt )=>
 		if evnt.type is "keydown"
+			console.log "EVNT", evnt.keyCode
 			switch evnt.keyCode
 				when KEYCODES.UP
 					@crement( @model.get( "step" ) )
 					return
 				when KEYCODES.DOWN
 					@crement( @model.get( "step" ) * -1 )
+					return
+				when KEYCODES.RIGHT
+					@switchFocus( "in" )
+					return
+				when KEYCODES.LEFT
+					@switchFocus( "op" )
 					return
 				when KEYCODES.ENTER
 					@select()

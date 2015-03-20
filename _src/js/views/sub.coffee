@@ -29,12 +29,7 @@ class ViewSub extends Backbone.View
 
 	selected: ( optMdl )=>
 		@result.add( optMdl )
-		
-		_list = []
-		for model, idx in @selectview.result.models
-			_list.push model.getLabel()
-		@$results.html( "<li>" + _list.join( "</li><li>" ) + "</li>" )
-		#@render()
+		@$results.html( @selectview.renderResult() )
 		@trigger( "selected", @model, @selectview.getResults() )
 		return
 
