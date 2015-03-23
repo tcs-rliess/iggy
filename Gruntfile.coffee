@@ -41,7 +41,7 @@ module.exports = (grunt) ->
 		copy: 
 			dist:
 				src: ['js/iggy.js']
-				dest: 'dist'
+				dest: 'dist/iggy.js'
 
 		karma:
 			local:
@@ -86,5 +86,5 @@ module.exports = (grunt) ->
 	grunt.registerTask "build-core", [ "build-core-js", "build-core-css"]
 
 
-	grunt.registerTask "build", [ "clear", "build-core", "copy:dist" ]
+	grunt.registerTask "build", [ "clear", "build-core"]
 	grunt.registerTask "release", [ "build" ]

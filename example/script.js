@@ -16,7 +16,12 @@ jQuery( function( $ ){
 		label: "Nummer",
 		min: 0,
 		max: 100,
-		step: 5
+		step: 5,
+		modify: function( value ){
+			return { "mod": value }
+		}
+                        
+
 	},{
 		type: "number",
 		name: "numberop",
@@ -25,7 +30,6 @@ jQuery( function( $ ){
 		max: 100,
 		step: 1,
 		operators: [ "!=", "==" ]
-
 	}]
 
 	var _iggy = new IGGY( $( "#iggytest1" ), facets );
