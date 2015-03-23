@@ -15,8 +15,11 @@ jQuery( function( $ ){
 		name: "number",
 		label: "Nummer",
 		min: 0,
-		max: 100,
-		step: 5
+		max: 999,
+		step: 5,
+		modify: function( value ){
+			return { "mod": value }
+		}
 	},{
 		type: "number",
 		name: "numberop",
@@ -32,9 +35,9 @@ jQuery( function( $ ){
 	var _query = _iggy.getQuery()
 	
 	var _printQuery = function( data, target ){
-		$( target ? target : "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
+		$( target ? target : "#iggytest1_result" ).html( JSON.stringify( data, null, "	" ) );
 	}
-	_printQuery( facets, "#iggytest1_config" );
+	//_printQuery( facets, "#iggytest1_config" );
 	_printQuery( _query.toJSON() )
 
 

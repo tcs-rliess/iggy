@@ -76,7 +76,38 @@
   <h4>IGGY-Result-Collection</h4>
   <pre><code id="iggytest1_result"></code></pre>
   <h4>Example Config</h4>
-   <pre><code id="iggytest1_config"></code></pre>
+   <pre><code id="iggytest1_config">
+[{
+    type: "string",
+    name: "simple",
+    label: "Simple",
+    options: [ "frist", "second", "last" ]
+},{
+    type: "array",
+    name: "multi",
+    label: "Array",
+    options: [ "pizza", "pasta", "carne" ]
+},{
+    type: "number",
+    name: "number",
+    label: "Nummer",
+    min: 0,
+    max: 999,
+    step: 5,
+    modify: function( value ){
+        return { "mod": value }
+    }
+},{
+    type: "number",
+    name: "numberop",
+    label: "Nummer-OP",
+    min: 0,
+    max: 100,
+    step: 1,
+    operators: [ "!=", "==" ]
+}]
+
+   </code></pre>
 </div>
 
 <h2>
@@ -99,8 +130,13 @@
 </thead>
 <tbody>
 <tr>
+<td align="center">0.0.2</td>
+<td align="center">2015-03-23</td>
+<td align="left">added option <code>modify</code></td>
+</tr>
+<tr>
 <td align="center">0.0.1</td>
-<td align="center">2015-3-5</td>
+<td align="center">2015-03-05</td>
 <td align="left">Initial commit</td>
 </tr>
 </tbody>
@@ -119,9 +155,9 @@
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 
 <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/mpneuried">mpneuried</a></p>
+			</section>
+			<footer>
+			  <p>This project is maintained by <a href="https://github.com/mpneuried">mpneuried</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
