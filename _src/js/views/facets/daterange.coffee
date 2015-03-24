@@ -21,7 +21,6 @@ class FacetSubsDateRange extends require( "./base" )
 			@$inp.on( "cancel.daterangepicker", @close )
 			@$inp.on( "hide.daterangepicker", @close )
 
-			console.log @daterangepicker
 			@daterangepicker.container?.addClass( "daterange-iggy" )
 
 		else
@@ -49,7 +48,6 @@ class FacetSubsDateRange extends require( "./base" )
 		return _s
 
 	_dateReturn: ( @startDate, @endDate )=>
-		console.log "_dateSelect", arguments
 		@select()
 		return
 
@@ -57,7 +55,6 @@ class FacetSubsDateRange extends require( "./base" )
 		return super
 
 	getValue: =>
-		console.log "getValue", @startDate.valueOf()
 		_out = [ @startDate.valueOf() ]
 		_out.push @endDate.valueOf() if @endDate?
 		return _out

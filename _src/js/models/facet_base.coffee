@@ -15,7 +15,6 @@ class FacetBase extends Backbone.Model
 		return found >= 0
 
 	comparator: ( mdl )->
-		console.log "comparator", mdl
 		return mdl.id
 
 module.exports = FacetBase
