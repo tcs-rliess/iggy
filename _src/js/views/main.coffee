@@ -23,6 +23,7 @@ class MainView extends Backbone.View
 
 	render: =>
 		@$el.html( @template() )
+		@$addBtn = @$( ".add-facet-btn" )
 		return
 
 	_addFacet: ( evnt )=>
@@ -37,10 +38,12 @@ class MainView extends Backbone.View
 	
 	exit: =>
 		if @selectview
+			#console.log "MAIN REMOVE SELECT"
 			@selectview.remove()
 			@selectview = null
 
 		if @subview
+			#console.log "MAIN REMOVE SUB", @subview
 			@subview.remove()
 			@subview = null
 		return
@@ -51,34 +54,43 @@ class MainView extends Backbone.View
 
 	addFacet: =>
 		if @selectview?
+			#console.log "STOP @ SELECT EXIST"
 			@selectview.focus()
 			return
 
 		if @subview?
+			#console.log "STOP @ SUB EXIST"
 			@subview.focus()
 			return
 
 		if not @collection.length
+			#console.log "STOP @ EMPTY COLL"
 			return
 
 		@selectview = new SelectorView( collection: @collection, custom: false )
 
-		@$el.append( @selectview.render() )
+		@$addBtn.before( @selectview.render() )
 		@selectview.focus()
 
 		@selectview.on "closed", ( results )=>
+			#console.log "SELECT VIEW CLOSED", results?.length
 			@selectview.off()
 			@selectview.remove()
 			@selectview = null
+			if not results?.length and @subview?
+				@subview.off()
+				@subview.remove()
+				@subview = null
 			return
 
 		@selectview.on "selected", ( facetM )=>
 
 			@subview = new SubView( model: facetM, collection: @collection )
-			@$el.append( @subview.render() )
+			@$addBtn.before( @subview.render() )
 			@subview.open()
 
 			@subview.on "closed", ( results )=>
+				#console.log "SUB VIEW CLOSED", results?.length
 				@subview.off()
 				@subview.remove() if not results?.length
 				@subview = null

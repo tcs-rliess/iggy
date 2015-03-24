@@ -1,9 +1,14 @@
+KEYCODES = require( "../../utils/keycodes" )
 SubResults = require( "../../models/subresults" )
 
 class FacetSubsBase extends Backbone.View
 	initialize: =>
 		@result = new SubResults()
 		return
+
+	events: =>
+		"keyup input##{@cid}": "input"
+		"keydown input##{@cid}": "input"
 
 	focus: =>
 		@$inp.focus()
@@ -20,6 +25,13 @@ class FacetSubsBase extends Backbone.View
 		@$el.addClass( "open" )
 		@isOpen = true
 		@trigger( "opened" )
+		return
+
+	input: ( evnt )=>
+		if evnt.type is "keydown"
+			switch evnt.keyCode
+				when KEYCODES.ENTER
+					@select()
 		return
 
 	getTemplateData: =>

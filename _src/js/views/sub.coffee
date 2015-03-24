@@ -25,7 +25,12 @@ class ViewSub extends Backbone.View
 		@collection.trigger( "iggy:rem", @model )
 		@collection.add( @model )
 		@remove()
+		@trigger( "closed" )
 		return false
+
+	remove: =>
+		@selectview?.remove()
+		return super
 
 	selected: ( optMdl )=>
 		@result.add( optMdl )

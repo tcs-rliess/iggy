@@ -56,7 +56,6 @@ class FacetSubsNumber extends require( "./base" )
 
 	input: ( evnt )=>
 		if evnt.type is "keydown"
-			console.log "EVNT", evnt.keyCode
 			switch evnt.keyCode
 				when KEYCODES.UP
 					@crement( @model.get( "step" ) )
