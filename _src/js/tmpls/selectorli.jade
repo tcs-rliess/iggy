@@ -8,7 +8,7 @@ if list.length
 	each el, idx in list
 
 		li
-			a(data-id=el.id data-idx=idx class={active:(idx + add) === activeIdx}) !{el.label} !{idx}
+			a(data-id=el.id data-idx=idx class={active:(idx + add) === activeIdx}) !{el.label}
 else if !custom
 	li
 		a.emptyres no result for "#{query}"
