@@ -14,8 +14,7 @@ jQuery( function( $ ){
 		type: "number",
 		name: "number",
 		label: "Nummer",
-		min: 0,
-		max: 100,
+		min: null,
 		step: 5,
 		modify: function( value ){
 			return { "mod": value }

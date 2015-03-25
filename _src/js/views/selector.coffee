@@ -20,7 +20,7 @@ class SelectorView extends require( "./facets/base" )
 
 	constructor: ( options )->
 		@custom =  options.custom or false
-		@activeIdx = if @custom then -1 else 0
+		@activeIdx = 0
 		@currQuery = ""
 		super
 		return
@@ -105,41 +105,52 @@ class SelectorView extends require( "./facets/base" )
 
 		@currQuery = _q
 
-		@searchcoll.updateSubFilter( ( mdl )->
+		@searchcoll.updateSubFilter( ( mdl )=>
+			if @result.get( mdl.id )?
+				return false
 			if not _q?.length
 				return true
 			_match = mdl.match( _q )
 			return _match
 		, false )
 
+
+		@activeIdx = 0
 		@renderRes()
 		return
 
 	move: ( up = false )=>
-		_top = ( if @custom then -1 else 0 )
+		_list = @$el.find( ".typelist a" )
+
+
+		_top = 0
 		if up 
 			if ( @activeIdx - 1 ) < _top
 				return
 			_newidx = @activeIdx - 1 
 		else 
-			if @searchcoll.length <= @activeIdx + 1
+			if @searchcoll.length < @activeIdx + 1
 				return
 			_newidx = @activeIdx + 1 
 
-		_list = @$el.find( ".typelist a" )
 
 		@$( _list[ @activeIdx ] ).removeClass( "active" )
 		@$( _list[ _newidx ] ).addClass( "active" )
 
 		@activeIdx = _newidx
-		
 		return
 
 	select: =>
-		if @activeIdx >= 0 and @searchcoll.length
-			@trigger "selected", @collection.at( @activeIdx )
-		else
+		_sel = @$el.find( ".typelist a.active" ).removeClass( "active" ).data()
+		@activeIdx = 0
+		if _sel?.idx >= 0 and @searchcoll.length
+			@trigger "selected", @collection.get( _sel.id )
+		else if @currQuery?.length
 			@trigger "selected", new @collection.model( value: @currQuery, custom: true )
+			@$inp.val( "" )
+		else
+			return
+
 
 		if not @multiSelect
 			@close()

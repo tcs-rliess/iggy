@@ -1,7 +1,14 @@
+- var add = 0;
+if custom && query
+	- add = 1;
+	li
+		a(data-id="_custom" data-idx="-1" class={active:0 === activeIdx})
+			i "!{query}"
 if list.length
 	each el, idx in list
+
 		li
-			a(data-id=el.id data-idx=idx class={active:idx === activeIdx}) !{el.label}
+			a(data-id=el.id data-idx=idx class={active:(idx + add) === activeIdx}) !{el.label} !{idx}
 else if !custom
 	li
 		a.emptyres no result for "#{query}"
