@@ -15,10 +15,15 @@ precision = (n, dp)->
 class FacetSubsNumber extends require( "./base" )
 	template: require( "../../tmpls/number.jade" )
 
+	constructor: ->
+		@setNumber = _.debounce( @_setNumber, 300 )
+		super
+		return
+
 	events: =>
 		"keyup input##{@cid}": "input"
 		"keydown input##{@cid}": "input"
-		"change select##{@cid}op": "switchFocus"
+		#"change select##{@cid}op": "switchFocus"
 
 	render: =>
 		super
@@ -45,7 +50,7 @@ class FacetSubsNumber extends require( "./base" )
 
 	focus: ( inp = false )=>
 		#console.log "focus", inp or not @$inpOp?, inp, not @$inpOp?, @$inpOp
-		if inp or not @$inpOp?
+		if not inp or not @$inpOp?
 			super
 			return
 		@$inpOp.focus()
@@ -74,7 +79,7 @@ class FacetSubsNumber extends require( "./base" )
 					return
 		
 		if evnt.type is "keyup"
-			_v = evnt.currentTarget.value.replace( /\D/gi, "" )
+			_v = evnt.currentTarget.value.replace( /[^\d]?[^-\d]+/g, "" )
 			_v = parseInt( _v, 10 )
 			 
 			@setNumber( _v )
@@ -103,21 +108,25 @@ class FacetSubsNumber extends require( "./base" )
 
 	getValue: =>
 		_v = @$inp.val()
-		return parseInt( _v, 10 )
+		return parseInt( @valueByDefinition( _v), 10 )
 
-	setNumber: ( _v )=>
+	_setNumber: ( _v )=>
 		if isNaN( _v )
-			@$inp.val("")
+			#@$inp.val("")
 			return
 
-		_max = @model.get( "max" )
-		_min = @model.get( "min" )
-		_step = @model.get( "step" )
+		_curr = @$inp.val()
 
-		@$inp.val( @valueByDefinition( _v, _min, _max, _step ) )
+		_v = @valueByDefinition( _v)
+		if _curr != _v.toString()
+			@$inp.val( _v )
 		return
 
-	valueByDefinition: ( _value, min, max, step )->
+	valueByDefinition: ( _value )->
+		max = @model.get( "max" )
+		min = @model.get( "min" )
+		step = @model.get( "step" )
+		
 		# fix reversed min/max setting
 		if min > max
 			_tmp = min
@@ -125,9 +134,10 @@ class FacetSubsNumber extends require( "./base" )
 			max = _tmp
 		
 		# on exxedding the limits use the limit
-		if _value < min
+		if min? and _value < min
+			console.log min
 			return min
-		if _value > max
+		if max? and _value > max
 			return max
 
 		# search the nearest _value to the step
