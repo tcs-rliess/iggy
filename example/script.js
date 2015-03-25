@@ -32,7 +32,9 @@ jQuery( function( $ ){
 		name: "shipment",
 		label: "Select a date(range)",
 		opts: {},
-		modify: function( value, name, type ){
+		modify: function( value, facet ){
+			name = facet.get( "name" )
+			type = facet.get( "type" )
 			var _ret = {};
 			_ret[ name + "_start" ] = moment( value[ 0 ] ).format( "DD.MM.YYYY" );
 			if( value[ 1 ] != undefined )
