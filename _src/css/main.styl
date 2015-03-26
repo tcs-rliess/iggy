@@ -37,7 +37,8 @@
 		
 	.operator
 		float left
-		margin-top 7px
+		top -2px
+		position relative
 		margin-right 10px
 
 	input.selector-inp
@@ -58,6 +59,7 @@
 	
 	input.number-inp
 		width 50px
+		top 0px
 
 	input.number-inp
 	input.selector-inp
@@ -86,6 +88,7 @@
 		border 1px solid #ddd
 		max-height 200px
 		overflow auto
+		z-index 50
 		li
 			padding 0
 			margin 0
@@ -108,7 +111,7 @@
 		position relative
 		
 	.subselect
-		top -5px
+		//top -5px
 		margin-bottom -2px
 		.typelist
 			top 2px
@@ -140,6 +143,30 @@
 		.daterange-inp
 		.operator
 			display none
+
+	.select-check
+		margin-right 5px
+
+	.select2
+		min-width 90px
+		.select2-selection
+			border 1px solid transparent
+			background 0
+			padding 0
+			min-height 10px
+		.select2-dropdown
+		.select2-selection__choice
+			border-radius 2px
+		.select2-selection__choice
+			margin-top 3px
+		.select2-search__field
+			margin-top 0
+			top 3px
+			position relative
+	.operator
+		.select2
+			min-width 50px
+			
 			
 .daterange-iggy
 	margin-top -27px

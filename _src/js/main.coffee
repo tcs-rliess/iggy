@@ -2,6 +2,7 @@ MainView = require( "./views/main" )
 Facets = require( "./models/backbone_sub" )
 FctString = require( "./models/facet_string" )
 FctArray = require( "./models/facet_array" )
+FctSelect = require( "./models/facet_select" )
 FctNumber = require( "./models/facet_number" )
 FctDateRange = require( "./models/facet_daterange" )
 Results = require( "./models/results" )
@@ -70,7 +71,8 @@ class IGGY extends Backbone.Events
 	_createFacet: ( facet )=>
 		switch facet.type.toLowerCase()
 			when "string" then return new FctString( facet )
-			when "array" then return new FctArray( facet )
+			when "select" then return new FctSelect( facet )
+			when "array" then return new FctSelect( facet )
 			when "number" then return new FctNumber( facet )
 			when "daterange" then return new FctDateRange( facet )
 

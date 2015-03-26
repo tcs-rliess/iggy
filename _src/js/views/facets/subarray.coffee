@@ -12,7 +12,7 @@ class ArrayOption extends Backbone.Model
 class ArrayOptions extends require( "../../models/backbone_sub" )
 	model: ArrayOption
 
-class FacetSubArray extends require( "./substring" )
+class FacetSubArray extends require( "./base" )
 	multiSelect: true
 
 	getResults: =>

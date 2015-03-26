@@ -16,19 +16,23 @@ class FacetSubsNumber extends require( "./base" )
 	template: require( "../../tmpls/number.jade" )
 
 	constructor: ->
-		@setNumber = _.debounce( @_setNumber, 300 )
+		@setNumber = _.throttle( @_setNumber, 300, {leading: false} )
 		super
 		return
 
 	events: =>
-		"keyup input##{@cid}": "input"
-		"keydown input##{@cid}": "input"
-		#"change select##{@cid}op": "switchFocus"
+		_evnts = 
+			"keyup #{@_getInpSelector()}": "input"
+			"keydown #{@_getInpSelector()}": "input"
+			"blur #{@_getInpSelector()}": "select"
+		return _evnts
 
 	render: =>
 		super
 		if @model.get( "operators" )?.length
 			@$inpOp = @$el.find( "select##{@cid}op" )
+			@$inpOp.select2( { width: "auto" } )
+			@$inpOp.on( "select2:close", @_opSelected )
 		return
 
 	renderResult: =>
@@ -41,19 +45,24 @@ class FacetSubsNumber extends require( "./base" )
 
 		return _s
 
-	switchFocus: ( type="in" )=>
-		if type is "op"
-			@focus()
-		else
-			@focus( true )
+	close: ( evnt )=>
+		if @$inpOp?
+			@$inpOp.select2( "destroy" )
+			@$inpOp.remove()
+			@$inpOp = null
+		super
+		return
+
+	_opSelected: =>
+		@selectedOP = true
+		@focus()
 		return
 
 	focus: ( inp = false )=>
-		#console.log "focus", inp or not @$inpOp?, inp, not @$inpOp?, @$inpOp
-		if not inp or not @$inpOp?
-			super
+		if @$inpOp? and not @selectedOP
+			@$inpOp.select2( "open" )
 			return
-		@$inpOp.focus()
+		super
 		return
 
 	getTemplateData: =>
@@ -68,12 +77,6 @@ class FacetSubsNumber extends require( "./base" )
 				when KEYCODES.DOWN
 					@crement( @model.get( "step" ) * -1 )
 					return
-				when KEYCODES.RIGHT
-					@switchFocus( "in" )
-					return
-				when KEYCODES.LEFT
-					@switchFocus( "op" )
-					return
 				when KEYCODES.ENTER
 					@select()
 					return
@@ -86,13 +89,14 @@ class FacetSubsNumber extends require( "./base" )
 		return
 
 	crement: ( change )=>
+		console.log "crement", change
 		_v = @$inp.val()
 		if not _v?.length
 			_v = @model.get( "value" )
 		else
 			_v = parseInt( _v, 10 )
 
-		@setNumber( _v + change )
+		@_setNumber( _v + change )
 
 		return
 

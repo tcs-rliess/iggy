@@ -79,10 +79,8 @@ class SelectorView extends require( "./facets/base" )
 
 	scrollHelper: ( height )=>
 		if height >= @_scrollTill
-			console.log "ACTIVATE"
 			@scrolling = true
 		else
-			console.log "DEACTIVATE"
 			@scrolling = false
 		return
 

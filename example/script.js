@@ -19,9 +19,15 @@ jQuery( function( $ ){
 		label: "Simple",
 		options: [ "frist", "second", "last" ]
 	},{
-		type: "array",
+		type: "select",
+		name: "selsingle",
+		label: "Select Single",
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "select",
 		name: "multi",
-		label: "Array",
+		label: "Select Multi",
+		multiple: true,
 		options: [ "pizza", "pasta", "carne" ]
 	},{
 		type: "number",
@@ -67,9 +73,10 @@ jQuery( function( $ ){
 	}
 	for (i = j = 0; j <= 100; i = ++j) {
 		facets2.push( {
-			type: "string",
+			type: "select",
 			name: "simple" + i,
 			label: "Simple " + i,
+			multiple: true,
 			options: options
 		} );
 	}

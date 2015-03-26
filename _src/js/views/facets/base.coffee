@@ -2,13 +2,14 @@ KEYCODES = require( "../../utils/keycodes" )
 SubResults = require( "../../models/subresults" )
 
 class FacetSubsBase extends Backbone.View
+
 	initialize: =>
 		@result = new SubResults()
 		return
 
 	events: =>
-		"keyup input##{@cid}": "input"
-		"keydown input##{@cid}": "input"
+		"keyup #{@_getInpSelector()}": "input"
+		"keydown #{@_getInpSelector()}": "input"
 
 	focus: =>
 		@$inp.focus()
@@ -37,9 +38,12 @@ class FacetSubsBase extends Backbone.View
 	getTemplateData: =>
 		cid: @cid		
 
+	_getInpSelector: =>
+		return "input##{@cid}"
+
 	render: =>
 		@$el.html( @template( @getTemplateData() ) )
-		@$inp = @$el.find( "input##{@cid}" )
+		@$inp = @$el.find( @_getInpSelector() )
 		return
 
 	close: ( evnt )=>
@@ -58,9 +62,18 @@ class FacetSubsBase extends Backbone.View
 	getSelectModel: =>
 		return SubResults.prototype.model
 
+	_checkSelectEmpty: ( _val )=>
+		console.log "_checkSelectEmpty", _val, _.isEmpty( _val )
+		if _.isEmpty( _val ) and not _.isNumber( _val ) and not _.isBoolean( _val )
+			@close()
+			return true
+		return false
+
 	select: =>
+		_val = @getValue()
+		return if @_checkSelectEmpty( _val )
 		_ModelConst = @getSelectModel()
-		_model = new _ModelConst( value: @getValue(), custom: true )
+		_model = new _ModelConst( value: _val, custom: true )
 		@result.add( _model )
 		@trigger( "selected", _model )
 		@close()
