@@ -2,6 +2,6 @@ if operators && operators.length
 	.operator
 		select( id="#{cid}op"  )
 			each op, idx in operators
-				option( value=op )= op
+				option( value=op selected=( operator == op ) )= op
 
-input.number-inp( id=cid )
+input.number-inp( id=cid value=value )

@@ -3,6 +3,6 @@ class FctDateRange extends require( "./facet_base" )
 	defaults: =>
 		return $.extend super, 
 			opts: {}
-			value: []
+			value: null
 
 module.exports = FctDateRange

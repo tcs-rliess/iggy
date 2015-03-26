@@ -14,7 +14,6 @@ class FacetSubsSelect extends require( "./base" )
 	events: => 
 		_evnts = {}
 		_evnts[ "click .select-check" ] = "select" if @model.get( "multiple" )
-		console.log _evnts
 		return _evnts
 
 	_getInpSelector: =>
@@ -34,7 +33,6 @@ class FacetSubsSelect extends require( "./base" )
 		return super
 
 	_sel2open: ( evnt )=>
-		console.log evnt
 		evnt.stopPropagation()
 		return false
 
@@ -44,10 +42,17 @@ class FacetSubsSelect extends require( "./base" )
 
 	getTemplateData: =>
 		_data = _.extend( {}, super, { multiple: @model.get( "multiple" ), options: @_createOptionCollection( @model.get( "options" ) ) } )
+		if _data.value? and not _.isArray( _data.value )
+			_data.value = [ _data.value ]
+
+		if _data.value?
+			for _v in _data.value when _v not in _.pluck( _data.options, "value" )
+				_data.options.push { value: _v, label: _v, group: null }
+				
 		return _data
 
 	getValue: =>
-		return @select2.val()
+		return @$inp.val()
 
 	getResults: =>
 		value: @result.pluck( "value" )
@@ -66,14 +71,12 @@ class FacetSubsSelect extends require( "./base" )
 		return _opts
 
 	unselect: ( evnt )=>
-		console.log "unselect", evnt.params?.data?.id
 		@result.remove( evnt.params?.data?.id )
-		console.log @result.toJSON()
 		return
 
 	close: =>
-		@select2.destroy()
-		@$inp.remove()
+		@select2?.destroy()
+		@$inp?.remove()
 		@$( ".select-check" ).remove()
 		super
 		return

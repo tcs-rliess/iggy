@@ -88,7 +88,6 @@ class FacetNumberBase extends require( "./base" )
 		
 		# on exxedding the limits use the limit
 		if min? and _value < min
-			console.log min
 			return min
 		if max? and _value > max
 			return max

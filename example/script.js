@@ -17,33 +17,39 @@ jQuery( function( $ ){
 		type: "string",
 		name: "simple",
 		label: "Simple",
-		options: [ "frist", "second", "last" ]
+		options: [ "frist", "second", "last" ],
+		//value: "first"
 	},{
 		type: "select",
 		name: "selsingle",
 		label: "Select Single",
-		options: [ "pizza", "pasta", "carne" ]
+		options: [ "pizza", "pasta", "carne" ],
+		//value: [ "pasta", "soup" ]
 	},{
 		type: "array",
 		name: "arraysel",
 		label: "Select Array",
+		//value: "custom",
 		options: [ "pizza", "pasta", "carne" ]
 	},{
 		type: "array",
 		name: "arrayempty",
-		label: "Select Array",
+		label: "Empty Array",
+		//value: [ "custom", "values", "predefined" ],
 		options: [  ]
 	},{
 		type: "select",
 		name: "multi",
 		label: "Select Multi",
 		multiple: true,
+		//value: "pizza",
 		options: [ "pizza", "pasta", "carne" ]
 	},{
 		type: "select",
 		name: "selectcustom",
 		label: "Select Custom",
 		multiple: true,
+		//value: [ "custom", "values", "predefined" ],
 		opts: {
 			tags: true
 		}
@@ -53,6 +59,7 @@ jQuery( function( $ ){
 		label: "Nummer",
 		min: null,
 		step: 5,
+		//value: 42,
 		modify: function( value ){
 			return { "mod": value }
 		}
@@ -63,11 +70,14 @@ jQuery( function( $ ){
 		min: 0,
 		max: 100,
 		step: 1,
+		//value: 42,
+		operator: "!=",
 		operators: [ "!=", "==" ]
 	},{
 		type: "daterange",
 		name: "shipment",
 		label: "Select a date(range)",
+		//value: [ Date.now(), Date.now() + 10000 ],
 		opts: {},
 		modify: function( value, facet ){
 			name = facet.get( "name" )
@@ -84,7 +94,8 @@ jQuery( function( $ ){
 		label: "Range",
 		min: 0,
 		max: 100,
-		step: 1
+		step: 1,
+		//value: [ 10,20 ]
 	}]
 
 	newIggy( facets, "#iggytest1" )

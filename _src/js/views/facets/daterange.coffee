@@ -34,14 +34,17 @@ class FacetSubsDateRange extends require( "./base" )
 	renderResult: =>
 		_res = @getResults()
 
+		_startDate = moment( _res.value[ 0 ] )
+		_endDate = moment( _res.value[ 1 ] ) if _res.value[ 1 ]?
+
 		_time = @model.get( "opts" ).timePicker
 
 		_s = "<li>"
-		_s += @startDate.format( ( if _time then "LLLL" else "LL" ) )
+		_s += _startDate.format( ( if _time then "LLLL" else "LL" ) )
 
-		if @endDate?
+		if _endDate?
 			_s += " - "
-			_s += @endDate.format( ( if _time then "LLLL" else "LL" ) )
+			_s += _endDate.format( ( if _time then "LLLL" else "LL" ) )
 
 		_s += "</li>"
 
@@ -55,6 +58,12 @@ class FacetSubsDateRange extends require( "./base" )
 		return super
 
 	getValue: =>
+		_predefVal = @model.get( "value" )
+		if _predefVal?
+			if not _.isArray( _predefVal )
+				_predefVal =  [ _predefVal ]
+			[ @startDate, @endDate ] = _predefVal
+			return _predefVal 
 		_out = [ @startDate.valueOf() ]
 		_out.push @endDate.valueOf() if @endDate?
 		return _out

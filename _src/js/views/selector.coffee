@@ -28,10 +28,7 @@ class SelectorView extends require( "./facets/base" )
 	initialize: ( options )=>
 		@searchcoll = @collection.sub( ->true )
 		@result = new @collection.constructor()
-		@on "selected", ( result )=>
-			@searchcoll.remove( result )
-			@result.add( result )
-			return
+		
 		#@listenTo( @searchcoll, "add", @renderRes )
 		@listenTo( @searchcoll, "remove", @renderRes )
 		@listenTo( @searchcoll, "remove", @checkOptionsEmpty )
@@ -94,13 +91,15 @@ class SelectorView extends require( "./facets/base" )
 		evnt.preventDefault()
 
 		_id = @$( evnt.currentTarget ).data( "id" )
-		@trigger "selected", @collection.get( _id )
+		@selected( @collection.get( _id ) )
 		if not @multiSelect
 			@close()
 		return false
 
-
-	selected: =>
+	selected: ( mdl )=>
+		@searchcoll.remove( mdl )
+		@result.add( mdl )
+		@trigger "selected", mdl
 		return
 
 	focus: =>
@@ -117,7 +116,7 @@ class SelectorView extends require( "./facets/base" )
 					@move( false )
 					return
 				when KEYCODES.ENTER
-					@select()
+					@selectActive()
 					return
 			return
 
@@ -171,13 +170,16 @@ class SelectorView extends require( "./facets/base" )
 		@activeIdx = _newidx
 		return
 
-	select: =>
+	select:=>
+		return
+
+	selectActive: =>
 		_sel = @$el.find( ".typelist a.active" ).removeClass( "active" ).data()
 		@activeIdx = 0
 		if _sel?.idx >= 0 and @searchcoll.length
-			@trigger "selected", @collection.get( _sel.id )
+			@selected( @collection.get( _sel.id ) )
 		else if @currQuery?.length
-			@trigger "selected", new @collection.model( value: @currQuery, custom: true )
+			@selected( new @collection.model( value: @currQuery, custom: true ) )
 			@$inp.val( "" )
 		else
 			return

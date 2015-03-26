@@ -5,6 +5,6 @@ class FctRange extends require( "./facet_base" )
 			min: null
 			max: null
 			step: 1
-			value: 50
+			value: null
 
 module.exports = FctRange

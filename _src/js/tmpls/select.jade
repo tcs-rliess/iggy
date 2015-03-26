@@ -1,6 +1,6 @@
 select.select-inp( id=cid multiple )
 	each el, idx in options
-		option(value=el.value)= el.label
+		option( value=el.value selected=( value && value.indexOf( el.value ) >= 0 ) )= el.label
 
 if multiple
 	span.btn.btn-xs.btn-success.select-check.fa.fa-check

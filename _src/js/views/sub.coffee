@@ -17,6 +17,8 @@ class ViewSub extends Backbone.View
 		@$el.html @template( label: @model.getLabel(), selected: _list )
 		@$sub = @$( ".subselect" )
 		@$results = @$( ".subresults" )
+
+		@generateSub()
 		return @el
 
 	del: ( evnt )=>
@@ -54,12 +56,11 @@ class ViewSub extends Backbone.View
 			return
 		return
 
-	open: =>
+	generateSub: =>
+		if @selectview?
+			return @selectview
+
 		@selectview = new @model.SubView( model: @model, el: @$sub )
-
-		@$el.append( @selectview.render() )
-		@selectview.focus()
-
 		@selectview.on "closed", ( result )=>
 			@selectview.off()
 			@selectview.remove() if not result.length
@@ -72,6 +73,16 @@ class ViewSub extends Backbone.View
 			if mdl
 				@selected( mdl )
 			return
+			
+		@$el.append( @selectview.render() )
+		if @model?.get( "value" )?
+			@selectview.select()
+		return
+
+	open: =>
+		@generateSub()
+
+		@selectview.focus()
 		return
 
 module.exports = ViewSub

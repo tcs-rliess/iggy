@@ -19,6 +19,10 @@ class MainView extends Backbone.View
 		@el.className += @className
 		@render()
 		$( document ).on "keyup", @_onKey
+
+		for fct in @collection.filter( ( fct )->return fct?.get( "value" )? )
+			subview = @genSub( fct )
+			
 		return
 
 	render: =>
@@ -43,7 +47,6 @@ class MainView extends Backbone.View
 			@selectview = null
 
 		if @subview
-			console.log "MAIN REMOVE SUB", @subview
 			@subview.close()
 			@subview = null
 		return
@@ -51,6 +54,27 @@ class MainView extends Backbone.View
 	remFacet: ( facetM )=>
 		@results.remove( facetM.get( "name" ) )
 		return
+
+	setFacet: ( facetM, data )=>
+		@collection.remove( facetM )
+
+		@results.add( _.extend( data, { name: facetM.get( "name" ), type: facetM.get( "type" ) } ), { merge: true, parse: true, _facet: facetM } )
+		return
+
+	genSub: ( facetM )=>
+		subview = new SubView( model: facetM, collection: @collection )
+		
+		subview.on "closed", ( results )=>
+			#console.log "SUB VIEW CLOSED", results?.length
+			subview.off()
+			subview.remove() if not results?.length
+			@subview = null
+			return 
+
+		subview.on( "selected", @setFacet )
+		
+		@$addBtn.before( subview.render() )
+		return subview
 
 	addFacet: =>
 		if @selectview?
@@ -84,26 +108,9 @@ class MainView extends Backbone.View
 			return
 
 		@selectview.on "selected", ( facetM )=>
-
-			@subview = new SubView( model: facetM, collection: @collection )
-			@$addBtn.before( @subview.render() )
+			facetM.set( "value", null )
+			@subview = @genSub( facetM )
 			@subview.open()
-
-			@subview.on "closed", ( results )=>
-				#console.log "SUB VIEW CLOSED", results?.length
-				@subview.off()
-				@subview.remove() if not results?.length
-				@subview = null
-				return 
-
-			@subview.on "selected", ( facetM, results )=>
-				@collection.remove( facetM )
-
-				@results.add( _.extend( results, { name: facetM.get( "name" ), type: facetM.get( "type" ) } ), { merge: true, parse: true, _facet: facetM } )
-				#@subview.off()
-				#@subview = null
-
-				return
 			return
 		return
 

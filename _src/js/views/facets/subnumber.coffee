@@ -17,7 +17,6 @@ class FacetSubsNumber extends require( "./number_base" )
 
 	renderResult: =>
 		_res = @getResults()
-
 		_s = "<li>"
 		_s += _res.operator + " " if _res.operator?
 		_s += _res.value
@@ -46,7 +45,7 @@ class FacetSubsNumber extends require( "./number_base" )
 		return
 
 	getTemplateData: =>
-		return _.extend( super, { operators: @model.get( "operators" ) } )
+		return _.extend( super, { operators: @model.get( "operators" ), operator: @model.get( "operator" )} )
 
 
 	getResults: =>

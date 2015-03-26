@@ -7,7 +7,7 @@ class FacetSubString extends require( "./base" )
 		"blur #{@_getInpSelector()}": "select"
 
 	close: ( evnt )=>
-		@$inp.remove()
+		@$inp?.remove()
 		super
 		return
 module.exports = FacetSubString

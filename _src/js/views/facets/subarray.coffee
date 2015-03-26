@@ -39,6 +39,19 @@ class FacetSubArray extends require( "../selector" )
 		super( options )
 		return
 
+	select: =>
+		_vals = @model.get( "value" )
+		if _vals? and not _.isArray( _vals )
+			_vals = [ _vals ]
+
+		for _val in _vals
+			_mdl = @collection.get( _val )
+			if not _mdl?
+				_mdl = new @collection.model( value: _val, custom: true )
+			@selected( _mdl )
+		@close()
+		return 
+
 	getResults: =>
 		value: @result.pluck( "value" )
 

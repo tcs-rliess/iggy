@@ -1,4 +1,5 @@
 .rangeinp
-	input.number-inp.range-from( id="#{cid}_from" )
+	- var _vals = value ? value : []
+	input.number-inp.range-from( id="#{cid}_from" value=_vals[0] )
 	span.separator -
-	input.number-inp.range-to( id="#{cid}_to" )
+	input.number-inp.range-to( id="#{cid}_to" value=_vals[0] )

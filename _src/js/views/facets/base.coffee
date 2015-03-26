@@ -2,6 +2,7 @@ KEYCODES = require( "../../utils/keycodes" )
 SubResults = require( "../../models/subresults" )
 
 class FacetSubsBase extends Backbone.View
+	resultTemplate: require( "../../tmpls/result_base.jade" )
 
 	initialize: =>
 		@result = new SubResults()
@@ -36,7 +37,8 @@ class FacetSubsBase extends Backbone.View
 		return
 
 	getTemplateData: =>
-		cid: @cid		
+		cid: @cid	
+		value: @model?.get( "value" )	
 
 	_getInpSelector: =>
 		return "input##{@cid}"
@@ -71,11 +73,16 @@ class FacetSubsBase extends Backbone.View
 	select: =>
 		_val = @getValue()
 		return if @_checkSelectEmpty( _val )
+		@set( _val )
+		return
+
+	set: ( val )=>
 		_ModelConst = @getSelectModel()
-		_model = new _ModelConst( value: _val, custom: true )
+		_model = new _ModelConst( value: val )
 		@result.add( _model )
 		@trigger( "selected", _model )
 		@close()
 		return
+
 
 module.exports = FacetSubsBase
