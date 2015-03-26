@@ -39,12 +39,12 @@ class MainView extends Backbone.View
 	exit: =>
 		if @selectview
 			#console.log "MAIN REMOVE SELECT"
-			@selectview.remove()
+			@selectview.close()
 			@selectview = null
 
 		if @subview
-			#console.log "MAIN REMOVE SUB", @subview
-			@subview.remove()
+			console.log "MAIN REMOVE SUB", @subview
+			@subview.close()
 			@subview = null
 		return
 

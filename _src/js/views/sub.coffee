@@ -48,6 +48,12 @@ class ViewSub extends Backbone.View
 		@open()
 		return
 
+	close: =>
+		if @selectview?
+			@selectview?.close()
+			return
+		return
+
 	open: =>
 		@selectview = new @model.SubView( model: @model, el: @$sub )
 
