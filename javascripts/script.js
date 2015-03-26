@@ -21,6 +21,22 @@ jQuery( function( $ ){
 			return { "mod": value }
 		}
 	},{
+		type: "range",
+		name: "range",
+		label: "Number Range"
+	},{
+		type: "select",
+		name: "select2multi",
+		label: "Select2 Multi",
+		multiple: true,
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "select",
+		name: "select2single",
+		label: "Select2 Single",
+		multiple: false,
+		options: [ "pizza", "pasta", "carne" ]
+	},{
 		type: "number",
 		name: "numberop",
 		label: "Nummer-OP",
