@@ -80,8 +80,8 @@ jQuery( function( $ ){
 		//value: [ Date.now(), Date.now() + 10000 ],
 		opts: {},
 		modify: function( value, facet ){
-			name = facet.get( "name" )
-			type = facet.get( "type" )
+			var name = facet.get( "name" )
+			var type = facet.get( "type" )
 			var _ret = {};
 			_ret[ name + "_start" ] = moment( value[ 0 ] ).format( "DD.MM.YYYY" );
 			if( value[ 1 ] != undefined )
