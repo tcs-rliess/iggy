@@ -1,5 +1,18 @@
 jQuery( function( $ ){
 
+	var _printQuery = function( data, target ){
+		$( target || "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
+	}
+
+	function newIggy( facets, _target ){
+		var _iggy = new IGGY( $( _target ), facets );
+		var _query = _iggy.getQuery()
+		_printQuery( _query.toJSON(), _target + "_result" )
+		_iggy.on( "change", function( qColl ){
+			_printQuery( qColl.toJSON(), _target + "_result" )
+		});
+	}
+
 	var facets = [{
 		type: "string",
 		name: "simple",
@@ -49,7 +62,9 @@ jQuery( function( $ ){
 		name: "shipment",
 		label: "Select a date(range)",
 		opts: {},
-		modify: function( value, name, type ){
+		modify: function( value, facet ){
+			var name = facet.get( "name" )
+			var type = facet.get( "type" )
 			var _ret = {};
 			_ret[ name + "_start" ] = value[ 0 ];
 			if( value[ 1 ] != undefined )
@@ -58,18 +73,52 @@ jQuery( function( $ ){
 		}
 	}]
 
-	var _iggy = new IGGY( $( "#iggytest1" ), facets );
 
-	var _query = _iggy.getQuery()
-	
-	var _printQuery = function( data, target ){
-		$( target ? target : "#iggytest1_result" ).html( JSON.stringify( data, null, "	" ) );
-	}
-	//_printQuery( facets, "#iggytest1_config" );
-	_printQuery( _query.toJSON() )
+	newIggy( facets, "#iggytest_regular" )
 
 
-	_iggy.on( "change", function( qColl ){
-		_printQuery( qColl.toJSON() )
-	});
+	var facetsPredef = [{
+		type: "string",
+		name: "simple",
+		label: "Simple",
+		options: [ "frist", "second", "last" ],
+		value: "first"
+	},{
+		type: "select",
+		name: "selsingle",
+		label: "Select Single",
+		options: [ "pizza", "pasta", "carne" ],
+		value: [ "pasta", "soup" ]
+	},{
+		type: "array",
+		name: "arraysel",
+		label: "Select Array",
+		value: "custom",
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "number",
+		name: "numberop",
+		label: "Nummer-OP",
+		min: 0,
+		max: 100,
+		step: 1,
+		operators: [ "!=", "==" ],
+		operator: "==",
+		value: 42
+	},{
+		type: "select",
+		name: "multi",
+		label: "Select Multi",
+		multiple: true,
+		value: "pizza",
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "range",
+		name: "range",
+		label: "Number Range",
+		value: [ 23, 42 ]
+	}]
+
+	newIggy( facetsPredef, "#iggytest_predef" )
+
 })
