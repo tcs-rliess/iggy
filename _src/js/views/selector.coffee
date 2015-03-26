@@ -59,7 +59,32 @@ class SelectorView extends require( "./facets/base" )
 				_lbl = _lbl.replace( new RegExp( @currQuery, "gi" ), (( str )->return "<b>#{str}</b>" ) )
 			_list.push label: _lbl, id: _id
 		@$list.append( @templateEl( list: _list, query: @currQuery, activeIdx: @activeIdx, custom: @custom ) )
+
+		@_checkScroll()
+		
 		return @$list
+
+	_scrollTill: 198
+	_checkScroll: =>
+		_height = @$list.height()
+		if _height > 0
+			@scrollHelper( _height )
+			return
+
+		# exit the the call stack to check height after the module has been added to the dom
+		setTimeout( =>
+			@scrollHelper( @$list.height() )
+		, 0 )
+		return
+
+	scrollHelper: ( height )=>
+		if height >= @_scrollTill
+			console.log "ACTIVATE"
+			@scrolling = true
+		else
+			console.log "DEACTIVATE"
+			@scrolling = false
+		return
 
 	checkOptionsEmpty: =>
 		#if @searchcoll.length <= 0
@@ -98,7 +123,6 @@ class SelectorView extends require( "./facets/base" )
 					return
 			return
 
-		#@search.
 		_q = evnt.currentTarget.value.toLowerCase()
 		if _q is @currQuery
 			return
@@ -122,20 +146,29 @@ class SelectorView extends require( "./facets/base" )
 	move: ( up = false )=>
 		_list = @$el.find( ".typelist a" )
 
-
 		_top = 0
 		if up 
 			if ( @activeIdx - 1 ) < _top
 				return
 			_newidx = @activeIdx - 1 
 		else 
-			if @searchcoll.length < @activeIdx + 1
+			if @searchcoll.length - 1 <= @activeIdx
 				return
-			_newidx = @activeIdx + 1 
+			_newidx = @activeIdx + 1
 
 
 		@$( _list[ @activeIdx ] ).removeClass( "active" )
-		@$( _list[ _newidx ] ).addClass( "active" )
+		_$elnew = @$( _list[ _newidx ] ).addClass( "active" )
+
+		if @scrolling
+			_elH = _$elnew.outerHeight()
+			_pos = _elH * ( _newidx + 1 )
+			_$list = @$el.find( ".typelist" )
+			_scrollT = _$list.scrollTop()
+			if _pos > _scrollT + @_scrollTill
+				_$list.scrollTop( _pos - @_scrollTill )
+			else if _pos < _scrollT + _elH
+				_$list.scrollTop( _pos - _elH )
 
 		@activeIdx = _newidx
 		return
@@ -150,7 +183,6 @@ class SelectorView extends require( "./facets/base" )
 			@$inp.val( "" )
 		else
 			return
-
 
 		if not @multiSelect
 			@close()

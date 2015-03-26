@@ -1,5 +1,18 @@
 jQuery( function( $ ){
 
+	var _printQuery = function( data, target ){
+		$( target || "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
+	}
+
+	function newIggy( facets, _target ){
+		var _iggy = new IGGY( $( _target ), facets );
+		var _query = _iggy.getQuery()
+		_printQuery( _query.toJSON(), _target + "_result" )
+		_iggy.on( "change", function( qColl ){
+			_printQuery( qColl.toJSON(), _target + "_result" )
+		});
+	}
+
 	var facets = [{
 		type: "string",
 		name: "simple",
@@ -43,16 +56,23 @@ jQuery( function( $ ){
 		}
 	}]
 
-	var _iggy = new IGGY( $( "#iggytest1" ), facets );
+	newIggy( facets, "#iggytest1" )
 
-	var _query = _iggy.getQuery()
-	
-	var _printQuery = function( data ){
-		$( "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
+	var facets2 = []
+	var options = []
+	var i, j;
+	for (i = j = 0; j <= 50; i = ++j) {
+		//options.push( { value: "opt" + i, label: "Option " + i } )
+		options.push( "opt" + i )
 	}
-	_printQuery( _query.toJSON() )
+	for (i = j = 0; j <= 100; i = ++j) {
+		facets2.push( {
+			type: "string",
+			name: "simple" + i,
+			label: "Simple " + i,
+			options: options
+		} );
+	}
 
-	_iggy.on( "change", function( qColl ){
-		_printQuery( qColl.toJSON() )
-	});
+	newIggy( facets2, "#iggytest2" )
 })
