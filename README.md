@@ -25,18 +25,15 @@ Browser search module to use with Backbone.js
   // TODO init code
 ```
 
-**Options** 
-
-- **foo** : *( `String` required )* TODO option description
-- **bar** : *( `Number` optional: default = `123` )* TODO option description
-
 ## Todos
 
- * implement test cases to check for correct template generation.
+ * set inital values
+ * solution to change the facets
 
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.0.4|2015-03-26|general changes. Added select2, range, switch to font-awsome, ...|
 |0.0.3|2015-03-24|added daterange facet and optimized gui and code |
 |0.0.2|2015-03-23|added option `modify`|
 |0.0.1|2015-03-05|Initial commit|
