@@ -63,7 +63,6 @@ class FacetSubsBase extends Backbone.View
 		return SubResults.prototype.model
 
 	_checkSelectEmpty: ( _val )=>
-		console.log "_checkSelectEmpty", _val, _.isEmpty( _val )
 		if _.isEmpty( _val ) and not _.isNumber( _val ) and not _.isBoolean( _val )
 			@close()
 			return true

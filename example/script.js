@@ -24,11 +24,29 @@ jQuery( function( $ ){
 		label: "Select Single",
 		options: [ "pizza", "pasta", "carne" ]
 	},{
+		type: "array",
+		name: "arraysel",
+		label: "Select Array",
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "array",
+		name: "arrayempty",
+		label: "Select Array",
+		options: [  ]
+	},{
 		type: "select",
 		name: "multi",
 		label: "Select Multi",
 		multiple: true,
 		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "select",
+		name: "selectcustom",
+		label: "Select Custom",
+		multiple: true,
+		opts: {
+			tags: true
+		}
 	},{
 		type: "number",
 		name: "number",
@@ -60,6 +78,13 @@ jQuery( function( $ ){
 				_ret[ name + "_end" ] = moment( value[ 1 ] ).format( "DD.MM.YYYY" );
 			return _ret
 		}
+	},{
+		type: "range",
+		name: "range",
+		label: "Range",
+		min: 0,
+		max: 100,
+		step: 1
 	}]
 
 	newIggy( facets, "#iggytest1" )
