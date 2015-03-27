@@ -147,7 +147,12 @@
   min: 0,
   max: 100,
   step: 1,
-  operators: [ "!=", "==" ]
+  operators: [ "!=", "==" ],
+  modify: function( value, facet, raw ){
+    var _ret = {};
+    _ret[ raw.operator ] = value;
+    return _ret
+  }
 },{
   type: "daterange",
   name: "shipment",
@@ -235,6 +240,12 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td align="center">0.0.7</td>
+<td align="center">2015-03-27</td>
+<td align="left">Optimized modify arguments by passing the raw attributes as third argement; Optimized build.</td>
+</tr>
+<tr>
 <tr>
 <td align="center">0.0.6</td>
 <td align="center">2015-03-27</td>

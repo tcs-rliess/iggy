@@ -80,7 +80,12 @@ jQuery( function( $ ){
 		min: 0,
 		max: 100,
 		step: 1,
-		operators: [ "!=", "==" ]
+		operators: [ "!=", "==" ],
+		modify: function( value, facet, raw ){
+			var _ret = {};
+			_ret[ raw.operator ] = value;
+			return _ret
+		}
 	},{
 		type: "daterange",
 		name: "shipment",
