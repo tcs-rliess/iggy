@@ -33,6 +33,7 @@ Browser search module to use with Backbone.js
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.0.7|2015-03-27|Optimized modify arguments by passing the raw attributes as third argement; Optimized build.|
 |0.0.6|2015-03-27|Optimized select2 groups|
 |0.0.5|2015-03-26|Added optional value config to predefine the facets|
 |0.0.4|2015-03-26|general changes. Added select2, range, switch to font-awsome, ...|

@@ -7,10 +7,10 @@ module.exports = (grunt) ->
 		regarde:
 			js:
 				files: ["_src/**/*.coffee"]
-				tasks: [ "build-core-js"]
+				tasks: [ "build-core-js-debug"]
 			tmpls:
 				files: ["_src/**/*.jade"]
-				tasks: [ "build-core-js"]
+				tasks: [ "build-core-js-debug"]
 			css:
 				files: ["_src/css/**/*.styl"]
 				tasks: [ "build-core-css"]
@@ -27,17 +27,27 @@ module.exports = (grunt) ->
 
 		browserify:
 			base:
+				options:
+					transform: ["jadeify", "coffeeify"]
+					browserifyOptions:
+						extensions: ".coffee"
+						standalone: "IGGY"
+						external: true
 				files:
 					'js/iggy.js': "_src/js/main.coffee"
 
-			options:
-				transform: ["jadeify", "coffeeify"]
-				browserifyOptions:
-					debug: true
-					extensions: ".coffee"
-					standalone: "IGGY"
-					external: true
+			basedebug:
+				options:
+					transform: ["jadeify", "coffeeify"]
+					browserifyOptions:
+						debug: true
+						extensions: ".coffee"
+						standalone: "IGGY"
+						external: true
+				files:
+					'js/iggy.debug.js': "_src/js/main.coffee"
 
+			
 		copy: 
 			dist:
 				src: ['js/iggy.js']
@@ -81,9 +91,10 @@ module.exports = (grunt) ->
 	grunt.registerTask "test-local", "karma:local"
 
 	# build the project
-	grunt.registerTask "build-core-js", [ "browserify" ]
+	grunt.registerTask "build-core-js", [ "browserify:base" ]
+	grunt.registerTask "build-core-js-debug", [ "browserify:basedebug", "browserify:base" ]
 	grunt.registerTask "build-core-css", [ "stylus:base"]
-	grunt.registerTask "build-core", [ "build-core-js", "build-core-css"]
+	grunt.registerTask "build-core", [ "build-core-js", "build-core-js-debug", "build-core-css"]
 
 
 	grunt.registerTask "build", [ "clear", "build-core"]

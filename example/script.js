@@ -43,6 +43,9 @@ jQuery( function( $ ){
 		label: "Select Multi",
 		multiple: true,
 		//value: "pizza",
+		opts: {
+			width: 200
+		},
 		options: [ 
 			{ value: "m", label: "München" },
 			{ value: "hh", label: "Hamburg" },
@@ -91,7 +94,12 @@ jQuery( function( $ ){
 		step: 1,
 		//value: 42,
 		operator: "!=",
-		operators: [ "!=", "==" ]
+		operators: [ "!=", "==" ],
+		modify: function( value, facet, raw ){
+			var _ret = {};
+			_ret[ raw.operator ] = value;
+			return _ret
+		}
 	},{
 		type: "daterange",
 		name: "shipment",
