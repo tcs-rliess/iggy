@@ -50,6 +50,30 @@ jQuery( function( $ ){
 		multiple: false,
 		options: [ "pizza", "pasta", "carne" ]
 	},{
+		type: "select",
+		name: "select2labels",
+		label: "Select Labels",
+		multiple: true,
+		options: [ 
+			{ value: "m", label: "München" },
+			{ value: "hh", label: "Hamburg" },
+			{ value: "b", label: "Berlin" },
+			{ value: "k", label: "Köln" },
+			{ value: "s", label: "Stuttgart" }
+		]
+	},{
+		type: "select",
+		name: "select2groups",
+		label: "Select Groups",
+		multiple: true,
+		options: [ 
+			{ value: "usa", label: "United States", group: "America" },
+			{ value: "can", label: "Canada", group: "America" },
+			{ value: "jp", label: "Japan", group: "Asia" },
+			{ value: "cn", label: "China", group: "Asia" },
+			{ value: "ger", label: "Germany", group: "Europe" }
+		]
+	},{
 		type: "number",
 		name: "numberop",
 		label: "Nummer-OP",
