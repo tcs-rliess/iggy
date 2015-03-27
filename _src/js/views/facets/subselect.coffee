@@ -48,7 +48,10 @@ class FacetSubsSelect extends require( "./base" )
 		if _data.value?
 			for _v in _data.value when _v not in _.pluck( _data.options, "value" )
 				_data.options.push { value: _v, label: _v, group: null }
-				
+		
+		_groups = _.groupBy( _data.options, "group" )
+		if _.compact( _.keys( _groups or {} ) ).length > 1
+			_data.optionGroups = _groups
 		return _data
 
 	getValue: =>
@@ -65,7 +68,7 @@ class FacetSubsSelect extends require( "./base" )
 		for opt in options
 			if _.isString( opt ) or _.isNumber( opt )
 				_opts.push { value: opt, label: opt, group: null }
-			else if _.isObject(  )
+			else if _.isObject( opt )
 				_opts.push _.extend( {}, @optDefault, opt );
 
 		return _opts

@@ -1,6 +1,12 @@
 select.select-inp( id=cid multiple )
-	each el, idx in options
-		option( value=el.value selected=( value && value.indexOf( el.value ) >= 0 ) )= el.label
+	if optionGroups
+		each opts, gname in optionGroups
+			optgroup( label=gname )
+			each el, idx in opts
+				option( value=el.value selected=( value && value.indexOf( el.value ) >= 0 ) )= el.label
+	else
+		each el, idx in options
+			option( value=el.value selected=( value && value.indexOf( el.value ) >= 0 ) )= el.label
 
 if multiple
 	span.btn.btn-xs.btn-success.select-check.fa.fa-check

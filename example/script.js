@@ -43,7 +43,26 @@ jQuery( function( $ ){
 		label: "Select Multi",
 		multiple: true,
 		//value: "pizza",
-		options: [ "pizza", "pasta", "carne" ]
+		options: [ 
+			{ value: "m", label: "München" },
+			{ value: "hh", label: "Hamburg" },
+			{ value: "b", label: "Berlin" },
+			{ value: "k", label: "Köln" },
+			{ value: "s", label: "Stuttgart" }
+		]
+	},{
+		type: "select",
+		name: "multigroup",
+		label: "Select Multi Group",
+		multiple: true,
+		//value: "pizza",
+		options: [ 
+			{ value: "usa", label: "United States", group: "America" },
+			{ value: "can", label: "Canada", group: "America" },
+			{ value: "jp", label: "Japan", group: "Asia" },
+			{ value: "cn", label: "China", group: "Asia" },
+			{ value: "ger", label: "Germany", group: "Europe" }
+		]
 	},{
 		type: "select",
 		name: "selectcustom",
