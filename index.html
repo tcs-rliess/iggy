@@ -183,6 +183,7 @@
   max: 100,
   step: 1,
   operators: [ "!=", "==" ],
+  modifyKey: "modified",
   modify: function( value, facet, raw ){
     var _ret = {};
     _ret[ raw.operator ] = value;
@@ -275,6 +276,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td align="center">0.0.11</td>
+<td align="center">2015-03-30</td>
+<td align="left">Added facet option <code>modifyKey</code> to be able to change the target key of the modify method. If not set the regular value will be replaced. It also possible to define the default by setting the IGGI-option <code>modifyKey</code>.</td>
+</tr>
 <tr>
 <td align="center">0.0.10</td>
 <td align="center">2015-03-30</td>
