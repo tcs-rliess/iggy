@@ -74,6 +74,28 @@ jQuery( function( $ ){
 			{ value: "ger", label: "Germany", group: "Europe" }
 		]
 	},{
+		type: "select",
+		name: "select2ajax",
+		label: "Select Ajax",
+		multiple: true,
+		opts: {
+			ajax:{
+				url: "http://jsonplaceholder.typicode.com/users",
+				processResults: function( data ){
+					var i, len, user
+						ret = [];
+					for (i = 0, len = data.length; i < len; i++) {
+						user = data[i];
+						ret.push( { id: user.id, text: user.name } )
+
+					}
+					return {
+						results: ret
+					};
+				}
+			}
+		}
+	},{
 		type: "number",
 		name: "numberop",
 		label: "Nummer-OP",

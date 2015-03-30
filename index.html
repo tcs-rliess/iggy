@@ -79,7 +79,7 @@
   <h4>IGGY-Result-Collection</h4>
   <pre><code id="iggytest_regular_result"></code></pre>
   <h4>Example Config</h4>
-   <pre><code id="iggytest_regular_config">
+  <pre><code id="iggytest_regular_config">
 [{
   type: "string",
   name: "simple",
@@ -140,6 +140,30 @@
     { value: "cn", label: "China", group: "Asia" },
     { value: "ger", label: "Germany", group: "Europe" }
   ]
+},{
+  type: "select",
+  name: "selectajax",
+  label: "Select Ajax",
+  multiple: true,
+  //value: [ "custom", "values", "predefined" ],
+  opts: {
+    ajax:{
+      url: "http://jsonplaceholder.typicode.com/users",
+      processResults: function( data ){
+        var i, len, user
+          ret = [];
+        for (i = 0, len = data.length; i < len; i++) {
+          user = data[i];
+          ret.push( { id: user.id, text: user.name } )
+
+        }
+        console.log("processResults", ret);
+        return {
+          results: ret
+        };
+      }
+    }
+  }
 },{
   type: "number",
   name: "numberop",
@@ -240,6 +264,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td align="center">0.0.9</td>
+<td align="center">2015-03-30</td>
+<td align="left">Optimized select2 selection result. Nicer multi result design.</td>
+</tr>
 <tr>
 <td align="center">0.0.8</td>
 <td align="center">2015-03-30</td>
