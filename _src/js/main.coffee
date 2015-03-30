@@ -21,7 +21,7 @@ class IGGY extends Backbone.Events
 
 		# init facets
 		@facets = @_prepareFacets( facets )
-		@results = new Results()
+		@results = new Results( null, options )
 
 		@results.on "add", @triggerChange
 		@results.on "remove", @triggerChange

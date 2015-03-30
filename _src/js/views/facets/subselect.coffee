@@ -56,7 +56,7 @@ class FacetSubsSelect extends require( "./base" )
 
 	getValue: =>
 		_vals = []
-		for data in @select2.data()
+		for data in @select2?.data() or []
 			_data = {}
 			_data.value = data.id
 			_data.label = data.text if data.text?

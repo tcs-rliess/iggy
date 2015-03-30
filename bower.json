@@ -1,7 +1,7 @@
 {
   "name": "iggy",
   "description": "Browser search module to use with Backbone.js",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "keywords": [],
   "homepage": "https://github.com/mpneuried/iggy",
   "main": [

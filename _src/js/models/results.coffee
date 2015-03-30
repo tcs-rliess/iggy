@@ -7,12 +7,15 @@ class IggyResult extends Backbone.Model
 
 class IggyResults extends Backbone.Collection
 	model: IggyResult
+	initialize: ( mdls, opts )=>
+		if opts.modifyKey?.length
+			@modifyKey = opts.modifyKey
+		return
 	parse: ( attr, options )=>
+		_key = options._facet.get( "modifyKey" ) or @modifyKey or "value"
 		_modify = options._facet?.get( "modify" )
-		_name = options._facet?.get( "name" )
-		_type = options._facet?.get( "type" )
 		if _modify? and _.isFunction( _modify )
-			attr.value = _modify( attr.value, options._facet, attr )
+			attr[ _key ] = _modify( attr.value, options._facet, attr )
 		return attr
 
 module.exports = IggyResults

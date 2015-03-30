@@ -14,6 +14,7 @@ Browser search module to use with Backbone.js
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.0.11|2015-03-30|Added facet option `modifyKey` to be able to change the target key of the modify method. If not set the regular value will be replaced. It also possible to define the default by setting the IGGI-option `modifyKey`.|
 |0.0.10|2015-03-30|Optimized array selection result.|
 |0.0.9|2015-03-30|Optimized select2 selection result. Nicer multi result design|
 |0.0.8|2015-03-30|Automatic add of new facet after finished a selection. Style changes. Added distribution files|

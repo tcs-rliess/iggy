@@ -49,7 +49,7 @@ IGGY = (function(superClass) {
     this.el = this.$el[0];
     this.$el.data("iggy", this);
     this.facets = this._prepareFacets(facets);
-    this.results = new Results();
+    this.results = new Results(null, options);
     this.results.on("add", this.triggerChange);
     this.results.on("remove", this.triggerChange);
     this.results.on("change", this.triggerChange);
@@ -642,18 +642,25 @@ IggyResults = (function(superClass) {
 
   function IggyResults() {
     this.parse = bind(this.parse, this);
+    this.initialize = bind(this.initialize, this);
     return IggyResults.__super__.constructor.apply(this, arguments);
   }
 
   IggyResults.prototype.model = IggyResult;
 
+  IggyResults.prototype.initialize = function(mdls, opts) {
+    var ref;
+    if ((ref = opts.modifyKey) != null ? ref.length : void 0) {
+      this.modifyKey = opts.modifyKey;
+    }
+  };
+
   IggyResults.prototype.parse = function(attr, options) {
-    var _modify, _name, _type, ref, ref1, ref2;
+    var _key, _modify, ref;
+    _key = options._facet.get("modifyKey") || this.modifyKey || "value";
     _modify = (ref = options._facet) != null ? ref.get("modify") : void 0;
-    _name = (ref1 = options._facet) != null ? ref1.get("name") : void 0;
-    _type = (ref2 = options._facet) != null ? ref2.get("type") : void 0;
     if ((_modify != null) && _.isFunction(_modify)) {
-      attr.value = _modify(attr.value, options._facet, attr);
+      attr[_key] = _modify(attr.value, options._facet, attr);
     }
     return attr;
   };
@@ -1896,11 +1903,11 @@ FacetSubsSelect = (function(superClass) {
   };
 
   FacetSubsSelect.prototype.getValue = function() {
-    var _data, _vals, data, i, len, ref;
+    var _data, _vals, data, i, len, ref, ref1;
     _vals = [];
-    ref = this.select2.data();
-    for (i = 0, len = ref.length; i < len; i++) {
-      data = ref[i];
+    ref1 = ((ref = this.select2) != null ? ref.data() : void 0) || [];
+    for (i = 0, len = ref1.length; i < len; i++) {
+      data = ref1[i];
       _data = {};
       _data.value = data.id;
       if (data.text != null) {

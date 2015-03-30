@@ -4,8 +4,8 @@ jQuery( function( $ ){
 		$( target || "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
 	}
 
-	function newIggy( facets, _target ){
-		var _iggy = new IGGY( $( _target ), facets );
+	function newIggy( facets, _target, opts ){
+		var _iggy = new IGGY( $( _target ), facets, opts );
 		var _query = _iggy.getQuery()
 		_printQuery( _query.toJSON(), _target + "_result" )
 		_iggy.on( "change", function( qColl ){
@@ -131,6 +131,7 @@ jQuery( function( $ ){
 		//value: 42,
 		operator: "!=",
 		operators: [ "!=", "==" ],
+		modifyKey: "modified",
 		modify: function( value, facet, raw ){
 			var _ret = {};
 			_ret[ raw.operator ] = value;
@@ -161,7 +162,7 @@ jQuery( function( $ ){
 		//value: [ 10,20 ]
 	}]
 
-	newIggy( facets, "#iggytest1" )
+	newIggy( facets, "#iggytest1", { modifyKey: "orgValue" } )
 
 	var facets2 = []
 	var options = []
