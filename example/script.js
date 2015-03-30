@@ -20,23 +20,35 @@ jQuery( function( $ ){
 		options: [ "frist", "second", "last" ],
 		//value: "first"
 	},{
-		type: "select",
-		name: "selsingle",
-		label: "Select Single",
-		options: [ "pizza", "pasta", "carne" ],
-		//value: [ "pasta", "soup" ]
-	},{
 		type: "array",
 		name: "arraysel",
-		label: "Select Array",
+		label: "Array Select",
 		//value: "custom",
 		options: [ "pizza", "pasta", "carne" ]
 	},{
 		type: "array",
 		name: "arrayempty",
-		label: "Empty Array",
+		label: "Array Empty",
 		//value: [ "custom", "values", "predefined" ],
 		options: [  ]
+	},{
+		type: "array",
+		name: "arraylabels",
+		label: "Array Labels",
+		//value: [ "m", "s"],
+		options: [ 
+			{ value: "m", label: "München" },
+			{ value: "hh", label: "Hamburg" },
+			{ value: "b", label: "Berlin" },
+			{ value: "k", label: "Köln" },
+			{ value: "s", label: "Stuttgart" }
+		]
+	},{
+		type: "select",
+		name: "selsingle",
+		label: "Select Single",
+		options: [ "pizza", "pasta", "carne" ],
+		//value: [ "pasta", "soup" ]
 	},{
 		type: "select",
 		name: "multi",

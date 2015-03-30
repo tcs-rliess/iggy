@@ -1515,9 +1515,8 @@ FacetSubArray = (function(superClass) {
   extend(FacetSubArray, superClass);
 
   FacetSubArray.prototype.optDefault = {
-    name: "-",
-    value: "-",
-    group: null
+    label: "-",
+    value: "-"
   };
 
   FacetSubArray.prototype.multiSelect = true;
@@ -1571,10 +1570,9 @@ FacetSubArray = (function(superClass) {
       if (_.isString(opt) || _.isNumber(opt)) {
         _opts.push({
           value: opt,
-          label: opt,
-          group: null
+          label: opt
         });
-      } else if (_.isObject()) {
+      } else if (_.isObject(opt)) {
         _opts.push(_.extend({}, this.optDefault, opt));
       }
     }

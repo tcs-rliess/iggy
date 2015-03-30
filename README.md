@@ -9,30 +9,12 @@ Browser search module to use with Backbone.js
 
 [![NPM](https://nodei.co/npm/iggy.png?downloads=true&stars=true)](https://nodei.co/npm/iggy/)
 
-*Written in coffee-script*
-
-**INFO: all examples are written in coffee-script**
-
-## Install
-
-```
-  npm install iggy
-```
-
-## Initialize
-
-```
-  // TODO init code
-```
-
-## Todos
-
- * set inital values
- * solution to change the facets
+*Docs are under constrcution* 
 
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.0.10|2015-03-30|Optimized array selection result.|
 |0.0.9|2015-03-30|Optimized select2 selection result. Nicer multi result design|
 |0.0.8|2015-03-30|Automatic add of new facet after finished a selection. Style changes. Added distribution files|
 |0.0.7|2015-03-27|Optimized modify arguments by passing the raw attributes as third argement; Optimized build.|
