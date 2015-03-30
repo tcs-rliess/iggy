@@ -1898,7 +1898,19 @@ FacetSubsSelect = (function(superClass) {
   };
 
   FacetSubsSelect.prototype.getValue = function() {
-    return this.$inp.val();
+    var _data, _vals, data, i, len, ref;
+    _vals = [];
+    ref = this.select2.data();
+    for (i = 0, len = ref.length; i < len; i++) {
+      data = ref[i];
+      _data = {};
+      _data.value = data.id;
+      if (data.text != null) {
+        _data.label = data.text;
+      }
+      _vals.push(_data);
+    }
+    return _vals;
   };
 
   FacetSubsSelect.prototype.getResults = function() {
@@ -1946,18 +1958,18 @@ FacetSubsSelect = (function(superClass) {
   };
 
   FacetSubsSelect.prototype.select = function(evnt) {
-    var _ModelConst, _model, _val;
-    _val = this.getValue();
-    if (_val == null) {
+    var ModelConst, _val, _vals, i, len;
+    _vals = this.getValue();
+    if (!(_vals != null ? _vals.length : void 0)) {
       this.close();
       return;
     }
-    _ModelConst = this.getSelectModel();
-    _model = new _ModelConst({
-      value: _val
-    });
-    this.result.add(_model);
-    this.trigger("selected", _model);
+    ModelConst = this.getSelectModel();
+    for (i = 0, len = _vals.length; i < len; i++) {
+      _val = _vals[i];
+      this.result.add(new ModelConst(_val));
+    }
+    this.trigger("selected", this.result);
     this.close();
   };
 

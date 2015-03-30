@@ -76,6 +76,30 @@ jQuery( function( $ ){
 			tags: true
 		}
 	},{
+		type: "select",
+		name: "selectajax",
+		label: "Select Ajax",
+		multiple: true,
+		//value: [ "custom", "values", "predefined" ],
+		opts: {
+			ajax:{
+				url: "http://jsonplaceholder.typicode.com/users",
+				processResults: function( data ){
+					var i, len, user
+						ret = [];
+					for (i = 0, len = data.length; i < len; i++) {
+						user = data[i];
+						ret.push( { id: user.id, text: user.name } )
+
+					}
+					console.log("processResults", ret);
+					return {
+						results: ret
+					};
+				}
+			}
+		}
+	},{
 		type: "number",
 		name: "number",
 		label: "Nummer",

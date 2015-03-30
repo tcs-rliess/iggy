@@ -1,9 +1,23 @@
 path = require( "path" )
 
+
 module.exports = (grunt) ->
+
+	banner = 
+	
 	# Project configuration.
 	grunt.initConfig
 		pkg: grunt.file.readJSON('package.json')
+		banner: """
+/*
+ * IGGY <%= pkg.version %> ( <%= grunt.template.today( 'yyyy-mm-dd' )%> )
+ * http://mpneuried.github.io/iggy/
+ *
+ * Released under the MIT license
+ * https://github.com/mpneuried/iggy/blob/master/LICENSE
+*/
+
+""" 
 		regarde:
 			js:
 				files: ["_src/**/*.coffee"]
@@ -17,7 +31,7 @@ module.exports = (grunt) ->
 		stylus:
 			options:
 				"include css": true
-				banner: "/*!\n * IGGY <%= pkg.version %>\n * http://mpneuried.github.io/iggy/\n *\n * Released under the MIT license\n * https://github.com/mpneuried/iggy/blob/master/LICENSE\n */\n"
+				banner: "<%= banner %>"
 			base:
 				files:
 					"css/iggy.css": ["_src/css/main.styl"]
@@ -61,7 +75,7 @@ module.exports = (grunt) ->
 		uglify: 
 			options:
 				compress: true
-				banner: "/*!\n * IGGY <%= pkg.version %>\n * http://mpneuried.github.io/iggy/\n *\n * Released under the MIT license\n * https://github.com/mpneuried/iggy/blob/master/LICENSE\n */\n"
+				banner: "<%= banner %>"
 
 			release: 
 				files: 

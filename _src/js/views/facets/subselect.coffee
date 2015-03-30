@@ -55,7 +55,13 @@ class FacetSubsSelect extends require( "./base" )
 		return _data
 
 	getValue: =>
-		return @$inp.val()
+		_vals = []
+		for data in @select2.data()
+			_data = {}
+			_data.value = data.id
+			_data.label = data.text if data.text?
+			_vals.push( _data )
+		return _vals
 
 	getResults: =>
 		value: @result.pluck( "value" )
@@ -85,14 +91,14 @@ class FacetSubsSelect extends require( "./base" )
 		return
 
 	select: ( evnt )=>
-		_val = @getValue()
-		if not _val?
+		_vals = @getValue()
+		if not _vals?.length
 			@close()
 			return
-		_ModelConst = @getSelectModel()
-		_model = new _ModelConst( value: _val )
-		@result.add( _model )
-		@trigger( "selected", _model )
+		ModelConst = @getSelectModel()
+		for _val in _vals
+			@result.add( new ModelConst( _val ) )
+		@trigger( "selected", @result )
 
 		@close()
 		return
