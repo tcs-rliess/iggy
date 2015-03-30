@@ -49,6 +49,7 @@ class MainView extends Backbone.View
 		if @subview
 			@subview.close()
 			@subview = null
+			@addFacet()
 		return
 
 	remFacet: ( facetM )=>
@@ -69,6 +70,7 @@ class MainView extends Backbone.View
 			subview.off()
 			subview.remove() if not results?.length
 			@subview = null
+			@addFacet()
 			return 
 
 		subview.on( "selected", @setFacet )

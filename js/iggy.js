@@ -1999,10 +1999,12 @@ FacetSubString = (function(superClass) {
 
   FacetSubString.prototype.close = function(evnt) {
     var ref;
-    if ((ref = this.$inp) != null) {
-      ref.remove();
-    }
     FacetSubString.__super__.close.apply(this, arguments);
+    try {
+      if ((ref = this.$inp) != null) {
+        ref.remove();
+      }
+    } catch (_error) {}
   };
 
   return FacetSubString;
@@ -2092,6 +2094,7 @@ MainView = (function(superClass) {
     if (this.subview) {
       this.subview.close();
       this.subview = null;
+      this.addFacet();
     }
   };
 
@@ -2124,6 +2127,7 @@ MainView = (function(superClass) {
           subview.remove();
         }
         _this.subview = null;
+        _this.addFacet();
       };
     })(this));
     subview.on("selected", this.setFacet);
