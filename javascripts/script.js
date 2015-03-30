@@ -24,6 +24,17 @@ jQuery( function( $ ){
 		label: "Array",
 		options: [ "pizza", "pasta", "carne" ]
 	},{
+		type: "array",
+		name: "arraylabel",
+		label: "Array Labels",
+		options: [ 
+			{ value: "m", label: "München" },
+			{ value: "hh", label: "Hamburg" },
+			{ value: "b", label: "Berlin" },
+			{ value: "k", label: "Köln" },
+			{ value: "s", label: "Stuttgart" }
+		]
+	},{
 		type: "number",
 		name: "number",
 		label: "Nummer",
