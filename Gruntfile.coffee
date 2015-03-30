@@ -17,6 +17,7 @@ module.exports = (grunt) ->
 		stylus:
 			options:
 				"include css": true
+				banner: "/*!\n * IGGY <%= pkg.version %>\n * http://mpneuried.github.io/iggy/\n *\n * Released under the MIT license\n * https://github.com/mpneuried/iggy/blob/master/LICENSE\n */\n"
 			base:
 				files:
 					"css/iggy.css": ["_src/css/main.styl"]
@@ -49,27 +50,22 @@ module.exports = (grunt) ->
 
 			
 		copy: 
-			dist:
-				src: ['js/iggy.js']
-				dest: 'dist/iggy.js'
+			release:
+				src: ['css/iggy.css']
+				dest: 'dist/css/iggy.css'
 
 		karma:
 			local:
 				configFile: 'karma.conf.coffee'
 
-		includereplace:
-			pckg:
-				options:
-					globals:
-						version: "0.0.11"
+		uglify: 
+			options:
+				compress: true
+				banner: "/*!\n * IGGY <%= pkg.version %>\n * http://mpneuried.github.io/iggy/\n *\n * Released under the MIT license\n * https://github.com/mpneuried/iggy/blob/master/LICENSE\n */\n"
 
-					prefix: "@@"
-					suffix: ''
-
-				files:
-					"index.js": ["index.js"]
-
-		
+			release: 
+				files: 
+					'dist/js/iggy.js': "js/iggy.js"
 		
 
 	# Load npm modules
@@ -77,7 +73,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-contrib-copy"
 	grunt.loadNpmTasks "grunt-contrib-stylus"
 	grunt.loadNpmTasks "grunt-contrib-clean"
-	grunt.loadNpmTasks "grunt-include-replace"
+	grunt.loadNpmTasks "grunt-contrib-uglify"
 	grunt.loadNpmTasks "grunt-browserify"
 	grunt.loadNpmTasks "grunt-karma"
 
@@ -98,4 +94,4 @@ module.exports = (grunt) ->
 
 
 	grunt.registerTask "build", [ "clear", "build-core"]
-	grunt.registerTask "release", [ "build" ]
+	grunt.registerTask "release", [ "build", "uglify:release", "copy:release" ]
