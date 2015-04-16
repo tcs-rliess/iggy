@@ -19,7 +19,19 @@ class FacetSubsSelect extends require( "./base" )
 	_getInpSelector: =>
 		return "select##{@cid}"
 
+	render: =>
+		super
+		@_initSelect2()
+		return
+
 	focus: ()=>
+		@_initSelect2()
+		@select2.open()
+		#else
+			#@$inp.select2( "open" )
+		return super
+
+	_initSelect2: =>
 		if not @select2?
 			_opts = _.extend( {}, @defaultModuleOpts, @model.get( "opts" ), { multiple: @model.get( "multiple" ) }, @forcedModuleOpts )
 			@$inp.select2( _opts )
@@ -27,10 +39,7 @@ class FacetSubsSelect extends require( "./base" )
 			if not @model.get( "multiple" )
 				@$inp.on "select2:select", @select
 			@select2.$container.on "click", @_sel2open
-			@select2.open()
-		#else
-			#@$inp.select2( "open" )
-		return super
+		return
 
 	_sel2open: ( evnt )=>
 		evnt.stopPropagation()

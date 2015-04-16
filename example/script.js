@@ -182,4 +182,61 @@ jQuery( function( $ ){
 	}
 
 	newIggy( facets2, "#iggytest2" )
+
+	var facetsPredef = [{
+		type: "string",
+		name: "string",
+		label: "Simple",
+		options: [ "frist", "second", "last" ],
+		value: "first"
+	},{
+		type: "select",
+		name: "select_single",
+		label: "Select Single",
+		options: [ "pizza", "pasta", "carne" ],
+		value: [ "pasta", "soup" ]
+	},{
+		type: "array",
+		name: "select_array",
+		label: "Select Array",
+		value: "custom",
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "number",
+		name: "numberop",
+		label: "Nummer-OP",
+		min: 0,
+		max: 100,
+		step: 1,
+		operators: [ "!=", "==" ],
+		operator: "==",
+		value: 42
+	},{
+		type: "select",
+		name: "select_multi",
+		label: "Select Multi",
+		multiple: true,
+		value: "pizza",
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "range",
+		name: "range",
+		label: "Number Range",
+		value: [ 23, 42 ]
+	},{
+		type: "select",
+		name: "select_group",
+		label: "Select Multi Group",
+		multiple: true,
+		value: "ger",
+		options: [ 
+			{ value: "usa", label: "United States", group: "America" },
+			{ value: "can", label: "Canada", group: "America" },
+			{ value: "jp", label: "Japan", group: "Asia" },
+			{ value: "cn", label: "China", group: "Asia" },
+			{ value: "ger", label: "Germany", group: "Europe" }
+		]
+	}]
+
+	newIggy( facetsPredef, "#iggytest3" )
 })

@@ -21,8 +21,8 @@ class MainView extends Backbone.View
 		$( document ).on "keyup", @_onKey
 
 		for fct in @collection.filter( ( fct )->return fct?.get( "value" )? )
-			subview = @genSub( fct )
-			
+			subview = @genSub( fct, false )
+		
 		return
 
 	render: =>
@@ -62,7 +62,7 @@ class MainView extends Backbone.View
 		@results.add( _.extend( data, { name: facetM.get( "name" ), type: facetM.get( "type" ) } ), { merge: true, parse: true, _facet: facetM } )
 		return
 
-	genSub: ( facetM )=>
+	genSub: ( facetM, addAfter = true )=>
 		subview = new SubView( model: facetM, collection: @collection )
 		
 		subview.on "closed", ( results )=>
@@ -70,7 +70,7 @@ class MainView extends Backbone.View
 			subview.off()
 			subview.remove() if not results?.length
 			@subview = null
-			@addFacet()
+			@addFacet() if addAfter
 			return 
 
 		subview.on( "selected", @setFacet )

@@ -1106,7 +1106,9 @@ FacetSubsBase = (function(superClass) {
   };
 
   FacetSubsBase.prototype.render = function() {
-    this.$el.html(this.template(this.getTemplateData()));
+    var _tmpl;
+    _tmpl = this.template(this.getTemplateData());
+    this.$el.html(_tmpl);
     this.$inp = this.$el.find(this._getInpSelector());
   };
 
@@ -1819,7 +1821,9 @@ FacetSubsSelect = (function(superClass) {
     this.getTemplateData = bind(this.getTemplateData, this);
     this.remove = bind(this.remove, this);
     this._sel2open = bind(this._sel2open, this);
+    this._initSelect2 = bind(this._initSelect2, this);
     this.focus = bind(this.focus, this);
+    this.render = bind(this.render, this);
     this._getInpSelector = bind(this._getInpSelector, this);
     this.events = bind(this.events, this);
     return FacetSubsSelect.__super__.constructor.apply(this, arguments);
@@ -1847,7 +1851,18 @@ FacetSubsSelect = (function(superClass) {
     return "select#" + this.cid;
   };
 
+  FacetSubsSelect.prototype.render = function() {
+    FacetSubsSelect.__super__.render.apply(this, arguments);
+    this._initSelect2();
+  };
+
   FacetSubsSelect.prototype.focus = function() {
+    this._initSelect2();
+    this.select2.open();
+    return FacetSubsSelect.__super__.focus.apply(this, arguments);
+  };
+
+  FacetSubsSelect.prototype._initSelect2 = function() {
     var _opts;
     if (this.select2 == null) {
       _opts = _.extend({}, this.defaultModuleOpts, this.model.get("opts"), {
@@ -1859,9 +1874,7 @@ FacetSubsSelect = (function(superClass) {
         this.$inp.on("select2:select", this.select);
       }
       this.select2.$container.on("click", this._sel2open);
-      this.select2.open();
     }
-    return FacetSubsSelect.__super__.focus.apply(this, arguments);
   };
 
   FacetSubsSelect.prototype._sel2open = function(evnt) {
@@ -2082,7 +2095,7 @@ MainView = (function(superClass) {
     });
     for (i = 0, len = ref.length; i < len; i++) {
       fct = ref[i];
-      subview = this.genSub(fct);
+      subview = this.genSub(fct, false);
     }
   };
 
@@ -2131,8 +2144,11 @@ MainView = (function(superClass) {
     });
   };
 
-  MainView.prototype.genSub = function(facetM) {
+  MainView.prototype.genSub = function(facetM, addAfter) {
     var subview;
+    if (addAfter == null) {
+      addAfter = true;
+    }
     subview = new SubView({
       model: facetM,
       collection: this.collection
@@ -2144,7 +2160,9 @@ MainView = (function(superClass) {
           subview.remove();
         }
         _this.subview = null;
-        _this.addFacet();
+        if (addAfter) {
+          _this.addFacet();
+        }
       };
     })(this));
     subview.on("selected", this.setFacet);

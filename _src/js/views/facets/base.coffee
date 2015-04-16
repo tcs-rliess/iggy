@@ -44,7 +44,8 @@ class FacetSubsBase extends Backbone.View
 		return "input##{@cid}"
 
 	render: =>
-		@$el.html( @template( @getTemplateData() ) )
+		_tmpl = @template( @getTemplateData() )
+		@$el.html( _tmpl )
 		@$inp = @$el.find( @_getInpSelector() )
 		return
 
