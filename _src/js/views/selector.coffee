@@ -144,11 +144,11 @@ class SelectorView extends require( "./facets/base" )
 		_list = @$el.find( ".typelist a" )
 
 		_top = 0
-		if up 
+		if up
 			if ( @activeIdx - 1 ) < _top
 				return
-			_newidx = @activeIdx - 1 
-		else 
+			_newidx = @activeIdx - 1
+		else
 			if @searchcoll.length - 1 <= @activeIdx
 				return
 			_newidx = @activeIdx + 1

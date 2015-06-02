@@ -50,11 +50,11 @@ class FacetSubsNumber extends require( "./number_base" )
 
 	getResults: =>
 		if @$inpOp?
-			_ret = 
+			_ret =
 				value: @getValue()
 				operator: @$inpOp.val()
 		else
-			_ret = 
+			_ret =
 				value: @getValue()
 		return _ret
 

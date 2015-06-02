@@ -10,7 +10,7 @@ class FacetSubsDateRange extends require( "./base" )
 	forcedDateRangeOpts:
 		opens: "right"
 
-	events: => 
+	events: =>
 		return
 
 	focus: ()=>
@@ -63,7 +63,7 @@ class FacetSubsDateRange extends require( "./base" )
 			if not _.isArray( _predefVal )
 				_predefVal =  [ _predefVal ]
 			[ @startDate, @endDate ] = _predefVal
-			return _predefVal 
+			return _predefVal
 		_out = [ @startDate.valueOf() ]
 		_out.push @endDate.valueOf() if @endDate?
 		return _out

@@ -4,10 +4,10 @@ EXAMPLE USAGE
 	parentColl = new Backbone.Collection.Sub()
 	
 	# by Array
-	subCollA = parentColl.sub( [ 1, 2, 3 ] ) 
+	subCollA = parentColl.sub( [ 1, 2, 3 ] )
 	
 	# or by Object
-	subCollO = parentColl.sub( { name: "Foo", age: 42 } ) 
+	subCollO = parentColl.sub( { name: "Foo", age: 42 } )
 	
 	# or by Number
 	subCollN = parentColl.sub( 13 )
@@ -53,7 +53,7 @@ class BackboneSub extends Backbone.Collection
 
 		# recheck the model against the filter on change
 		@on "change", _.bind( ( _m )->
-			toAdd = @_fnFilter( _m ) 
+			toAdd = @_fnFilter( _m )
 			added = @get( _m )?
 			if added and not toAdd
 				@remove( _m )
@@ -105,7 +105,7 @@ class BackboneSub extends Backbone.Collection
 	
 	Method to update the filter of a subcollection. Then all models will be resete by the new filter. So you have to listen to teh reset event
 	
-	@param { Function|Array|String|Number|Object } filter The filter to reduce the current collection. Can be a function like underscore `_.filter` or an array of ids, a single id as string or number or a filter object containings key value filters. 
+	@param { Function|Array|String|Number|Object } filter The filter to reduce the current collection. Can be a function like underscore `_.filter` or an array of ids, a single id as string or number or a filter object containings key value filters.
 	
 	@return { Self } itself
 	
@@ -143,24 +143,24 @@ class BackboneSub extends Backbone.Collection
 	
 	Internal method th convert a filter argument to a filter function
 	
-	@param { Function|Array|String|Number|Object } filter The filter to reduce the current collection. Can be a function like underscore `_.filter` or an array of ids, a single id as string or number or a filter object containings key value filters. 
+	@param { Function|Array|String|Number|Object } filter The filter to reduce the current collection. Can be a function like underscore `_.filter` or an array of ids, a single id as string or number or a filter object containings key value filters.
 	
-	@return { Function } The generated filter function 
+	@return { Function } The generated filter function
 	
 	@api private
 	###
-	_generateSubFilter: ( filter )=>
+	_generateSubFilter: ( filter )->
 		# construct the filter function
 		if _.isFunction( filter )
 			fnFilter = filter
 		else if _.isArray( filter )
-			fnFilter = ( _m )=>
+			fnFilter = ( _m )->
 				_m.id in filter
 		else if _.isString( filter ) or _.isNumber( filter )
-			fnFilter = ( _m )=>
+			fnFilter = ( _m )->
 				_m.id is filter
 		else
-			fnFilter = ( _m )=>
+			fnFilter = ( _m )->
 				for _nm, _vl of filter
 					if _m.get( _nm ) isnt _vl
 						return false

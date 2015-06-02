@@ -8,7 +8,7 @@ class FacetSubString extends require( "./base" )
 
 	close: ( evnt )=>
 		super
-		try 
+		try
 			@$inp?.remove()
 		return
 module.exports = FacetSubString

@@ -69,7 +69,7 @@ class IGGY extends Backbone.Events
 
 		return new Facets( _ret )
 
-	_createFacet: ( facet )=>
+	_createFacet: ( facet )->
 		switch facet.type.toLowerCase()
 			when "string" then return new FctString( facet )
 			when "select" then return new FctSelect( facet )
@@ -105,10 +105,10 @@ class IGGY extends Backbone.Events
 	_initErrors: =>
 		@errors = {}
 		for _k, _tmpl of @ERRORS()
-			@errors[ _k ] = _.template( _tmpl ) 
+			@errors[ _k ] = _.template( _tmpl )
 		return
 
-	ERRORS: =>
+	ERRORS: ->
 		"EINVALIDELSTRING": "If you define a `el` as String it has to be a valid selector for an existing DOM element."
 		"EEMPTYELSTRING": "The `el` as string can not be empty."
 		"EEMPTYELJQUERY": "The `el` as jOuery object can not be an empty collection."

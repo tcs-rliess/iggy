@@ -12,7 +12,7 @@ class FacetSubsRange extends require( "./number_base" )
 
 	renderResult: =>
 		_res = @getResults()
-		return "<li>" +_res.value.join( " - " ) + "</li>" 
+		return "<li>" +_res.value.join( " - " ) + "</li>"
 
 	render: =>
 		super
@@ -29,7 +29,7 @@ class FacetSubsRange extends require( "./number_base" )
 		return
 
 	getResults: =>
-		_ret = 
+		_ret =
 			value: @getValue()
 		return _ret
 

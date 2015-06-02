@@ -24,7 +24,7 @@ class ArrayOptions extends require( "../../models/backbone_sub" )
 	model: ArrayOption
 
 class FacetSubArray extends require( "../selector" )
-	optDefault: 
+	optDefault:
 		label: "-"
 		value: "-"
 
@@ -49,7 +49,7 @@ class FacetSubArray extends require( "../selector" )
 				_mdl = new @collection.model( value: _val, custom: true )
 			@selected( _mdl )
 		@close()
-		return 
+		return
 
 	getResults: =>
 		value: @result.pluck( "value" )
@@ -63,7 +63,7 @@ class FacetSubArray extends require( "../selector" )
 			if _.isString( opt ) or _.isNumber( opt )
 				_opts.push { value: opt, label: opt }
 			else if _.isObject(opt)
-				_opts.push _.extend( {}, @optDefault, opt );
+				_opts.push _.extend( {}, @optDefault, opt )
 		return new @optColl( _opts )
 
 

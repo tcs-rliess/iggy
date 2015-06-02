@@ -1,6 +1,6 @@
 class IggyResult extends Backbone.Model
 	idAttribute: "name"
-	defaults: 
+	defaults:
 		type: "string"
 		name: null
 		value: null

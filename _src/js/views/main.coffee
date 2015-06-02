@@ -7,7 +7,7 @@ class MainView extends Backbone.View
 	template: require( "../tmpls/wrapper.jade" )
 	className: "iggy clearfix"
 
-	events: 
+	events:
 		"click .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
 
@@ -71,7 +71,7 @@ class MainView extends Backbone.View
 			subview.remove() if not results?.length
 			@subview = null
 			@addFacet() if addAfter
-			return 
+			return
 
 		subview.on( "selected", @setFacet )
 		

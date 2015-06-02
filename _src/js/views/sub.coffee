@@ -6,7 +6,7 @@ class ViewSub extends Backbone.View
 		@result = new Backbone.Collection()
 		return
 
-	events: 
+	events:
 		"click .rm-facet-btn": "del"
 
 	render: ( optMdl )=>

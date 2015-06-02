@@ -20,7 +20,7 @@ class FacetNumberBase extends require( "./base" )
 		return
 
 	events: =>
-		_evnts = 
+		_evnts =
 			"keyup #{@_getInpSelector()}": "input"
 			"keydown #{@_getInpSelector()}": "input"
 		return _evnts
