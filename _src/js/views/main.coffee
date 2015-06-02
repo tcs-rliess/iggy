@@ -35,7 +35,7 @@ class MainView extends Backbone.View
 		return
 
 	_onKey: ( evnt )=>
-		if evnt.keyCode in KEYCODES.ESC
+		if evnt.keyCode is KEYCODES.ESC or evnt.keyCode in KEYCODES.ESC
 			@exit()
 			return
 		return

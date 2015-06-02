@@ -37,8 +37,8 @@ class FacetSubsBase extends Backbone.View
 		return
 
 	getTemplateData: =>
-		cid: @cid	
-		value: @model?.get( "value" )	
+		cid: @cid
+		value: @model?.get( "value" )
 
 	_getInpSelector: =>
 		return "input##{@cid}"
@@ -62,7 +62,7 @@ class FacetSubsBase extends Backbone.View
 	getValue: =>
 		return @$inp.val()
 
-	getSelectModel: =>
+	getSelectModel: ->
 		return SubResults.prototype.model
 
 	_checkSelectEmpty: ( _val )=>

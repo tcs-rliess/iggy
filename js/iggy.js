@@ -1009,7 +1009,8 @@ module.exports = {
   "UP": 38,
   "DOWN": 40,
   "ESC": [229, 27],
-  "ENTER": 13
+  "ENTER": 13,
+  "TAB": 9
 };
 
 
@@ -1031,7 +1032,6 @@ FacetSubsBase = (function(superClass) {
     this.set = bind(this.set, this);
     this.select = bind(this.select, this);
     this._checkSelectEmpty = bind(this._checkSelectEmpty, this);
-    this.getSelectModel = bind(this.getSelectModel, this);
     this.getValue = bind(this.getValue, this);
     this.getResults = bind(this.getResults, this);
     this.close = bind(this.close, this);
@@ -1820,7 +1820,7 @@ FacetSubsSelect = (function(superClass) {
     this.getValue = bind(this.getValue, this);
     this.getTemplateData = bind(this.getTemplateData, this);
     this.remove = bind(this.remove, this);
-    this._sel2open = bind(this._sel2open, this);
+    this._onKey = bind(this._onKey, this);
     this._initSelect2 = bind(this._initSelect2, this);
     this.focus = bind(this.focus, this);
     this.render = bind(this.render, this);
@@ -1874,12 +1874,23 @@ FacetSubsSelect = (function(superClass) {
         this.$inp.on("select2:select", this.select);
       }
       this.select2.$container.on("click", this._sel2open);
+      if (this.model.get("multiple")) {
+        $(document).on("keyup", this._onKey);
+      }
     }
   };
 
   FacetSubsSelect.prototype._sel2open = function(evnt) {
     evnt.stopPropagation();
     return false;
+  };
+
+  FacetSubsSelect.prototype._onKey = function(evnt) {
+    var ref;
+    if (evnt.keyCode === KEYCODES.TAB || (ref = evnt.keyCode, indexOf.call(KEYCODES.TAB, ref) >= 0)) {
+      this.select();
+      return;
+    }
   };
 
   FacetSubsSelect.prototype.remove = function() {
@@ -1972,6 +1983,9 @@ FacetSubsSelect = (function(superClass) {
       ref1.remove();
     }
     this.$(".select-check").remove();
+    if (this.model.get("multiple")) {
+      $(document).off("keyup", this._onKey);
+    }
     FacetSubsSelect.__super__.close.apply(this, arguments);
   };
 
@@ -2110,7 +2124,7 @@ MainView = (function(superClass) {
 
   MainView.prototype._onKey = function(evnt) {
     var ref;
-    if (ref = evnt.keyCode, indexOf.call(KEYCODES.ESC, ref) >= 0) {
+    if (evnt.keyCode === KEYCODES.ESC || (ref = evnt.keyCode, indexOf.call(KEYCODES.ESC, ref) >= 0)) {
       this.exit();
       return;
     }

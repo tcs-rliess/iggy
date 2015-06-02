@@ -5,3 +5,4 @@ module.exports =
 	"DOWN": 40
 	"ESC": [ 229, 27 ]
 	"ENTER": 13
+	"TAB": 9
