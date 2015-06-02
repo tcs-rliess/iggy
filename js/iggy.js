@@ -1,5 +1,5 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.IGGY = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Facets, FctArray, FctDateRange, FctNumber, FctRange, FctSelect, FctString, IGGY, MainView, Results,
+var Facets, FctArray, FctDateRange, FctEvent, FctNumber, FctRange, FctSelect, FctString, IGGY, MainView, Results,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -20,6 +20,8 @@ FctRange = require("./models/facet_range");
 
 FctDateRange = require("./models/facet_daterange");
 
+FctEvent = require("./models/facet_event");
+
 Results = require("./models/results");
 
 IGGY = (function(superClass) {
@@ -34,13 +36,11 @@ IGGY = (function(superClass) {
     if (options == null) {
       options = {};
     }
-    this.ERRORS = bind(this.ERRORS, this);
     this._initErrors = bind(this._initErrors, this);
     this.triggerChange = bind(this.triggerChange, this);
     this.getQuery = bind(this.getQuery, this);
     this._error = bind(this._error, this);
     this.addFacet = bind(this.addFacet, this);
-    this._createFacet = bind(this._createFacet, this);
     this._prepareFacets = bind(this._prepareFacets, this);
     this._prepareEl = bind(this._prepareEl, this);
     _.extend(this, Backbone.Events);
@@ -53,7 +53,7 @@ IGGY = (function(superClass) {
     this.results.on("add", this.triggerChange);
     this.results.on("remove", this.triggerChange);
     this.results.on("change", this.triggerChange);
-    new MainView({
+    this.view = new MainView({
       el: this.$el,
       collection: this.facets,
       results: this.results
@@ -106,17 +106,33 @@ IGGY = (function(superClass) {
   IGGY.prototype._createFacet = function(facet) {
     switch (facet.type.toLowerCase()) {
       case "string":
-        return new FctString(facet);
+        return new FctString(facet, {
+          main: this
+        });
       case "select":
-        return new FctSelect(facet);
+        return new FctSelect(facet, {
+          main: this
+        });
       case "array":
-        return new FctArray(facet);
+        return new FctArray(facet, {
+          main: this
+        });
       case "number":
-        return new FctNumber(facet);
+        return new FctNumber(facet, {
+          main: this
+        });
       case "range":
-        return new FctRange(facet);
+        return new FctRange(facet, {
+          main: this
+        });
       case "daterange":
-        return new FctDateRange(facet);
+        return new FctDateRange(facet, {
+          main: this
+        });
+      case "event":
+        return new FctEvent(facet, {
+          main: this
+        });
     }
   };
 
@@ -184,7 +200,7 @@ module.exports = IGGY;
 
 
 
-},{"./models/backbone_sub":2,"./models/facet_array":3,"./models/facet_daterange":5,"./models/facet_number":6,"./models/facet_range":7,"./models/facet_select":8,"./models/facet_string":9,"./models/results":10,"./views/main":31}],2:[function(require,module,exports){
+},{"./models/backbone_sub":2,"./models/facet_array":3,"./models/facet_daterange":5,"./models/facet_event":6,"./models/facet_number":7,"./models/facet_range":8,"./models/facet_select":9,"./models/facet_string":10,"./models/results":11,"./views/main":32}],2:[function(require,module,exports){
 
 /*
 EXAMPLE USAGE
@@ -192,10 +208,10 @@ EXAMPLE USAGE
 	parentColl = new Backbone.Collection.Sub()
 	
 	 * by Array
-	subCollA = parentColl.sub( [ 1, 2, 3 ] ) 
+	subCollA = parentColl.sub( [ 1, 2, 3 ] )
 	
 	 * or by Object
-	subCollO = parentColl.sub( { name: "Foo", age: 42 } ) 
+	subCollO = parentColl.sub( { name: "Foo", age: 42 } )
 	
 	 * or by Number
 	subCollN = parentColl.sub( 13 )
@@ -219,7 +235,6 @@ BackboneSub = (function(superClass) {
   extend(BackboneSub, superClass);
 
   function BackboneSub() {
-    this._generateSubFilter = bind(this._generateSubFilter, this);
     this.updateSubFilter = bind(this.updateSubFilter, this);
     this.sub = bind(this.sub, this);
     return BackboneSub.__super__.constructor.apply(this, arguments);
@@ -286,7 +301,7 @@ BackboneSub = (function(superClass) {
   	
   	Method to update the filter of a subcollection. Then all models will be resete by the new filter. So you have to listen to teh reset event
   	
-  	@param { Function|Array|String|Number|Object } filter The filter to reduce the current collection. Can be a function like underscore `_.filter` or an array of ids, a single id as string or number or a filter object containings key value filters. 
+  	@param { Function|Array|String|Number|Object } filter The filter to reduce the current collection. Can be a function like underscore `_.filter` or an array of ids, a single id as string or number or a filter object containings key value filters.
   	
   	@return { Self } itself
   	
@@ -333,9 +348,9 @@ BackboneSub = (function(superClass) {
   	
   	Internal method th convert a filter argument to a filter function
   	
-  	@param { Function|Array|String|Number|Object } filter The filter to reduce the current collection. Can be a function like underscore `_.filter` or an array of ids, a single id as string or number or a filter object containings key value filters. 
+  	@param { Function|Array|String|Number|Object } filter The filter to reduce the current collection. Can be a function like underscore `_.filter` or an array of ids, a single id as string or number or a filter object containings key value filters.
   	
-  	@return { Function } The generated filter function 
+  	@return { Function } The generated filter function
   	
   	@api private
    */
@@ -345,31 +360,25 @@ BackboneSub = (function(superClass) {
     if (_.isFunction(filter)) {
       fnFilter = filter;
     } else if (_.isArray(filter)) {
-      fnFilter = (function(_this) {
-        return function(_m) {
-          var ref;
-          return ref = _m.id, indexOf.call(filter, ref) >= 0;
-        };
-      })(this);
+      fnFilter = function(_m) {
+        var ref;
+        return ref = _m.id, indexOf.call(filter, ref) >= 0;
+      };
     } else if (_.isString(filter) || _.isNumber(filter)) {
-      fnFilter = (function(_this) {
-        return function(_m) {
-          return _m.id === filter;
-        };
-      })(this);
+      fnFilter = function(_m) {
+        return _m.id === filter;
+      };
     } else {
-      fnFilter = (function(_this) {
-        return function(_m) {
-          var _nm, _vl;
-          for (_nm in filter) {
-            _vl = filter[_nm];
-            if (_m.get(_nm) !== _vl) {
-              return false;
-            }
+      fnFilter = function(_m) {
+        var _nm, _vl;
+        for (_nm in filter) {
+          _vl = filter[_nm];
+          if (_m.get(_nm) !== _vl) {
+            return false;
           }
-          return true;
-        };
-      })(this);
+        }
+        return true;
+      };
     }
     return fnFilter;
   };
@@ -404,7 +413,7 @@ module.exports = FctArray;
 
 
 
-},{"../views/facets/subarray":26,"./facet_string":9}],4:[function(require,module,exports){
+},{"../views/facets/subarray":27,"./facet_string":10}],4:[function(require,module,exports){
 var FacetBase,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -413,16 +422,17 @@ var FacetBase,
 FacetBase = (function(superClass) {
   extend(FacetBase, superClass);
 
-  function FacetBase() {
-    this.match = bind(this.match, this);
-    this.getLabel = bind(this.getLabel, this);
-    this.defaults = bind(this.defaults, this);
-    return FacetBase.__super__.constructor.apply(this, arguments);
-  }
-
   FacetBase.prototype.idAttribute = "name";
 
   FacetBase.prototype.SubView = require("../views/facets/base");
+
+  function FacetBase(attrs, options) {
+    this.match = bind(this.match, this);
+    this.getLabel = bind(this.getLabel, this);
+    this.main = options.main;
+    FacetBase.__super__.constructor.apply(this, arguments);
+    return;
+  }
 
   FacetBase.prototype.defaults = function() {
     return {
@@ -455,7 +465,7 @@ module.exports = FacetBase;
 
 
 
-},{"../views/facets/base":23}],5:[function(require,module,exports){
+},{"../views/facets/base":24}],5:[function(require,module,exports){
 var FctDateRange,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -486,7 +496,44 @@ module.exports = FctDateRange;
 
 
 
-},{"../views/facets/daterange":24,"./facet_base":4}],6:[function(require,module,exports){
+},{"../views/facets/daterange":25,"./facet_base":4}],6:[function(require,module,exports){
+var FctEvent,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+FctEvent = (function(superClass) {
+  extend(FctEvent, superClass);
+
+  function FctEvent() {
+    this.exec = bind(this.exec, this);
+    this.defaults = bind(this.defaults, this);
+    return FctEvent.__super__.constructor.apply(this, arguments);
+  }
+
+  FctEvent.prototype.SubView = null;
+
+  FctEvent.prototype.onlyExec = true;
+
+  FctEvent.prototype.defaults = function() {
+    return $.extend(FctEvent.__super__.defaults.apply(this, arguments), {
+      options: []
+    });
+  };
+
+  FctEvent.prototype.exec = function() {
+    this.main.trigger(this.get("event"), this.toJSON());
+  };
+
+  return FctEvent;
+
+})(require("./facet_base"));
+
+module.exports = FctEvent;
+
+
+
+},{"./facet_base":4}],7:[function(require,module,exports){
 var FctNumber,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -519,7 +566,7 @@ module.exports = FctNumber;
 
 
 
-},{"../views/facets/subnumber":27,"./facet_base":4}],7:[function(require,module,exports){
+},{"../views/facets/subnumber":28,"./facet_base":4}],8:[function(require,module,exports){
 var FctRange,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -552,7 +599,7 @@ module.exports = FctRange;
 
 
 
-},{"../views/facets/subrange":28,"./facet_base":4}],8:[function(require,module,exports){
+},{"../views/facets/subrange":29,"./facet_base":4}],9:[function(require,module,exports){
 var FctSelect,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -582,7 +629,7 @@ module.exports = FctSelect;
 
 
 
-},{"../views/facets/subselect":29,"./facet_base":4}],9:[function(require,module,exports){
+},{"../views/facets/subselect":30,"./facet_base":4}],10:[function(require,module,exports){
 var FctString,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -612,7 +659,7 @@ module.exports = FctString;
 
 
 
-},{"../views/facets/substring":30,"./facet_base":4}],10:[function(require,module,exports){
+},{"../views/facets/substring":31,"./facet_base":4}],11:[function(require,module,exports){
 var IggyResult, IggyResults,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty,
@@ -673,7 +720,7 @@ module.exports = IggyResults;
 
 
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var BaseResult, BaseResults,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -714,7 +761,7 @@ module.exports = BaseResults;
 
 
 
-},{"./backbone_sub":2}],12:[function(require,module,exports){
+},{"./backbone_sub":2}],13:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -724,7 +771,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (cid) {
 buf.push("<input" + (jade.attr("id", cid, true, false)) + " class=\"daterange-inp\"/>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined));;return buf.join("");
 };
-},{"jade/runtime":35}],13:[function(require,module,exports){
+},{"jade/runtime":36}],14:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -761,7 +808,7 @@ buf.push("</select></div>");
 }
 buf.push("<input" + (jade.attr("id", cid, true, false)) + (jade.attr("value", value, true, false)) + " class=\"number-inp\"/>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"operator" in locals_for_with?locals_for_with.operator:typeof operator!=="undefined"?operator:undefined,"operators" in locals_for_with?locals_for_with.operators:typeof operators!=="undefined"?operators:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
-},{"jade/runtime":35}],14:[function(require,module,exports){
+},{"jade/runtime":36}],15:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -773,7 +820,7 @@ buf.push("<div class=\"rangeinp\">");
 var _vals = value ? value : []
 buf.push("<input" + (jade.attr("id", "" + (cid) + "_from", true, false)) + (jade.attr("value", _vals[0], true, false)) + " class=\"number-inp range-from\"/><span class=\"separator\">-</span><input" + (jade.attr("id", "" + (cid) + "_to", true, false)) + (jade.attr("value", _vals[0], true, false)) + " class=\"number-inp range-to\"/></div>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
-},{"jade/runtime":35}],15:[function(require,module,exports){
+},{"jade/runtime":36}],16:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -783,7 +830,7 @@ var jade_interp;
 
 ;return buf.join("");
 };
-},{"jade/runtime":35}],16:[function(require,module,exports){
+},{"jade/runtime":36}],17:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -892,7 +939,7 @@ if ( multiple)
 buf.push("<span class=\"btn btn-xs btn-success select-check fa fa-check\"></span>");
 }}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"multiple" in locals_for_with?locals_for_with.multiple:typeof multiple!=="undefined"?multiple:undefined,"optionGroups" in locals_for_with?locals_for_with.optionGroups:typeof optionGroups!=="undefined"?optionGroups:undefined,"options" in locals_for_with?locals_for_with.options:typeof options!=="undefined"?options:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
-},{"jade/runtime":35}],17:[function(require,module,exports){
+},{"jade/runtime":36}],18:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -902,7 +949,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (cid) {
 buf.push("<input" + (jade.attr("id", cid, true, false)) + " class=\"selector-inp\"/><ul" + (jade.attr("id", "" + (cid) + "typelist", true, false)) + " class=\"typelist\"></ul>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined));;return buf.join("");
 };
-},{"jade/runtime":35}],18:[function(require,module,exports){
+},{"jade/runtime":36}],19:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -926,7 +973,7 @@ if ( list.length)
     for (var idx = 0, $$l = $$obj.length; idx < $$l; idx++) {
       var el = $$obj[idx];
 
-buf.push("<li><a" + (jade.attr("data-id", el.id, true, false)) + (jade.attr("data-idx", idx, true, false)) + (jade.cls([{active:(idx + add) === activeIdx}], [true])) + ">" + (((jade_interp = el.label) == null ? '' : jade_interp)) + "</a></li>");
+buf.push("<li" + (jade.cls([el.cssclass], [true])) + "><a" + (jade.attr("data-id", el.id, true, false)) + (jade.attr("data-idx", idx, true, false)) + (jade.cls([{active:(idx + add) === activeIdx}], [true])) + ">" + (((jade_interp = el.label) == null ? '' : jade_interp)) + "</a></li>");
     }
 
   } else {
@@ -934,7 +981,7 @@ buf.push("<li><a" + (jade.attr("data-id", el.id, true, false)) + (jade.attr("dat
     for (var idx in $$obj) {
       $$l++;      var el = $$obj[idx];
 
-buf.push("<li><a" + (jade.attr("data-id", el.id, true, false)) + (jade.attr("data-idx", idx, true, false)) + (jade.cls([{active:(idx + add) === activeIdx}], [true])) + ">" + (((jade_interp = el.label) == null ? '' : jade_interp)) + "</a></li>");
+buf.push("<li" + (jade.cls([el.cssclass], [true])) + "><a" + (jade.attr("data-id", el.id, true, false)) + (jade.attr("data-idx", idx, true, false)) + (jade.cls([{active:(idx + add) === activeIdx}], [true])) + ">" + (((jade_interp = el.label) == null ? '' : jade_interp)) + "</a></li>");
     }
 
   }
@@ -946,7 +993,7 @@ else if ( !custom)
 buf.push("<li><a class=\"emptyres\">no result for \"" + (jade.escape((jade_interp = query) == null ? '' : jade_interp)) + "\"</a></li>");
 }}.call(this,"activeIdx" in locals_for_with?locals_for_with.activeIdx:typeof activeIdx!=="undefined"?activeIdx:undefined,"custom" in locals_for_with?locals_for_with.custom:typeof custom!=="undefined"?custom:undefined,"list" in locals_for_with?locals_for_with.list:typeof list!=="undefined"?list:undefined,"query" in locals_for_with?locals_for_with.query:typeof query!=="undefined"?query:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
 };
-},{"jade/runtime":35}],19:[function(require,module,exports){
+},{"jade/runtime":36}],20:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -956,7 +1003,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (cid, value) {
 buf.push("<input" + (jade.attr("id", cid, true, false)) + (jade.attr("value", value, true, false)) + " class=\"string-inp\"/>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
-},{"jade/runtime":35}],20:[function(require,module,exports){
+},{"jade/runtime":36}],21:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -992,7 +1039,7 @@ buf.push("<li>" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) +
 }
 buf.push("</ul><div class=\"subselect\"></div>");}.call(this,"label" in locals_for_with?locals_for_with.label:typeof label!=="undefined"?label:undefined,"selected" in locals_for_with?locals_for_with.selected:typeof selected!=="undefined"?selected:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
 };
-},{"jade/runtime":35}],21:[function(require,module,exports){
+},{"jade/runtime":36}],22:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -1002,7 +1049,7 @@ var jade_interp;
 
 buf.push("<div class=\"add-facet-btn fa fa-plus\"></div>");;return buf.join("");
 };
-},{"jade/runtime":35}],22:[function(require,module,exports){
+},{"jade/runtime":36}],23:[function(require,module,exports){
 module.exports = {
   "LEFT": 37,
   "RIGHT": 39,
@@ -1015,11 +1062,12 @@ module.exports = {
 
 
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var FacetSubsBase, KEYCODES, SubResults,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  hasProp = {}.hasOwnProperty,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 KEYCODES = require("../../utils/keycodes");
 
@@ -1035,9 +1083,11 @@ FacetSubsBase = (function(superClass) {
     this.getValue = bind(this.getValue, this);
     this.getResults = bind(this.getResults, this);
     this.close = bind(this.close, this);
+    this._onTabAction = bind(this._onTabAction, this);
     this.render = bind(this.render, this);
     this._getInpSelector = bind(this._getInpSelector, this);
     this.getTemplateData = bind(this.getTemplateData, this);
+    this._onKey = bind(this._onKey, this);
     this.input = bind(this.input, this);
     this.open = bind(this.open, this);
     this.renderResult = bind(this.renderResult, this);
@@ -1093,6 +1143,14 @@ FacetSubsBase = (function(superClass) {
     }
   };
 
+  FacetSubsBase.prototype._onKey = function(evnt) {
+    var ref;
+    if (evnt.keyCode === KEYCODES.TAB || (ref = evnt.keyCode, indexOf.call(KEYCODES.TAB, ref) >= 0)) {
+      this._onTabAction(evnt);
+      return;
+    }
+  };
+
   FacetSubsBase.prototype.getTemplateData = function() {
     var ref;
     return {
@@ -1110,9 +1168,29 @@ FacetSubsBase = (function(superClass) {
     _tmpl = this.template(this.getTemplateData());
     this.$el.html(_tmpl);
     this.$inp = this.$el.find(this._getInpSelector());
+    if (this._hasTabListener(true)) {
+      $(document).on(this._hasTabEvent(), this._onKey);
+    }
+  };
+
+  FacetSubsBase.prototype._hasTabEvent = function() {
+    return "keydown";
+  };
+
+  FacetSubsBase.prototype._hasTabListener = function() {
+    return true;
+  };
+
+  FacetSubsBase.prototype._onTabAction = function(evnt) {
+    evnt.preventDefault();
+    evnt.stopPropagation();
+    this.select();
   };
 
   FacetSubsBase.prototype.close = function(evnt) {
+    if (this._hasTabListener(false)) {
+      $(document).off(this._hasTabEvent(), this._onKey);
+    }
     this.$el.removeClass("open");
     this.$el.addClass("closed");
     this.isOpen = false;
@@ -1169,7 +1247,7 @@ module.exports = FacetSubsBase;
 
 
 
-},{"../../models/subresults":11,"../../tmpls/result_base.jade":15,"../../utils/keycodes":22}],24:[function(require,module,exports){
+},{"../../models/subresults":12,"../../tmpls/result_base.jade":16,"../../utils/keycodes":23}],25:[function(require,module,exports){
 var FacetSubsDateRange, KEYCODES,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1248,6 +1326,10 @@ FacetSubsDateRange = (function(superClass) {
     return _s;
   };
 
+  FacetSubsDateRange.prototype._hasTabListener = function() {
+    return false;
+  };
+
   FacetSubsDateRange.prototype._dateReturn = function(startDate, endDate) {
     this.startDate = startDate;
     this.endDate = endDate;
@@ -1294,7 +1376,7 @@ module.exports = FacetSubsDateRange;
 
 
 
-},{"../../tmpls/daterange.jade":12,"../../utils/keycodes":22,"./base":23}],25:[function(require,module,exports){
+},{"../../tmpls/daterange.jade":13,"../../utils/keycodes":23,"./base":24}],26:[function(require,module,exports){
 var FacetNumberBase, KEYCODES, nearest, precision,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1441,13 +1523,15 @@ module.exports = FacetNumberBase;
 
 
 
-},{"../../utils/keycodes":22,"./base":23}],26:[function(require,module,exports){
-var ArrayOption, ArrayOptions, FacetSubArray, StringOption, StringOptions, SubResults,
+},{"../../utils/keycodes":23,"./base":24}],27:[function(require,module,exports){
+var ArrayOption, ArrayOptions, FacetSubArray, KEYCODES, StringOption, StringOptions, SubResults,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 SubResults = require("../../models/subresults");
+
+KEYCODES = require("../../utils/keycodes");
 
 StringOption = (function(superClass) {
   extend(StringOption, superClass);
@@ -1534,6 +1618,7 @@ FacetSubArray = (function(superClass) {
 
   function FacetSubArray(options) {
     this._createOptionCollection = bind(this._createOptionCollection, this);
+    this._onTabAction = bind(this._onTabAction, this);
     this.getResults = bind(this.getResults, this);
     this.select = bind(this.select, this);
     options.custom = true;
@@ -1568,6 +1653,12 @@ FacetSubArray = (function(superClass) {
     };
   };
 
+  FacetSubArray.prototype._onTabAction = function(evnt) {
+    evnt.preventDefault();
+    evnt.stopPropagation();
+    this.close();
+  };
+
   FacetSubArray.prototype._createOptionCollection = function(options) {
     var _opts, i, len, opt;
     if (_.isFunction(options)) {
@@ -1596,7 +1687,7 @@ module.exports = FacetSubArray;
 
 
 
-},{"../../models/backbone_sub":2,"../../models/subresults":11,"../selector":32}],27:[function(require,module,exports){
+},{"../../models/backbone_sub":2,"../../models/subresults":12,"../../utils/keycodes":23,"../selector":33}],28:[function(require,module,exports){
 var FacetSubsNumber,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1607,6 +1698,7 @@ FacetSubsNumber = (function(superClass) {
 
   function FacetSubsNumber() {
     this.getResults = bind(this.getResults, this);
+    this._onTabAction = bind(this._onTabAction, this);
     this.getTemplateData = bind(this.getTemplateData, this);
     this.focus = bind(this.focus, this);
     this._opSelected = bind(this._opSelected, this);
@@ -1684,6 +1776,16 @@ FacetSubsNumber = (function(superClass) {
     });
   };
 
+  FacetSubsNumber.prototype._onTabAction = function(evnt) {
+    var _val;
+    _val = this.getValue();
+    evnt.preventDefault();
+    evnt.stopPropagation();
+    if (!isNaN(_val)) {
+      this.select();
+    }
+  };
+
   FacetSubsNumber.prototype.getResults = function() {
     var _ret;
     if (this.$inpOp != null) {
@@ -1707,7 +1809,7 @@ module.exports = FacetSubsNumber;
 
 
 
-},{"../../tmpls/number.jade":13,"./number_base":25}],28:[function(require,module,exports){
+},{"../../tmpls/number.jade":14,"./number_base":26}],29:[function(require,module,exports){
 var FacetSubsRange,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1717,6 +1819,7 @@ FacetSubsRange = (function(superClass) {
   extend(FacetSubsRange, superClass);
 
   function FacetSubsRange() {
+    this._onTabAction = bind(this._onTabAction, this);
     this.getValue = bind(this.getValue, this);
     this.getResults = bind(this.getResults, this);
     this.close = bind(this.close, this);
@@ -1791,6 +1894,16 @@ FacetSubsRange = (function(superClass) {
     return [_vFrom, _vTo];
   };
 
+  FacetSubsRange.prototype._onTabAction = function(evnt) {
+    var _val;
+    _val = this.getValue();
+    if ((_val != null ? _val.length : void 0) >= 2) {
+      evnt.preventDefault();
+      evnt.stopPropagation();
+      this.select();
+    }
+  };
+
   return FacetSubsRange;
 
 })(require("./number_base"));
@@ -1799,7 +1912,7 @@ module.exports = FacetSubsRange;
 
 
 
-},{"../../tmpls/range.jade":14,"./number_base":25}],29:[function(require,module,exports){
+},{"../../tmpls/range.jade":15,"./number_base":26}],30:[function(require,module,exports){
 var FacetSubsSelect, KEYCODES,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1818,9 +1931,9 @@ FacetSubsSelect = (function(superClass) {
     this._createOptionCollection = bind(this._createOptionCollection, this);
     this.getResults = bind(this.getResults, this);
     this.getValue = bind(this.getValue, this);
+    this._hasTabListener = bind(this._hasTabListener, this);
     this.getTemplateData = bind(this.getTemplateData, this);
     this.remove = bind(this.remove, this);
-    this._onKey = bind(this._onKey, this);
     this._initSelect2 = bind(this._initSelect2, this);
     this.focus = bind(this.focus, this);
     this.render = bind(this.render, this);
@@ -1875,7 +1988,7 @@ FacetSubsSelect = (function(superClass) {
       }
       this.select2.$container.on("click", this._sel2open);
       if (this.model.get("multiple")) {
-        $(document).on("keyup", this._onKey);
+        $(document).on(this._hasTabEvent(), this._onKey);
       }
     }
   };
@@ -1883,14 +1996,6 @@ FacetSubsSelect = (function(superClass) {
   FacetSubsSelect.prototype._sel2open = function(evnt) {
     evnt.stopPropagation();
     return false;
-  };
-
-  FacetSubsSelect.prototype._onKey = function(evnt) {
-    var ref;
-    if (evnt.keyCode === KEYCODES.TAB || (ref = evnt.keyCode, indexOf.call(KEYCODES.TAB, ref) >= 0)) {
-      this.select();
-      return;
-    }
   };
 
   FacetSubsSelect.prototype.remove = function() {
@@ -1924,6 +2029,17 @@ FacetSubsSelect = (function(superClass) {
       _data.optionGroups = _groups;
     }
     return _data;
+  };
+
+  FacetSubsSelect.prototype._hasTabListener = function(create) {
+    if (create) {
+      return false;
+    }
+    return this.model.get("multiple");
+  };
+
+  FacetSubsSelect.prototype._hasTabEvent = function() {
+    return "keyup";
   };
 
   FacetSubsSelect.prototype.getValue = function() {
@@ -1983,9 +2099,6 @@ FacetSubsSelect = (function(superClass) {
       ref1.remove();
     }
     this.$(".select-check").remove();
-    if (this.model.get("multiple")) {
-      $(document).off("keyup", this._onKey);
-    }
     FacetSubsSelect.__super__.close.apply(this, arguments);
   };
 
@@ -2013,7 +2126,7 @@ module.exports = FacetSubsSelect;
 
 
 
-},{"../../tmpls/select.jade":16,"../../utils/keycodes":22,"./base":23}],30:[function(require,module,exports){
+},{"../../tmpls/select.jade":17,"../../utils/keycodes":23,"./base":24}],31:[function(require,module,exports){
 var FacetSubString,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2059,7 +2172,7 @@ module.exports = FacetSubString;
 
 
 
-},{"../../tmpls/string.jade":19,"./base":23}],31:[function(require,module,exports){
+},{"../../tmpls/string.jade":20,"./base":24}],32:[function(require,module,exports){
 var KEYCODES, MainView, SelectorView, SubView,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2231,7 +2344,7 @@ module.exports = MainView;
 
 
 
-},{"../tmpls/wrapper.jade":21,"../utils/keycodes":22,"./selector":32,"./sub":33}],32:[function(require,module,exports){
+},{"../tmpls/wrapper.jade":22,"../utils/keycodes":23,"./selector":33,"./sub":34}],33:[function(require,module,exports){
 var KEYCODES, SelectorView,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2264,7 +2377,6 @@ SelectorView = (function(superClass) {
         "mousedown a": "_onClick"
       },
       obj["focus input#" + this.cid] = "open",
-      obj["blur input#" + this.cid] = "close",
       obj["keydown input#" + this.cid] = "search",
       obj["keyup input#" + this.cid] = "search",
       obj
@@ -2318,7 +2430,7 @@ SelectorView = (function(superClass) {
   };
 
   SelectorView.prototype.renderRes = function() {
-    var _id, _lbl, _list, i, idx, len, model, ref, ref1;
+    var _cssclass, _id, _lbl, _list, i, idx, len, model, ref, ref1;
     this.$list.empty();
     _list = [];
     ref = this.searchcoll.models;
@@ -2326,6 +2438,8 @@ SelectorView = (function(superClass) {
       model = ref[idx];
       _lbl = model.getLabel();
       _id = model.id;
+      _cssclass = model.get("cssclass");
+      console.log("model", _cssclass);
       if (((ref1 = this.currQuery) != null ? ref1.length : void 0) > 1) {
         _lbl = _lbl.replace(new RegExp(this.currQuery, "gi"), (function(str) {
           return "<b>" + str + "</b>";
@@ -2333,7 +2447,8 @@ SelectorView = (function(superClass) {
       }
       _list.push({
         label: _lbl,
-        id: _id
+        id: _id,
+        cssclass: _cssclass
       });
     }
     this.$list.append(this.templateEl({
@@ -2385,6 +2500,14 @@ SelectorView = (function(superClass) {
   };
 
   SelectorView.prototype.selected = function(mdl) {
+    if (mdl.onlyExec != null) {
+      if (mdl != null) {
+        if (typeof mdl.exec === "function") {
+          mdl.exec();
+        }
+      }
+      return;
+    }
     this.searchcoll.remove(mdl);
     this.result.add(mdl);
     this.trigger("selected", mdl);
@@ -2496,7 +2619,7 @@ module.exports = SelectorView;
 
 
 
-},{"../tmpls/selector.jade":17,"../tmpls/selectorli.jade":18,"../utils/keycodes":22,"./facets/base":23}],33:[function(require,module,exports){
+},{"../tmpls/selector.jade":18,"../tmpls/selectorli.jade":19,"../utils/keycodes":23,"./facets/base":24}],34:[function(require,module,exports){
 var ViewSub,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2633,8 +2756,11 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.open = function() {
+    var ref;
     this.generateSub();
-    this.selectview.focus();
+    if ((ref = this.selectview) != null) {
+      ref.focus();
+    }
   };
 
   return ViewSub;
@@ -2645,9 +2771,9 @@ module.exports = ViewSub;
 
 
 
-},{"../tmpls/sub.jade":20}],34:[function(require,module,exports){
+},{"../tmpls/sub.jade":21}],35:[function(require,module,exports){
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 (function (global){
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
@@ -2888,5 +3014,5 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
 },{}]},{},[1])(1)
 });
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"fs":34}]},{},[1])(1)
+},{"fs":35}]},{},[1])(1)
 });

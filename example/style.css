@@ -5,3 +5,11 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+.iggy .typelist li.runsearch{
+  font-weight: bold;
+  text-align: center;
+  
+}
+.iggy .typelist li.runsearch a{
+  color: #dd0000;
+}

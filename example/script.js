@@ -11,9 +11,17 @@ jQuery( function( $ ){
 		_iggy.on( "change", function( qColl ){
 			_printQuery( qColl.toJSON(), _target + "_result" )
 		});
+		return _iggy;
 	}
 
 	var facets = [{
+		type: "event",
+		name: "run",
+		label: "Suchen",
+		event: "run",
+		cssclass: "runsearch"
+		//value: "first"
+	},{
 		type: "string",
 		name: "simple",
 		label: "Simple",
@@ -162,8 +170,9 @@ jQuery( function( $ ){
 		//value: [ 10,20 ]
 	}]
 
-	newIggy( facets, "#iggytest1", { modifyKey: "orgValue" } )
-
+	iggy1 = newIggy( facets, "#iggytest1", { modifyKey: "orgValue" } )
+	iggy1.on( "run", function(){ alert( "Fired Event:\n" + JSON.stringify( arguments ) ) } )
+	
 	var facets2 = []
 	var options = []
 	var i, j;

@@ -6,6 +6,7 @@ FctSelect = require( "./models/facet_select" )
 FctNumber = require( "./models/facet_number" )
 FctRange = require( "./models/facet_range" )
 FctDateRange = require( "./models/facet_daterange" )
+FctEvent = require( "./models/facet_event" )
 Results = require( "./models/results" )
 
 class IGGY extends Backbone.Events
@@ -27,7 +28,7 @@ class IGGY extends Backbone.Events
 		@results.on "remove", @triggerChange
 		@results.on "change", @triggerChange
 
-		new MainView( el: @$el, collection: @facets, results: @results )
+		@view = new MainView( el: @$el, collection: @facets, results: @results )
 		return
 
 	_prepareEl: ( el )=>
@@ -71,12 +72,13 @@ class IGGY extends Backbone.Events
 
 	_createFacet: ( facet )->
 		switch facet.type.toLowerCase()
-			when "string" then return new FctString( facet )
-			when "select" then return new FctSelect( facet )
-			when "array" then return new FctArray( facet )
-			when "number" then return new FctNumber( facet )
-			when "range" then return new FctRange( facet )
-			when "daterange" then return new FctDateRange( facet )
+			when "string" then return new FctString( facet, main: @ )
+			when "select" then return new FctSelect( facet, main: @ )
+			when "array" then return new FctArray( facet, main: @ )
+			when "number" then return new FctNumber( facet, main: @ )
+			when "range" then return new FctRange( facet, main: @ )
+			when "daterange" then return new FctDateRange( facet, main: @ )
+			when "event" then return new FctEvent( facet, main: @ )
 
 	addFacet: ( facet )=>
 		if not @facets?

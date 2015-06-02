@@ -7,7 +7,7 @@ if custom && query
 if list.length
 	each el, idx in list
 
-		li
+		li( class=el.cssclass )
 			a(data-id=el.id data-idx=idx class={active:(idx + add) === activeIdx}) !{el.label}
 else if !custom
 	li

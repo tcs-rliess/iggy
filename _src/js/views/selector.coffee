@@ -14,7 +14,7 @@ class SelectorView extends require( "./facets/base" )
 	events: =>
 		"mousedown a": "_onClick"
 		"focus input##{@cid}": "open"
-		"blur input##{@cid}": "close"
+		#"blur input##{@cid}": "close"
 		"keydown input##{@cid}": "search"
 		"keyup input##{@cid}": "search"
 
@@ -51,10 +51,11 @@ class SelectorView extends require( "./facets/base" )
 		for model, idx in @searchcoll.models
 			_lbl = model.getLabel()
 			_id = model.id
-
+			_cssclass = model.get( "cssclass" )
+			console.log "model",_cssclass
 			if @currQuery?.length > 1
 				_lbl = _lbl.replace( new RegExp( @currQuery, "gi" ), (( str )->return "<b>#{str}</b>" ) )
-			_list.push label: _lbl, id: _id
+			_list.push label: _lbl, id: _id, cssclass: _cssclass
 		@$list.append( @templateEl( list: _list, query: @currQuery, activeIdx: @activeIdx, custom: @custom ) )
 
 		@_checkScroll()
@@ -97,6 +98,9 @@ class SelectorView extends require( "./facets/base" )
 		return false
 
 	selected: ( mdl )=>
+		if mdl.onlyExec?
+			mdl?.exec?()
+			return
 		@searchcoll.remove( mdl )
 		@result.add( mdl )
 		@trigger "selected", mdl
