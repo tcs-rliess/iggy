@@ -47,7 +47,14 @@ class FacetSubsNumber extends require( "./number_base" )
 	getTemplateData: =>
 		return _.extend( super, { operators: @model.get( "operators" ), operator: @model.get( "operator" )} )
 
-
+	_onTabAction: ( evnt )=>
+		_val = @getValue()
+		evnt.preventDefault()
+		evnt.stopPropagation()
+		if not isNaN( _val )
+			@select()
+		return
+		
 	getResults: =>
 		if @$inpOp?
 			_ret =

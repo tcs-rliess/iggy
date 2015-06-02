@@ -32,7 +32,7 @@ class FacetSubsRange extends require( "./number_base" )
 		_ret =
 			value: @getValue()
 		return _ret
-
+	
 	getValue: =>
 		_vFrom = super
 		_v = @$inpTo.val()
@@ -41,6 +41,14 @@ class FacetSubsRange extends require( "./number_base" )
 		_vTo = parseInt( @valueByDefinition( _v), 10 )
 
 		return [ _vFrom, _vTo ]
+	
+	_onTabAction: ( evnt )=>
+		_val = @getValue()
+		if _val?.length >= 2
+			evnt.preventDefault()
+			evnt.stopPropagation()
+			@select()
+		return
 
 
 

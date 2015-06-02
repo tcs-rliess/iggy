@@ -11,4 +11,5 @@ class FacetSubString extends require( "./base" )
 		try
 			@$inp?.remove()
 		return
+				
 module.exports = FacetSubString

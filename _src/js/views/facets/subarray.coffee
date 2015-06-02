@@ -1,4 +1,5 @@
 SubResults = require( "../../models/subresults" )
+KEYCODES = require( "../../utils/keycodes" )
 
 class StringOption extends SubResults.prototype.model
 	match: ( crit )=>
@@ -37,12 +38,12 @@ class FacetSubArray extends require( "../selector" )
 		@collection = @_createOptionCollection( options.model.get( "options" ) )
 		super( options )
 		return
-
+		
 	select: =>
 		_vals = @model.get( "value" )
 		if _vals? and not _.isArray( _vals )
 			_vals = [ _vals ]
-
+			
 		for _val in _vals
 			_mdl = @collection.get( _val )
 			if not _mdl?
@@ -50,10 +51,16 @@ class FacetSubArray extends require( "../selector" )
 			@selected( _mdl )
 		@close()
 		return
-
+		
 	getResults: =>
 		value: @result.pluck( "value" )
-
+	
+	_onTabAction: ( evnt )=>
+		evnt.preventDefault()
+		evnt.stopPropagation()
+		@close()
+		return
+		
 	_createOptionCollection: ( options )=>
 		if _.isFunction( options )
 			return options( @_createOptionCollection )

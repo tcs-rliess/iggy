@@ -49,7 +49,10 @@ class FacetSubsDateRange extends require( "./base" )
 		_s += "</li>"
 
 		return _s
-
+	
+	_hasTabListener: ->
+		return false
+		
 	_dateReturn: ( @startDate, @endDate )=>
 		@select()
 		return

@@ -35,7 +35,13 @@ class FacetSubsBase extends Backbone.View
 				when KEYCODES.ENTER
 					@select()
 		return
-
+	
+	_onKey: ( evnt )=>
+		if evnt.keyCode is KEYCODES.TAB or evnt.keyCode in KEYCODES.TAB
+			@_onTabAction( evnt )
+			return
+		return
+		
 	getTemplateData: =>
 		cid: @cid
 		value: @model?.get( "value" )
@@ -47,9 +53,23 @@ class FacetSubsBase extends Backbone.View
 		_tmpl = @template( @getTemplateData() )
 		@$el.html( _tmpl )
 		@$inp = @$el.find( @_getInpSelector() )
+		$( document ).on @_hasTabEvent(), @_onKey if @_hasTabListener( true )
+		return
+	
+	_hasTabEvent: ->
+		return "keydown"
+		
+	_hasTabListener: ->
+		return true
+	
+	_onTabAction: ( evnt )=>
+		evnt.preventDefault()
+		evnt.stopPropagation()
+		@select()
 		return
 
 	close: ( evnt )=>
+		$( document ).off @_hasTabEvent(), @_onKey if @_hasTabListener( false )
 		@$el.removeClass( "open" )
 		@$el.addClass( "closed" )
 		@isOpen = false

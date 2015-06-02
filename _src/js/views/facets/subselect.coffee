@@ -39,19 +39,13 @@ class FacetSubsSelect extends require( "./base" )
 			if not @model.get( "multiple" )
 				@$inp.on "select2:select", @select
 			@select2.$container.on "click", @_sel2open
-			$( document ).on "keyup", @_onKey if @model.get( "multiple" )
+			$( document ).on @_hasTabEvent(), @_onKey if @model.get( "multiple" )
 		return
 
 	_sel2open: ( evnt )->
 		evnt.stopPropagation()
 		return false
 	
-	_onKey: ( evnt )=>
-		if evnt.keyCode is KEYCODES.TAB or evnt.keyCode in KEYCODES.TAB
-			@select()
-			return
-		return
-		
 	remove: =>
 		#@$inp.select2( "destroy" )
 		return super
@@ -69,7 +63,15 @@ class FacetSubsSelect extends require( "./base" )
 		if _.compact( _.keys( _groups or {} ) ).length > 1
 			_data.optionGroups = _groups
 		return _data
-
+	
+	_hasTabListener: ( create )=>
+		if create
+			return false
+		return @model.get("multiple")
+	
+	_hasTabEvent: ->
+		return "keyup"
+		
 	getValue: =>
 		_vals = []
 		for data in @select2?.data() or []
@@ -103,10 +105,9 @@ class FacetSubsSelect extends require( "./base" )
 		@select2?.destroy()
 		@$inp?.remove()
 		@$( ".select-check" ).remove()
-		$( document ).off "keyup", @_onKey if @model.get( "multiple" )
 		super
 		return
-
+	
 	select: ( evnt )=>
 		_vals = @getValue()
 		if not _vals?.length

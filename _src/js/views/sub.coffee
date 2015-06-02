@@ -59,7 +59,7 @@ class ViewSub extends Backbone.View
 	generateSub: =>
 		if @selectview?
 			return @selectview
-
+			
 		@selectview = new @model.SubView( model: @model, el: @$sub )
 		@selectview.on "closed", ( result )=>
 			@selectview.off()
@@ -82,7 +82,7 @@ class ViewSub extends Backbone.View
 	open: =>
 		@generateSub()
 
-		@selectview.focus()
+		@selectview?.focus()
 		return
 
 module.exports = ViewSub

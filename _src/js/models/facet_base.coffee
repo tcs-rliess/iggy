@@ -1,6 +1,12 @@
 class FacetBase extends Backbone.Model
 	idAttribute: "name"
 	SubView: require( "../views/facets/base" )
+	
+	constructor: ( attrs, options )->
+		@main = options.main
+		super
+		return
+	
 	defaults: ->
 		type: "string"
 		name: "name"
