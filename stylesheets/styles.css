@@ -187,6 +187,19 @@ footer {
   bottom:50px;
 }
 
+
+/*
+IGGY special styles
+*/
+.iggy .typelist li.runsearch{
+  font-weight: bold;
+  text-align: center;
+  
+}
+.iggy .typelist li.runsearch a{
+  color: #dd0000;
+}
+
 @media print, screen and (max-width: 960px) {
   
   div.wrapper {
