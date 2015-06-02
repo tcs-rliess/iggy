@@ -81,6 +81,12 @@
   <h4>Example Config</h4>
   <pre><code id="iggytest_regular_config">
 [{
+  type: "event",
+  name: "run",
+  label: "Suchen",
+  event: "run", // this is teh event triggerd on selection
+  cssclass: "runsearch" // a special css class added to the li element of the list
+},{
   type: "string",
   name: "simple",
   label: "Simple",
@@ -276,6 +282,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td align="center">0.0.13</td>
+<td align="center">2015-05-02</td>
+<td align="left">Every facet can be done by hitting "TAB". Added "event" facet to trigger a event on selection.</td>
+</tr>
 <tr>
 <td align="center">0.0.12</td>
 <td align="center">2015-04-16</td>
