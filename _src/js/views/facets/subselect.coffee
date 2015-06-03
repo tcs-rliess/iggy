@@ -39,6 +39,7 @@ class FacetSubsSelect extends require( "./base" )
 			if not @model.get( "multiple" )
 				@$inp.on "select2:select", @select
 			@select2.$container.on "click", @_sel2open
+			@select2.$element.hide()
 			$( document ).on @_hasTabEvent(), @_onKey if @model.get( "multiple" )
 		return
 
