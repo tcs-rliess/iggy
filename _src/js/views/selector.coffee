@@ -98,12 +98,14 @@ class SelectorView extends require( "./facets/base" )
 		return false
 
 	selected: ( mdl )=>
-		if mdl.onlyExec?
+		if mdl?.onlyExec?
 			mdl?.exec?()
 			return
-		@searchcoll.remove( mdl )
-		@result.add( mdl )
-		@trigger "selected", mdl
+		
+		if mdl?
+			@searchcoll.remove( mdl )
+			@result.add( mdl )
+			@trigger "selected", mdl
 		return
 
 	focus: =>
