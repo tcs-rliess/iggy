@@ -14,6 +14,7 @@ Browser search module to use with Backbone.js
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.0.15|2015-06-10|removed console.log + added a bunch of error logs to detect bugs #23 #24|
 |0.0.14|2015-05-03|Fixed selection display bug created with select2 4.0.0.|
 |0.0.13|2015-05-02|Every facet can be done by hitting "TAB". Added "event" facet to trigger a event on selection.|
 |0.0.12|2015-04-16|Fixed bug for predefined select type|

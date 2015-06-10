@@ -52,7 +52,6 @@ class SelectorView extends require( "./facets/base" )
 			_lbl = model.getLabel()
 			_id = model.id
 			_cssclass = model.get( "cssclass" )
-			console.log "model",_cssclass
 			if @currQuery?.length > 1
 				_lbl = _lbl.replace( new RegExp( @currQuery, "gi" ), (( str )->return "<b>#{str}</b>" ) )
 			_list.push label: _lbl, id: _id, cssclass: _cssclass
@@ -92,15 +91,36 @@ class SelectorView extends require( "./facets/base" )
 		evnt.preventDefault()
 
 		_id = @$( evnt.currentTarget ).data( "id" )
-		@selected( @collection.get( _id ) )
+		if not _id?
+			try
+				console.error "Issue #23: No id - Class:#{ @constructor.name } - Event:#{evnt.type} - InnerHTML:#{evnt.currentTarget.innerHTML}"
+			catch _err
+				console.error "Issue #23: No id"
+			return
+			
+		_mdl = @collection.get( _id )
+		if not _mdl?
+			try
+				console.error "Issue #23: No model - Class:#{ @constructor.name } - ID:#{_id} - IDS:#{@collection.pluck( "name" )} - Event:#{evnt.type} - InnerHTML:#{evnt.currentTarget.innerHTML}"
+			catch _err
+				console.error "Issue #23: No model"
+			return
+			
+		@selected( _mdl )
 		if not @multiSelect
 			@close()
 		return false
 
 	selected: ( mdl )=>
-		if mdl?.onlyExec?
-			mdl?.exec?()
-			return
+		try
+			if mdl.onlyExec?
+				mdl?.exec?()
+				return
+		catch _err
+			try
+				console.error "Issue #23: CATCH - Class:#{ @constructor.name } - activeIdx:#{@activeIdx} - collection:#{JSON.stringify( @collection.toJSON())}"
+			catch _errerr
+				console.error "Issue #23: CATCH"
 		
 		if mdl?
 			@searchcoll.remove( mdl )

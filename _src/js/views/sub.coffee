@@ -12,8 +12,14 @@ class ViewSub extends Backbone.View
 	render: ( optMdl )=>
 		_list = []
 		for model, idx in @result.models
-			_list.push model.getLabel()
-
+			try
+				_list.push model.getLabel()
+			catch _err
+				try
+					console.error "Issue #24: CATCH - Class:#{ @constructor.name } - model:#{JSON.stringify(@model.toJSON())} - result:#{JSON.stringify( @result.toJSON())}"
+				catch _errerr
+					console.error "Issue #24: CATCH"
+		
 		@$el.html @template( label: @model.getLabel(), selected: _list )
 		@$sub = @$( ".subselect" )
 		@$results = @$( ".subresults" )

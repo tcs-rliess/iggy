@@ -2440,7 +2440,6 @@ SelectorView = (function(superClass) {
       _lbl = model.getLabel();
       _id = model.id;
       _cssclass = model.get("cssclass");
-      console.log("model", _cssclass);
       if (((ref1 = this.currQuery) != null ? ref1.length : void 0) > 1) {
         _lbl = _lbl.replace(new RegExp(this.currQuery, "gi"), (function(str) {
           return "<b>" + str + "</b>";
@@ -2489,11 +2488,30 @@ SelectorView = (function(superClass) {
   SelectorView.prototype.checkOptionsEmpty = function() {};
 
   SelectorView.prototype._onClick = function(evnt) {
-    var _id;
+    var _err, _id, _mdl;
     evnt.stopPropagation();
     evnt.preventDefault();
     _id = this.$(evnt.currentTarget).data("id");
-    this.selected(this.collection.get(_id));
+    if (_id == null) {
+      try {
+        console.error("Issue #23: No id - Class:" + this.constructor.name + " - Event:" + evnt.type + " - InnerHTML:" + evnt.currentTarget.innerHTML);
+      } catch (_error) {
+        _err = _error;
+        console.error("Issue #23: No id");
+      }
+      return;
+    }
+    _mdl = this.collection.get(_id);
+    if (_mdl == null) {
+      try {
+        console.error("Issue #23: No model - Class:" + this.constructor.name + " - ID:" + _id + " - IDS:" + (this.collection.pluck("name")) + " - Event:" + evnt.type + " - InnerHTML:" + evnt.currentTarget.innerHTML);
+      } catch (_error) {
+        _err = _error;
+        console.error("Issue #23: No model");
+      }
+      return;
+    }
+    this.selected(_mdl);
     if (!this.multiSelect) {
       this.close();
     }
@@ -2501,17 +2519,30 @@ SelectorView = (function(superClass) {
   };
 
   SelectorView.prototype.selected = function(mdl) {
-    if (mdl.onlyExec != null) {
-      if (mdl != null) {
-        if (typeof mdl.exec === "function") {
-          mdl.exec();
+    var _err, _errerr;
+    try {
+      if (mdl.onlyExec != null) {
+        if (mdl != null) {
+          if (typeof mdl.exec === "function") {
+            mdl.exec();
+          }
         }
+        return;
       }
-      return;
+    } catch (_error) {
+      _err = _error;
+      try {
+        console.error("Issue #23: CATCH - Class:" + this.constructor.name + " - activeIdx:" + this.activeIdx + " - collection:" + (JSON.stringify(this.collection.toJSON())));
+      } catch (_error) {
+        _errerr = _error;
+        console.error("Issue #23: CATCH");
+      }
     }
-    this.searchcoll.remove(mdl);
-    this.result.add(mdl);
-    this.trigger("selected", mdl);
+    if (mdl != null) {
+      this.searchcoll.remove(mdl);
+      this.result.add(mdl);
+      this.trigger("selected", mdl);
+    }
   };
 
   SelectorView.prototype.focus = function() {
@@ -2656,12 +2687,22 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.render = function(optMdl) {
-    var _list, i, idx, len, model, ref;
+    var _err, _errerr, _list, i, idx, len, model, ref;
     _list = [];
     ref = this.result.models;
     for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
       model = ref[idx];
-      _list.push(model.getLabel());
+      try {
+        _list.push(model.getLabel());
+      } catch (_error) {
+        _err = _error;
+        try {
+          console.error("Issue #24: CATCH - Class:" + this.constructor.name + " - model:" + (JSON.stringify(this.model.toJSON())) + " - result:" + (JSON.stringify(this.result.toJSON())));
+        } catch (_error) {
+          _errerr = _error;
+          console.error("Issue #24: CATCH");
+        }
+      }
     }
     this.$el.html(this.template({
       label: this.model.getLabel(),
