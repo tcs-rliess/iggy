@@ -92,18 +92,10 @@ class SelectorView extends require( "./facets/base" )
 
 		_id = @$( evnt.currentTarget ).data( "id" )
 		if not _id?
-			try
-				console.error "Issue #23: No id - Class:#{ @constructor.name } - Event:#{evnt.type} - InnerHTML:#{evnt.currentTarget.innerHTML}"
-			catch _err
-				console.error "Issue #23: No id"
 			return
 			
 		_mdl = @collection.get( _id )
 		if not _mdl?
-			try
-				console.error "Issue #23: No model - Class:#{ @constructor.name } - ID:#{_id} - IDS:#{@collection.pluck( "name" )} - Event:#{evnt.type} - InnerHTML:#{evnt.currentTarget.innerHTML}"
-			catch _err
-				console.error "Issue #23: No model"
 			return
 			
 		@selected( _mdl )
@@ -142,7 +134,7 @@ class SelectorView extends require( "./facets/base" )
 					@move( false )
 					return
 				when KEYCODES.ENTER
-					@selectActive()
+					@selectActive( true )
 					return
 			return
 
@@ -199,8 +191,19 @@ class SelectorView extends require( "./facets/base" )
 	select:=>
 		return
 
-	selectActive: =>
+	selectActive: ( isEnterEvent=false )=>
+		
 		_sel = @$el.find( ".typelist a.active" ).removeClass( "active" ).data()
+			
+		_search = @$inp.val()
+		
+		if  not _sel? and @multiSelect and isEnterEvent and not _search?.length
+			@close()
+			return
+			
+		if not _sel?
+			return
+		
 		@activeIdx = 0
 		if _sel?.idx >= 0 and @searchcoll.length
 			@selected( @collection.get( _sel.id ) )

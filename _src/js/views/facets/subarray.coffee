@@ -58,6 +58,10 @@ class FacetSubArray extends require( "../selector" )
 	_onTabAction: ( evnt )=>
 		evnt.preventDefault()
 		evnt.stopPropagation()
+		searchContent = @$inp.val()
+		if searchContent?.length
+			@selectActive()
+			return
 		@close()
 		return
 		

@@ -1654,8 +1654,14 @@ FacetSubArray = (function(superClass) {
   };
 
   FacetSubArray.prototype._onTabAction = function(evnt) {
+    var searchContent;
     evnt.preventDefault();
     evnt.stopPropagation();
+    searchContent = this.$inp.val();
+    if (searchContent != null ? searchContent.length : void 0) {
+      this.selectActive();
+      return;
+    }
     this.close();
   };
 
@@ -2488,27 +2494,15 @@ SelectorView = (function(superClass) {
   SelectorView.prototype.checkOptionsEmpty = function() {};
 
   SelectorView.prototype._onClick = function(evnt) {
-    var _err, _id, _mdl;
+    var _id, _mdl;
     evnt.stopPropagation();
     evnt.preventDefault();
     _id = this.$(evnt.currentTarget).data("id");
     if (_id == null) {
-      try {
-        console.error("Issue #23: No id - Class:" + this.constructor.name + " - Event:" + evnt.type + " - InnerHTML:" + evnt.currentTarget.innerHTML);
-      } catch (_error) {
-        _err = _error;
-        console.error("Issue #23: No id");
-      }
       return;
     }
     _mdl = this.collection.get(_id);
     if (_mdl == null) {
-      try {
-        console.error("Issue #23: No model - Class:" + this.constructor.name + " - ID:" + _id + " - IDS:" + (this.collection.pluck("name")) + " - Event:" + evnt.type + " - InnerHTML:" + evnt.currentTarget.innerHTML);
-      } catch (_error) {
-        _err = _error;
-        console.error("Issue #23: No model");
-      }
       return;
     }
     this.selected(_mdl);
@@ -2560,7 +2554,7 @@ SelectorView = (function(superClass) {
           this.move(false);
           return;
         case KEYCODES.ENTER:
-          this.selectActive();
+          this.selectActive(true);
           return;
       }
       return;
@@ -2623,9 +2617,20 @@ SelectorView = (function(superClass) {
 
   SelectorView.prototype.select = function() {};
 
-  SelectorView.prototype.selectActive = function() {
-    var _sel, ref;
+  SelectorView.prototype.selectActive = function(isEnterEvent) {
+    var _search, _sel, ref;
+    if (isEnterEvent == null) {
+      isEnterEvent = false;
+    }
     _sel = this.$el.find(".typelist a.active").removeClass("active").data();
+    _search = this.$inp.val();
+    if ((_sel == null) && this.multiSelect && isEnterEvent && !(_search != null ? _search.length : void 0)) {
+      this.close();
+      return;
+    }
+    if (_sel == null) {
+      return;
+    }
     this.activeIdx = 0;
     if ((_sel != null ? _sel.idx : void 0) >= 0 && this.searchcoll.length) {
       this.selected(this.collection.get(_sel.id));
