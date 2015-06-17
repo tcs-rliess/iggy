@@ -160,18 +160,19 @@ class SelectorView extends require( "./facets/base" )
 
 	move: ( up = false )=>
 		_list = @$el.find( ".typelist a" )
-
+	
+		_customElementChange = if @currQuery?.length then 0 else 1
 		_top = 0
 		if up
 			if ( @activeIdx - 1 ) < _top
 				return
 			_newidx = @activeIdx - 1
 		else
-			if @searchcoll.length - 1 <= @activeIdx
+			if @searchcoll.length - _customElementChange <= @activeIdx
 				return
 			_newidx = @activeIdx + 1
 
-
+		
 		@$( _list[ @activeIdx ] ).removeClass( "active" )
 		_$elnew = @$( _list[ _newidx ] ).addClass( "active" )
 

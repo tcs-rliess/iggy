@@ -2582,11 +2582,12 @@ SelectorView = (function(superClass) {
   };
 
   SelectorView.prototype.move = function(up) {
-    var _$elnew, _$list, _elH, _list, _newidx, _pos, _scrollT, _top;
+    var _$elnew, _$list, _customElementChange, _elH, _list, _newidx, _pos, _scrollT, _top, ref;
     if (up == null) {
       up = false;
     }
     _list = this.$el.find(".typelist a");
+    _customElementChange = ((ref = this.currQuery) != null ? ref.length : void 0) ? 0 : 1;
     _top = 0;
     if (up) {
       if ((this.activeIdx - 1) < _top) {
@@ -2594,7 +2595,7 @@ SelectorView = (function(superClass) {
       }
       _newidx = this.activeIdx - 1;
     } else {
-      if (this.searchcoll.length - 1 <= this.activeIdx) {
+      if (this.searchcoll.length - _customElementChange <= this.activeIdx) {
         return;
       }
       _newidx = this.activeIdx + 1;
