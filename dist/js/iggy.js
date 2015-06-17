@@ -1,5 +1,5 @@
 /*
- * IGGY 0.0.15 ( 2015-06-10 )
+ * IGGY 0.0.16 ( 2015-06-17 )
  * http://mpneuried.github.io/iggy/
  *
  * Released under the MIT license
@@ -1036,7 +1036,8 @@
                         value: this.result.pluck("value")
                     };
                 }, b.prototype._onTabAction = function(a) {
-                    a.preventDefault(), a.stopPropagation(), this.close();
+                    var b;
+                    return a.preventDefault(), a.stopPropagation(), b = this.$inp.val(), (null != b ? b.length : void 0) ? void this.selectActive() : void this.close();
                 }, b.prototype._createOptionCollection = function(a) {
                     var b, c, d, e;
                     if (_.isFunction(a)) return a(this._createOptionCollection);
@@ -1472,21 +1473,10 @@
                 }, d.prototype.scrollHelper = function(a) {
                     this.scrolling = a >= this._scrollTill ? !0 : !1;
                 }, d.prototype.checkOptionsEmpty = function() {}, d.prototype._onClick = function(a) {
-                    var b, c, d;
-                    if (a.stopPropagation(), a.preventDefault(), c = this.$(a.currentTarget).data("id"), 
-                    null != c) {
-                        if (d = this.collection.get(c), null != d) return this.selected(d), this.multiSelect || this.close(), 
-                        !1;
-                        try {
-                            console.error("Issue #23: No model - Class:" + this.constructor.name + " - ID:" + c + " - IDS:" + this.collection.pluck("name") + " - Event:" + a.type + " - InnerHTML:" + a.currentTarget.innerHTML);
-                        } catch (e) {
-                            b = e, console.error("Issue #23: No model");
-                        }
-                    } else try {
-                        console.error("Issue #23: No id - Class:" + this.constructor.name + " - Event:" + a.type + " - InnerHTML:" + a.currentTarget.innerHTML);
-                    } catch (e) {
-                        b = e, console.error("Issue #23: No id");
-                    }
+                    var b, c;
+                    return a.stopPropagation(), a.preventDefault(), b = this.$(a.currentTarget).data("id"), 
+                    null != b && (c = this.collection.get(b), null != c) ? (this.selected(c), this.multiSelect || this.close(), 
+                    !1) : void 0;
                 }, d.prototype.selected = function(a) {
                     var b, c;
                     try {
@@ -1518,32 +1508,36 @@
                         return void this.move(!1);
 
                       case c.ENTER:
-                        return void this.selectActive();
+                        return void this.selectActive(!0);
                     }
                 }, d.prototype.move = function(a) {
-                    var b, c, d, e, f, g, h, i;
-                    if (null == a && (a = !1), e = this.$el.find(".typelist a"), i = 0, a) {
-                        if (this.activeIdx - 1 < i) return;
-                        f = this.activeIdx - 1;
+                    var b, c, d, e, f, g, h, i, j, k;
+                    if (null == a && (a = !1), f = this.$el.find(".typelist a"), d = (null != (k = this.currQuery) ? k.length : void 0) ? 0 : 1, 
+                    j = 0, a) {
+                        if (this.activeIdx - 1 < j) return;
+                        g = this.activeIdx - 1;
                     } else {
-                        if (this.searchcoll.length - 1 <= this.activeIdx) return;
-                        f = this.activeIdx + 1;
+                        if (this.searchcoll.length - d <= this.activeIdx) return;
+                        g = this.activeIdx + 1;
                     }
-                    this.$(e[this.activeIdx]).removeClass("active"), b = this.$(e[f]).addClass("active"), 
-                    this.scrolling && (d = b.outerHeight(), g = d * (f + 1), c = this.$el.find(".typelist"), 
-                    h = c.scrollTop(), g > h + this._scrollTill ? c.scrollTop(g - this._scrollTill) : h + d > g && c.scrollTop(g - d)), 
-                    this.activeIdx = f;
-                }, d.prototype.select = function() {}, d.prototype.selectActive = function() {
-                    var a, b;
-                    if (a = this.$el.find(".typelist a.active").removeClass("active").data(), this.activeIdx = 0, 
-                    (null != a ? a.idx : void 0) >= 0 && this.searchcoll.length) this.selected(this.collection.get(a.id)); else {
-                        if (null != (b = this.currQuery) ? !b.length : !0) return;
-                        this.selected(new this.collection.model({
-                            value: this.currQuery,
-                            custom: !0
-                        })), this.$inp.val("");
+                    this.$(f[this.activeIdx]).removeClass("active"), b = this.$(f[g]).addClass("active"), 
+                    this.scrolling && (e = b.outerHeight(), h = e * (g + 1), c = this.$el.find(".typelist"), 
+                    i = c.scrollTop(), h > i + this._scrollTill ? c.scrollTop(h - this._scrollTill) : i + e > h && c.scrollTop(h - e)), 
+                    this.activeIdx = g;
+                }, d.prototype.select = function() {}, d.prototype.selectActive = function(a) {
+                    var b, c, d;
+                    if (null == a && (a = !1), c = this.$el.find(".typelist a.active").removeClass("active").data(), 
+                    b = this.$inp.val(), null == c && this.multiSelect && a && !(null != b ? b.length : void 0)) return void this.close();
+                    if (null != c) {
+                        if (this.activeIdx = 0, (null != c ? c.idx : void 0) >= 0 && this.searchcoll.length) this.selected(this.collection.get(c.id)); else {
+                            if (null != (d = this.currQuery) ? !d.length : !0) return;
+                            this.selected(new this.collection.model({
+                                value: this.currQuery,
+                                custom: !0
+                            })), this.$inp.val("");
+                        }
+                        this.multiSelect || this.close();
                     }
-                    this.multiSelect || this.close();
                 }, d;
             }(a("./facets/base")), b.exports = d;
         }, {
