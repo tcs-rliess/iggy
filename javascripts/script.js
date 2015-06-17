@@ -32,6 +32,11 @@ jQuery( function( $ ){
 		options: [ "pizza", "pasta", "carne" ]
 	},{
 		type: "array",
+		name: "array_empty",
+		label: "Array Empty",
+		options: []
+	},{
+		type: "array",
 		name: "arraylabel",
 		label: "Array Labels",
 		options: [ 
