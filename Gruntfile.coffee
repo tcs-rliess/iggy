@@ -68,9 +68,9 @@ module.exports = (grunt) ->
 				src: ['css/iggy.css']
 				dest: 'dist/css/iggy.css'
 
-		karma:
-			local:
-				configFile: 'karma.conf.coffee'
+		# karma:
+		# 	local:
+		# 		configFile: 'karma.conf.coffee'
 
 		uglify: 
 			options:
@@ -90,7 +90,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-contrib-clean"
 	grunt.loadNpmTasks "grunt-contrib-uglify"
 	grunt.loadNpmTasks "grunt-browserify"
-	grunt.loadNpmTasks "grunt-karma"
+	#grunt.loadNpmTasks "grunt-karma"
 
 	# just a hack until this issue has been fixed: https://github.com/yeoman/grunt-regarde/issues/3
 	grunt.option('force', not grunt.option('force'))
@@ -99,7 +99,7 @@ module.exports = (grunt) ->
 	grunt.registerTask "watch", "regarde"
 	grunt.registerTask "default", "build"
 	grunt.registerTask "clear", [ "clean:base" ]
-	grunt.registerTask "test-local", "karma:local"
+	#grunt.registerTask "test-local", "karma:local"
 
 	# build the project
 	grunt.registerTask "build-core-js", [ "browserify:base" ]

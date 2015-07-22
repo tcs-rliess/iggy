@@ -207,6 +207,7 @@ class SelectorView extends require( "./facets/base" )
 		
 		@activeIdx = 0
 		if _sel?.idx >= 0 and @searchcoll.length
+			console.log "got", @collection.get( _sel.id ), @collection, _sel.id
 			@selected( @collection.get( _sel.id ) )
 		else if @currQuery?.length
 			@selected( new @collection.model( value: @currQuery, custom: true ) )

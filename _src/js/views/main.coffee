@@ -5,18 +5,22 @@ KEYCODES = require( "../utils/keycodes" )
 
 class MainView extends Backbone.View
 	template: require( "../tmpls/wrapper.jade" )
-	className: "iggy clearfix"
 
 	events:
 		"click .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
 
 	initialize: ( options )=>
+		
 		@results = options.results
 
 		@collection.on "iggy:rem", @remFacet
-
-		@el.className += @className
+		
+		_cl = "iggy clearfix"
+		if @el.className?.length
+			_cl = " " + _cl
+		@el.className += _cl
+		
 		@render()
 		$( document ).on "keyup", @_onKey
 

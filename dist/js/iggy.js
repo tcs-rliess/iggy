@@ -1,5 +1,5 @@
 /*
- * IGGY 0.0.16 ( 2015-06-17 )
+ * IGGY 0.0.17 ( 2015-07-22 )
  * http://mpneuried.github.io/iggy/
  *
  * Released under the MIT license
@@ -36,38 +36,38 @@
         for (var f = "function" == typeof require && require, g = 0; g < d.length; g++) e(d[g]);
         return e;
     }({
-        1: [ function(a, b) {
-            var c, d, e, f, g, h, i, j, k, l, m, n = function(a, b) {
+        1: [ function(a, b, c) {
+            var d, e, f, g, h, i, j, k, l, m, n, o = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, o = function(a, b) {
+            }, p = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) p.call(b, d) && (a[d] = b[d]);
+                for (var d in b) q.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, p = {}.hasOwnProperty;
-            l = a("./views/main"), c = a("./models/backbone_sub"), j = a("./models/facet_string"), 
-            d = a("./models/facet_array"), i = a("./models/facet_select"), g = a("./models/facet_number"), 
-            h = a("./models/facet_range"), e = a("./models/facet_daterange"), f = a("./models/facet_event"), 
-            m = a("./models/results"), k = function(a) {
+            }, q = {}.hasOwnProperty;
+            m = a("./views/main"), d = a("./models/backbone_sub"), k = a("./models/facet_string"), 
+            e = a("./models/facet_array"), j = a("./models/facet_select"), h = a("./models/facet_number"), 
+            i = a("./models/facet_range"), f = a("./models/facet_daterange"), g = a("./models/facet_event"), 
+            n = a("./models/results"), l = function(a) {
                 function b(a, b, c) {
-                    null == b && (b = []), null == c && (c = {}), this._initErrors = n(this._initErrors, this), 
-                    this.triggerChange = n(this.triggerChange, this), this.getQuery = n(this.getQuery, this), 
-                    this._error = n(this._error, this), this.addFacet = n(this.addFacet, this), this._prepareFacets = n(this._prepareFacets, this), 
-                    this._prepareEl = n(this._prepareEl, this), _.extend(this, Backbone.Events), this._initErrors(), 
+                    null == b && (b = []), null == c && (c = {}), this._initErrors = o(this._initErrors, this), 
+                    this.triggerChange = o(this.triggerChange, this), this.getQuery = o(this.getQuery, this), 
+                    this._error = o(this._error, this), this.addFacet = o(this.addFacet, this), this._prepareFacets = o(this._prepareFacets, this), 
+                    this._prepareEl = o(this._prepareEl, this), _.extend(this, Backbone.Events), this._initErrors(), 
                     this.$el = this._prepareEl(a), this.el = this.$el[0], this.$el.data("iggy", this), 
-                    this.facets = this._prepareFacets(b), this.results = new m(null, c), this.results.on("add", this.triggerChange), 
+                    this.facets = this._prepareFacets(b), this.results = new n(null, c), this.results.on("add", this.triggerChange), 
                     this.results.on("remove", this.triggerChange), this.results.on("change", this.triggerChange), 
-                    this.view = new l({
+                    this.view = new m({
                         el: this.$el,
                         collection: this.facets,
                         results: this.results
                     });
                 }
-                return o(b, a), b.prototype.$ = jQuery, b.prototype._prepareEl = function(a) {
+                return p(b, a), b.prototype.$ = jQuery, b.prototype._prepareEl = function(a) {
                     var b;
                     if (null == a) throw this._error("EMISSINGEL");
                     if (_.isString(a)) {
@@ -83,43 +83,43 @@
                     if (a instanceof Element) return this.$(a);
                     throw this._error("EINVALIDELTYPE");
                 }, b.prototype._prepareFacets = function(a) {
-                    var b, d, e, f, g;
-                    for (d = [], f = 0, g = a.length; g > f; f++) e = a[f], null != (b = this._createFacet(e)) && d.push(b);
-                    return new c(d);
+                    var b, c, e, f, g;
+                    for (c = [], f = 0, g = a.length; g > f; f++) e = a[f], null != (b = this._createFacet(e)) && c.push(b);
+                    return new d(c);
                 }, b.prototype._createFacet = function(a) {
                     switch (a.type.toLowerCase()) {
                       case "string":
-                        return new j(a, {
+                        return new k(a, {
                             main: this
                         });
 
                       case "select":
-                        return new i(a, {
+                        return new j(a, {
                             main: this
                         });
 
                       case "array":
-                        return new d(a, {
-                            main: this
-                        });
-
-                      case "number":
-                        return new g(a, {
-                            main: this
-                        });
-
-                      case "range":
-                        return new h(a, {
-                            main: this
-                        });
-
-                      case "daterange":
                         return new e(a, {
                             main: this
                         });
 
-                      case "event":
+                      case "number":
+                        return new h(a, {
+                            main: this
+                        });
+
+                      case "range":
+                        return new i(a, {
+                            main: this
+                        });
+
+                      case "daterange":
                         return new f(a, {
+                            main: this
+                        });
+
+                      case "event":
+                        return new g(a, {
                             main: this
                         });
                     }
@@ -149,7 +149,7 @@
                         EMISSINGEL: "Please define a target `el`"
                     };
                 }, b;
-            }(Backbone.Events), b.exports = k;
+            }(Backbone.Events), b.exports = l;
         }, {
             "./models/backbone_sub": 2,
             "./models/facet_array": 3,
@@ -162,28 +162,28 @@
             "./models/results": 11,
             "./views/main": 32
         } ],
-        2: [ function(a, b) {
-            var c, d = function(a, b) {
+        2: [ function(a, b, c) {
+            var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, e = function(a, b) {
+            }, f = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, f = {}.hasOwnProperty, g = [].indexOf || function(a) {
+            }, g = {}.hasOwnProperty, h = [].indexOf || function(a) {
                 for (var b = 0, c = this.length; c > b; b++) if (b in this && this[b] === a) return b;
                 return -1;
             };
-            c = function(a) {
+            d = function(a) {
                 function b() {
-                    return this.updateSubFilter = d(this.updateSubFilter, this), this.sub = d(this.sub, this), 
+                    return this.updateSubFilter = e(this.updateSubFilter, this), this.sub = e(this.sub, this), 
                     b.__super__.constructor.apply(this, arguments);
                 }
-                return e(b, a), b.prototype.sub = function(a) {
+                return f(b, a), b.prototype.sub = function(a) {
                     var b, c, d;
                     return this.subColls || (this.subColls = []), d = this._generateSubFilter(a), b = this.filter(d), 
                     c = new this.constructor(b), c._parentCol = this, c._fnFilter = d, this.on("change", _.bind(function(a) {
@@ -193,27 +193,27 @@
                         this.add(a);
                     }, this)), this.on("add", _.bind(function(a) {
                         this._fnFilter(a) && this.add(a);
-                    }, c)), c.on("remove", _.bind(function() {}, this)), this.on("remove", _.bind(function(a) {
+                    }, c)), c.on("remove", _.bind(function(a) {}, this)), this.on("remove", _.bind(function(a) {
                         this.remove(a);
-                    }, c)), this.on("reset", _.bind(function() {
+                    }, c)), this.on("reset", _.bind(function(a) {
                         this.updateSubFilter();
                     }, c)), this.subColls.push(c), c;
                 }, b.prototype.updateSubFilter = function(a, b) {
-                    var c, d, e, f, h, i, j, k, l, m, n, o;
+                    var c, d, e, f, g, i, j, k, l, m, n, o;
                     if (null == b && (b = !0), null != this._parentCol) {
                         if (null != a && (this._fnFilter = this._generateSubFilter(a)), d = this._parentCol.filter(this._fnFilter), 
                         b) return this.reset(d), this;
                         for (l = _.pluck(d, "cid"), e = _.pluck(this.models, "cid"), m = _.difference(e, l), 
                         f = 0, i = m.length; i > f; f++) o = m[f], this.remove(o);
-                        for (c = _.difference(l, e), h = 0, j = d.length; j > h; h++) k = d[h], n = k.cid, 
-                        g.call(c, n) >= 0 && this.add(k);
+                        for (c = _.difference(l, e), g = 0, j = d.length; j > g; g++) k = d[g], n = k.cid, 
+                        h.call(c, n) >= 0 && this.add(k);
                     }
                     return this;
                 }, b.prototype._generateSubFilter = function(a) {
                     var b;
                     return b = _.isFunction(a) ? a : _.isArray(a) ? function(b) {
                         var c;
-                        return c = b.id, g.call(a, c) >= 0;
+                        return c = b.id, h.call(a, c) >= 0;
                     } : _.isString(a) || _.isNumber(a) ? function(b) {
                         return b.id === a;
                     } : function(b) {
@@ -222,33 +222,10 @@
                         return !0;
                     };
                 }, b;
-            }(Backbone.Collection), b.exports = c;
+            }(Backbone.Collection), b.exports = d;
         }, {} ],
-        3: [ function(a, b) {
-            var c, d = function(a, b) {
-                function c() {
-                    this.constructor = a;
-                }
-                for (var d in b) e.call(b, d) && (a[d] = b[d]);
-                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
-                a;
-            }, e = {}.hasOwnProperty;
-            c = function(b) {
-                function c() {
-                    return c.__super__.constructor.apply(this, arguments);
-                }
-                return d(c, b), c.prototype.SubView = a("../views/facets/subarray"), c;
-            }(a("./facet_string")), b.exports = c;
-        }, {
-            "../views/facets/subarray": 27,
-            "./facet_string": 10
-        } ],
-        4: [ function(a, b) {
-            var c, d = function(a, b) {
-                return function() {
-                    return a.apply(b, arguments);
-                };
-            }, e = function(a, b) {
+        3: [ function(a, b, c) {
+            var d, e = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
@@ -256,12 +233,35 @@
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
             }, f = {}.hasOwnProperty;
-            c = function(b) {
+            d = function(b) {
+                function c() {
+                    return c.__super__.constructor.apply(this, arguments);
+                }
+                return e(c, b), c.prototype.SubView = a("../views/facets/subarray"), c;
+            }(a("./facet_string")), b.exports = d;
+        }, {
+            "../views/facets/subarray": 27,
+            "./facet_string": 10
+        } ],
+        4: [ function(a, b, c) {
+            var d, e = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            }, f = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
                 function c(a, b) {
-                    this.match = d(this.match, this), this.getLabel = d(this.getLabel, this), this.main = b.main, 
+                    this.match = e(this.match, this), this.getLabel = e(this.getLabel, this), this.main = b.main, 
                     c.__super__.constructor.apply(this, arguments);
                 }
-                return e(c, b), c.prototype.idAttribute = "name", c.prototype.SubView = a("../views/facets/base"), 
+                return f(c, b), c.prototype.idAttribute = "name", c.prototype.SubView = a("../views/facets/base"), 
                 c.prototype.defaults = function() {
                     return {
                         type: "string",
@@ -277,219 +277,12 @@
                 }, c.prototype.comparator = function(a) {
                     return a.id;
                 }, c;
-            }(Backbone.Model), b.exports = c;
+            }(Backbone.Model), b.exports = d;
         }, {
             "../views/facets/base": 24
         } ],
-        5: [ function(a, b) {
-            var c, d = function(a, b) {
-                return function() {
-                    return a.apply(b, arguments);
-                };
-            }, e = function(a, b) {
-                function c() {
-                    this.constructor = a;
-                }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
-                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
-                a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
-                function c() {
-                    return this.defaults = d(this.defaults, this), c.__super__.constructor.apply(this, arguments);
-                }
-                return e(c, b), c.prototype.SubView = a("../views/facets/daterange"), c.prototype.defaults = function() {
-                    return $.extend(c.__super__.defaults.apply(this, arguments), {
-                        opts: {},
-                        value: null
-                    });
-                }, c;
-            }(a("./facet_base")), b.exports = c;
-        }, {
-            "../views/facets/daterange": 25,
-            "./facet_base": 4
-        } ],
-        6: [ function(a, b) {
-            var c, d = function(a, b) {
-                return function() {
-                    return a.apply(b, arguments);
-                };
-            }, e = function(a, b) {
-                function c() {
-                    this.constructor = a;
-                }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
-                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
-                a;
-            }, f = {}.hasOwnProperty;
-            c = function(a) {
-                function b() {
-                    return this.exec = d(this.exec, this), this.defaults = d(this.defaults, this), b.__super__.constructor.apply(this, arguments);
-                }
-                return e(b, a), b.prototype.SubView = null, b.prototype.onlyExec = !0, b.prototype.defaults = function() {
-                    return $.extend(b.__super__.defaults.apply(this, arguments), {
-                        options: []
-                    });
-                }, b.prototype.exec = function() {
-                    this.main.trigger(this.get("event"), this.toJSON());
-                }, b;
-            }(a("./facet_base")), b.exports = c;
-        }, {
-            "./facet_base": 4
-        } ],
-        7: [ function(a, b) {
-            var c, d = function(a, b) {
-                return function() {
-                    return a.apply(b, arguments);
-                };
-            }, e = function(a, b) {
-                function c() {
-                    this.constructor = a;
-                }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
-                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
-                a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
-                function c() {
-                    return this.defaults = d(this.defaults, this), c.__super__.constructor.apply(this, arguments);
-                }
-                return e(c, b), c.prototype.SubView = a("../views/facets/subnumber"), c.prototype.defaults = function() {
-                    return $.extend(c.__super__.defaults.apply(this, arguments), {
-                        min: null,
-                        max: null,
-                        step: 1,
-                        value: null
-                    });
-                }, c;
-            }(a("./facet_base")), b.exports = c;
-        }, {
-            "../views/facets/subnumber": 28,
-            "./facet_base": 4
-        } ],
-        8: [ function(a, b) {
-            var c, d = function(a, b) {
-                return function() {
-                    return a.apply(b, arguments);
-                };
-            }, e = function(a, b) {
-                function c() {
-                    this.constructor = a;
-                }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
-                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
-                a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
-                function c() {
-                    return this.defaults = d(this.defaults, this), c.__super__.constructor.apply(this, arguments);
-                }
-                return e(c, b), c.prototype.SubView = a("../views/facets/subrange"), c.prototype.defaults = function() {
-                    return $.extend(c.__super__.defaults.apply(this, arguments), {
-                        min: null,
-                        max: null,
-                        step: 1,
-                        value: null
-                    });
-                }, c;
-            }(a("./facet_base")), b.exports = c;
-        }, {
-            "../views/facets/subrange": 29,
-            "./facet_base": 4
-        } ],
-        9: [ function(a, b) {
-            var c, d = function(a, b) {
-                return function() {
-                    return a.apply(b, arguments);
-                };
-            }, e = function(a, b) {
-                function c() {
-                    this.constructor = a;
-                }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
-                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
-                a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
-                function c() {
-                    return this.defaults = d(this.defaults, this), c.__super__.constructor.apply(this, arguments);
-                }
-                return e(c, b), c.prototype.SubView = a("../views/facets/subselect"), c.prototype.defaults = function() {
-                    return $.extend(c.__super__.defaults.apply(this, arguments), {
-                        options: []
-                    });
-                }, c;
-            }(a("./facet_base")), b.exports = c;
-        }, {
-            "../views/facets/subselect": 30,
-            "./facet_base": 4
-        } ],
-        10: [ function(a, b) {
-            var c, d = function(a, b) {
-                return function() {
-                    return a.apply(b, arguments);
-                };
-            }, e = function(a, b) {
-                function c() {
-                    this.constructor = a;
-                }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
-                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
-                a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
-                function c() {
-                    return this.defaults = d(this.defaults, this), c.__super__.constructor.apply(this, arguments);
-                }
-                return e(c, b), c.prototype.SubView = a("../views/facets/substring"), c.prototype.defaults = function() {
-                    return $.extend(c.__super__.defaults.apply(this, arguments), {
-                        options: []
-                    });
-                }, c;
-            }(a("./facet_base")), b.exports = c;
-        }, {
-            "../views/facets/substring": 31,
-            "./facet_base": 4
-        } ],
-        11: [ function(a, b) {
-            var c, d, e = function(a, b) {
-                function c() {
-                    this.constructor = a;
-                }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
-                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
-                a;
-            }, f = {}.hasOwnProperty, g = function(a, b) {
-                return function() {
-                    return a.apply(b, arguments);
-                };
-            };
-            c = function(a) {
-                function b() {
-                    return b.__super__.constructor.apply(this, arguments);
-                }
-                return e(b, a), b.prototype.idAttribute = "name", b.prototype.defaults = {
-                    type: "string",
-                    name: null,
-                    value: null
-                }, b;
-            }(Backbone.Model), d = function(a) {
-                function b() {
-                    return this.parse = g(this.parse, this), this.initialize = g(this.initialize, this), 
-                    b.__super__.constructor.apply(this, arguments);
-                }
-                return e(b, a), b.prototype.model = c, b.prototype.initialize = function(a, b) {
-                    var c;
-                    (null != (c = b.modifyKey) ? c.length : void 0) && (this.modifyKey = b.modifyKey);
-                }, b.prototype.parse = function(a, b) {
-                    var c, d, e;
-                    return c = b._facet.get("modifyKey") || this.modifyKey || "value", d = null != (e = b._facet) ? e.get("modify") : void 0, 
-                    null != d && _.isFunction(d) && (a[c] = d(a.value, b._facet, a)), a;
-                }, b;
-            }(Backbone.Collection), b.exports = d;
-        }, {} ],
-        12: [ function(a, b) {
-            var c, d, e = function(a, b) {
+        5: [ function(a, b, c) {
+            var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
@@ -501,250 +294,202 @@
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
             }, g = {}.hasOwnProperty;
-            c = function(a) {
-                function b() {
-                    return this.getLabel = e(this.getLabel, this), b.__super__.constructor.apply(this, arguments);
+            d = function(b) {
+                function c() {
+                    return this.defaults = e(this.defaults, this), c.__super__.constructor.apply(this, arguments);
                 }
-                return f(b, a), b.prototype.idAttribute = "value", b.prototype.getLabel = function() {
-                    return this.get("label") || this.get(this.idAttribute) || "-";
+                return f(c, b), c.prototype.SubView = a("../views/facets/daterange"), c.prototype.defaults = function() {
+                    return $.extend(c.__super__.defaults.apply(this, arguments), {
+                        opts: {},
+                        value: null
+                    });
+                }, c;
+            }(a("./facet_base")), b.exports = d;
+        }, {
+            "../views/facets/daterange": 25,
+            "./facet_base": 4
+        } ],
+        6: [ function(a, b, c) {
+            var d, e = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            }, f = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, g = {}.hasOwnProperty;
+            d = function(a) {
+                function b() {
+                    return this.exec = e(this.exec, this), this.defaults = e(this.defaults, this), b.__super__.constructor.apply(this, arguments);
+                }
+                return f(b, a), b.prototype.SubView = null, b.prototype.onlyExec = !0, b.prototype.defaults = function() {
+                    return $.extend(b.__super__.defaults.apply(this, arguments), {
+                        options: []
+                    });
+                }, b.prototype.exec = function() {
+                    this.main.trigger(this.get("event"), this.toJSON());
                 }, b;
-            }(Backbone.Model), d = function(a) {
+            }(a("./facet_base")), b.exports = d;
+        }, {
+            "./facet_base": 4
+        } ],
+        7: [ function(a, b, c) {
+            var d, e = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            }, f = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
+                function c() {
+                    return this.defaults = e(this.defaults, this), c.__super__.constructor.apply(this, arguments);
+                }
+                return f(c, b), c.prototype.SubView = a("../views/facets/subnumber"), c.prototype.defaults = function() {
+                    return $.extend(c.__super__.defaults.apply(this, arguments), {
+                        min: null,
+                        max: null,
+                        step: 1,
+                        value: null
+                    });
+                }, c;
+            }(a("./facet_base")), b.exports = d;
+        }, {
+            "../views/facets/subnumber": 28,
+            "./facet_base": 4
+        } ],
+        8: [ function(a, b, c) {
+            var d, e = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            }, f = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
+                function c() {
+                    return this.defaults = e(this.defaults, this), c.__super__.constructor.apply(this, arguments);
+                }
+                return f(c, b), c.prototype.SubView = a("../views/facets/subrange"), c.prototype.defaults = function() {
+                    return $.extend(c.__super__.defaults.apply(this, arguments), {
+                        min: null,
+                        max: null,
+                        step: 1,
+                        value: null
+                    });
+                }, c;
+            }(a("./facet_base")), b.exports = d;
+        }, {
+            "../views/facets/subrange": 29,
+            "./facet_base": 4
+        } ],
+        9: [ function(a, b, c) {
+            var d, e = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            }, f = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
+                function c() {
+                    return this.defaults = e(this.defaults, this), c.__super__.constructor.apply(this, arguments);
+                }
+                return f(c, b), c.prototype.SubView = a("../views/facets/subselect"), c.prototype.defaults = function() {
+                    return $.extend(c.__super__.defaults.apply(this, arguments), {
+                        options: []
+                    });
+                }, c;
+            }(a("./facet_base")), b.exports = d;
+        }, {
+            "../views/facets/subselect": 30,
+            "./facet_base": 4
+        } ],
+        10: [ function(a, b, c) {
+            var d, e = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            }, f = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
+                function c() {
+                    return this.defaults = e(this.defaults, this), c.__super__.constructor.apply(this, arguments);
+                }
+                return f(c, b), c.prototype.SubView = a("../views/facets/substring"), c.prototype.defaults = function() {
+                    return $.extend(c.__super__.defaults.apply(this, arguments), {
+                        options: []
+                    });
+                }, c;
+            }(a("./facet_base")), b.exports = d;
+        }, {
+            "../views/facets/substring": 31,
+            "./facet_base": 4
+        } ],
+        11: [ function(a, b, c) {
+            var d, e, f = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, g = {}.hasOwnProperty, h = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            };
+            d = function(a) {
                 function b() {
                     return b.__super__.constructor.apply(this, arguments);
                 }
-                return f(b, a), b.prototype.model = c, b;
-            }(a("./backbone_sub")), b.exports = d;
-        }, {
-            "./backbone_sub": 2
-        } ],
-        13: [ function(a, b) {
-            var c = a("jade/runtime");
-            b.exports = function(a) {
-                var b = [], d = a || {};
-                return function(a) {
-                    b.push("<input" + c.attr("id", a, !0, !1) + ' class="daterange-inp"/>');
-                }.call(this, "cid" in d ? d.cid : "undefined" != typeof cid ? cid : void 0), b.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        14: [ function(a, b) {
-            var c = a("jade/runtime");
-            b.exports = function(a) {
-                var b, d = [], e = a || {};
-                return function(a, e, f, g, h) {
-                    f && f.length && (d.push('<div class="operator"><select' + c.attr("id", "" + a + "op", !0, !1) + ">"), 
-                    function() {
-                        var a = f;
-                        if ("number" == typeof a.length) for (var g = 0, h = a.length; h > g; g++) {
-                            var i = a[g];
-                            d.push("<option" + c.attr("value", i, !0, !1) + c.attr("selected", e == i, !0, !1) + ">" + c.escape(null == (b = i) ? "" : b) + "</option>");
-                        } else {
-                            var h = 0;
-                            for (var g in a) {
-                                h++;
-                                var i = a[g];
-                                d.push("<option" + c.attr("value", i, !0, !1) + c.attr("selected", e == i, !0, !1) + ">" + c.escape(null == (b = i) ? "" : b) + "</option>");
-                            }
-                        }
-                    }.call(this), d.push("</select></div>")), d.push("<input" + c.attr("id", a, !0, !1) + c.attr("value", h, !0, !1) + ' class="number-inp"/>');
-                }.call(this, "cid" in e ? e.cid : "undefined" != typeof cid ? cid : void 0, "operator" in e ? e.operator : "undefined" != typeof operator ? operator : void 0, "operators" in e ? e.operators : "undefined" != typeof operators ? operators : void 0, "undefined" in e ? e.undefined : void 0, "value" in e ? e.value : "undefined" != typeof value ? value : void 0), 
-                d.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        15: [ function(a, b) {
-            var c = a("jade/runtime");
-            b.exports = function(a) {
-                var b = [], d = a || {};
-                return function(a, d) {
-                    b.push('<div class="rangeinp">');
-                    var e = d ? d : [];
-                    b.push("<input" + c.attr("id", "" + a + "_from", !0, !1) + c.attr("value", e[0], !0, !1) + ' class="number-inp range-from"/><span class="separator">-</span><input' + c.attr("id", "" + a + "_to", !0, !1) + c.attr("value", e[0], !0, !1) + ' class="number-inp range-to"/></div>');
-                }.call(this, "cid" in d ? d.cid : "undefined" != typeof cid ? cid : void 0, "value" in d ? d.value : "undefined" != typeof value ? value : void 0), 
-                b.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        16: [ function(a, b) {
-            a("jade/runtime");
-            b.exports = function() {
-                var a = [];
-                return a.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        17: [ function(a, b) {
-            var c = a("jade/runtime");
-            b.exports = function(a) {
-                var b, d = [], e = a || {};
-                return function(a, e, f, g, h, i) {
-                    d.push("<select" + c.attr("id", a, !0, !1) + ' multiple="multiple" class="select-inp">'), 
-                    f ? function() {
-                        var a = f;
-                        if ("number" == typeof a.length) for (var e = 0, g = a.length; g > e; e++) {
-                            var h = a[e];
-                            d.push("<optgroup" + c.attr("label", e, !0, !1) + "></optgroup>"), function() {
-                                var a = h;
-                                if ("number" == typeof a.length) for (var e = 0, f = a.length; f > e; e++) {
-                                    var g = a[e];
-                                    d.push("<option" + c.attr("value", g.value, !0, !1) + c.attr("selected", i && i.indexOf(g.value) >= 0, !0, !1) + ">" + c.escape(null == (b = g.label) ? "" : b) + "</option>");
-                                } else {
-                                    var f = 0;
-                                    for (var e in a) {
-                                        f++;
-                                        var g = a[e];
-                                        d.push("<option" + c.attr("value", g.value, !0, !1) + c.attr("selected", i && i.indexOf(g.value) >= 0, !0, !1) + ">" + c.escape(null == (b = g.label) ? "" : b) + "</option>");
-                                    }
-                                }
-                            }.call(this);
-                        } else {
-                            var g = 0;
-                            for (var e in a) {
-                                g++;
-                                var h = a[e];
-                                d.push("<optgroup" + c.attr("label", e, !0, !1) + "></optgroup>"), function() {
-                                    var a = h;
-                                    if ("number" == typeof a.length) for (var e = 0, f = a.length; f > e; e++) {
-                                        var g = a[e];
-                                        d.push("<option" + c.attr("value", g.value, !0, !1) + c.attr("selected", i && i.indexOf(g.value) >= 0, !0, !1) + ">" + c.escape(null == (b = g.label) ? "" : b) + "</option>");
-                                    } else {
-                                        var f = 0;
-                                        for (var e in a) {
-                                            f++;
-                                            var g = a[e];
-                                            d.push("<option" + c.attr("value", g.value, !0, !1) + c.attr("selected", i && i.indexOf(g.value) >= 0, !0, !1) + ">" + c.escape(null == (b = g.label) ? "" : b) + "</option>");
-                                        }
-                                    }
-                                }.call(this);
-                            }
-                        }
-                    }.call(this) : function() {
-                        var a = g;
-                        if ("number" == typeof a.length) for (var e = 0, f = a.length; f > e; e++) {
-                            var h = a[e];
-                            d.push("<option" + c.attr("value", h.value, !0, !1) + c.attr("selected", i && i.indexOf(h.value) >= 0, !0, !1) + ">" + c.escape(null == (b = h.label) ? "" : b) + "</option>");
-                        } else {
-                            var f = 0;
-                            for (var e in a) {
-                                f++;
-                                var h = a[e];
-                                d.push("<option" + c.attr("value", h.value, !0, !1) + c.attr("selected", i && i.indexOf(h.value) >= 0, !0, !1) + ">" + c.escape(null == (b = h.label) ? "" : b) + "</option>");
-                            }
-                        }
-                    }.call(this), d.push("</select>"), e && d.push('<span class="btn btn-xs btn-success select-check fa fa-check"></span>');
-                }.call(this, "cid" in e ? e.cid : "undefined" != typeof cid ? cid : void 0, "multiple" in e ? e.multiple : "undefined" != typeof multiple ? multiple : void 0, "optionGroups" in e ? e.optionGroups : "undefined" != typeof optionGroups ? optionGroups : void 0, "options" in e ? e.options : "undefined" != typeof options ? options : void 0, "undefined" in e ? e.undefined : void 0, "value" in e ? e.value : "undefined" != typeof value ? value : void 0), 
-                d.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        18: [ function(a, b) {
-            var c = a("jade/runtime");
-            b.exports = function(a) {
-                var b = [], d = a || {};
-                return function(a) {
-                    b.push("<input" + c.attr("id", a, !0, !1) + ' class="selector-inp"/><ul' + c.attr("id", "" + a + "typelist", !0, !1) + ' class="typelist"></ul>');
-                }.call(this, "cid" in d ? d.cid : "undefined" != typeof cid ? cid : void 0), b.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        19: [ function(a, b) {
-            var c = a("jade/runtime");
-            b.exports = function(a) {
-                var b, d = [], e = a || {};
-                return function(a, e, f, g) {
-                    var h = 0;
-                    e && g && (h = 1, d.push('<li><a data-id="_custom" data-idx="-1"' + c.cls([ {
-                        active: 0 === a
-                    } ], [ !0 ]) + '><i>"' + (null == (b = g) ? "" : b) + '"</i></a></li>')), f.length ? function() {
-                        var e = f;
-                        if ("number" == typeof e.length) for (var g = 0, i = e.length; i > g; g++) {
-                            var j = e[g];
-                            d.push("<li" + c.cls([ j.cssclass ], [ !0 ]) + "><a" + c.attr("data-id", j.id, !0, !1) + c.attr("data-idx", g, !0, !1) + c.cls([ {
-                                active: g + h === a
-                            } ], [ !0 ]) + ">" + (null == (b = j.label) ? "" : b) + "</a></li>");
-                        } else {
-                            var i = 0;
-                            for (var g in e) {
-                                i++;
-                                var j = e[g];
-                                d.push("<li" + c.cls([ j.cssclass ], [ !0 ]) + "><a" + c.attr("data-id", j.id, !0, !1) + c.attr("data-idx", g, !0, !1) + c.cls([ {
-                                    active: g + h === a
-                                } ], [ !0 ]) + ">" + (null == (b = j.label) ? "" : b) + "</a></li>");
-                            }
-                        }
-                    }.call(this) : e || d.push('<li><a class="emptyres">no result for "' + c.escape(null == (b = g) ? "" : b) + '"</a></li>');
-                }.call(this, "activeIdx" in e ? e.activeIdx : "undefined" != typeof activeIdx ? activeIdx : void 0, "custom" in e ? e.custom : "undefined" != typeof custom ? custom : void 0, "list" in e ? e.list : "undefined" != typeof list ? list : void 0, "query" in e ? e.query : "undefined" != typeof query ? query : void 0, "undefined" in e ? e.undefined : void 0), 
-                d.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        20: [ function(a, b) {
-            var c = a("jade/runtime");
-            b.exports = function(a) {
-                var b = [], d = a || {};
-                return function(a, d) {
-                    b.push("<input" + c.attr("id", a, !0, !1) + c.attr("value", d, !0, !1) + ' class="string-inp"/>');
-                }.call(this, "cid" in d ? d.cid : "undefined" != typeof cid ? cid : void 0, "value" in d ? d.value : "undefined" != typeof value ? value : void 0), 
-                b.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        21: [ function(a, b) {
-            var c = a("jade/runtime");
-            b.exports = function(a) {
-                var b, d = [], e = a || {};
-                return function(a, e) {
-                    d.push('<div class="rm-facet-btn fa fa-remove"></div><span class="sublabel">' + c.escape(null == (b = a) ? "" : b) + ':</span><ul class="subresults">'), 
-                    e && e.length && function() {
-                        var a = e;
-                        if ("number" == typeof a.length) for (var f = 0, g = a.length; g > f; f++) {
-                            var h = a[f];
-                            d.push("<li>" + c.escape(null == (b = h) ? "" : b) + "</li>");
-                        } else {
-                            var g = 0;
-                            for (var f in a) {
-                                g++;
-                                var h = a[f];
-                                d.push("<li>" + c.escape(null == (b = h) ? "" : b) + "</li>");
-                            }
-                        }
-                    }.call(this), d.push('</ul><div class="subselect"></div>');
-                }.call(this, "label" in e ? e.label : "undefined" != typeof label ? label : void 0, "selected" in e ? e.selected : "undefined" != typeof selected ? selected : void 0, "undefined" in e ? e.undefined : void 0), 
-                d.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        22: [ function(a, b) {
-            a("jade/runtime");
-            b.exports = function() {
-                var a = [];
-                return a.push('<div class="add-facet-btn fa fa-plus"></div>'), a.join("");
-            };
-        }, {
-            "jade/runtime": 36
-        } ],
-        23: [ function(a, b) {
-            b.exports = {
-                LEFT: 37,
-                RIGHT: 39,
-                UP: 38,
-                DOWN: 40,
-                ESC: [ 229, 27 ],
-                ENTER: 13,
-                TAB: 9
-            };
+                return f(b, a), b.prototype.idAttribute = "name", b.prototype.defaults = {
+                    type: "string",
+                    name: null,
+                    value: null
+                }, b;
+            }(Backbone.Model), e = function(a) {
+                function b() {
+                    return this.parse = h(this.parse, this), this.initialize = h(this.initialize, this), 
+                    b.__super__.constructor.apply(this, arguments);
+                }
+                return f(b, a), b.prototype.model = d, b.prototype.initialize = function(a, b) {
+                    var c;
+                    (null != (c = b.modifyKey) ? c.length : void 0) && (this.modifyKey = b.modifyKey);
+                }, b.prototype.parse = function(a, b) {
+                    var c, d, e;
+                    return c = b._facet.get("modifyKey") || this.modifyKey || "value", d = null != (e = b._facet) ? e.get("modify") : void 0, 
+                    null != d && _.isFunction(d) && (a[c] = d(a.value, b._facet, a)), a;
+                }, b;
+            }(Backbone.Collection), b.exports = e;
         }, {} ],
-        24: [ function(a, b) {
-            var c, d, e, f = function(a, b) {
+        12: [ function(a, b, c) {
+            var d, e, f = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
@@ -755,24 +500,279 @@
                 for (var d in b) h.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, h = {}.hasOwnProperty, i = [].indexOf || function(a) {
+            }, h = {}.hasOwnProperty;
+            d = function(a) {
+                function b() {
+                    return this.getLabel = f(this.getLabel, this), b.__super__.constructor.apply(this, arguments);
+                }
+                return g(b, a), b.prototype.idAttribute = "value", b.prototype.getLabel = function() {
+                    return this.get("label") || this.get(this.idAttribute) || "-";
+                }, b;
+            }(Backbone.Model), e = function(a) {
+                function b() {
+                    return b.__super__.constructor.apply(this, arguments);
+                }
+                return g(b, a), b.prototype.model = d, b;
+            }(a("./backbone_sub")), b.exports = e;
+        }, {
+            "./backbone_sub": 2
+        } ],
+        13: [ function(a, b, c) {
+            var d = a("jade/runtime");
+            b.exports = function(a) {
+                var b = [], c = a || {};
+                return function(a) {
+                    b.push("<input" + d.attr("id", a, !0, !1) + ' class="daterange-inp"/>');
+                }.call(this, "cid" in c ? c.cid : "undefined" != typeof cid ? cid : void 0), b.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        14: [ function(a, b, c) {
+            var d = a("jade/runtime");
+            b.exports = function(a) {
+                var b, c = [], e = a || {};
+                return function(a, e, f, g, h) {
+                    f && f.length && (c.push('<div class="operator"><select' + d.attr("id", "" + a + "op", !0, !1) + ">"), 
+                    function() {
+                        var a = f;
+                        if ("number" == typeof a.length) for (var g = 0, h = a.length; h > g; g++) {
+                            var i = a[g];
+                            c.push("<option" + d.attr("value", i, !0, !1) + d.attr("selected", e == i, !0, !1) + ">" + d.escape(null == (b = i) ? "" : b) + "</option>");
+                        } else {
+                            var h = 0;
+                            for (var g in a) {
+                                h++;
+                                var i = a[g];
+                                c.push("<option" + d.attr("value", i, !0, !1) + d.attr("selected", e == i, !0, !1) + ">" + d.escape(null == (b = i) ? "" : b) + "</option>");
+                            }
+                        }
+                    }.call(this), c.push("</select></div>")), c.push("<input" + d.attr("id", a, !0, !1) + d.attr("value", h, !0, !1) + ' class="number-inp"/>');
+                }.call(this, "cid" in e ? e.cid : "undefined" != typeof cid ? cid : void 0, "operator" in e ? e.operator : "undefined" != typeof operator ? operator : void 0, "operators" in e ? e.operators : "undefined" != typeof operators ? operators : void 0, "undefined" in e ? e.undefined : void 0, "value" in e ? e.value : "undefined" != typeof value ? value : void 0), 
+                c.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        15: [ function(a, b, c) {
+            var d = a("jade/runtime");
+            b.exports = function(a) {
+                var b = [], c = a || {};
+                return function(a, c) {
+                    b.push('<div class="rangeinp">');
+                    var e = c ? c : [];
+                    b.push("<input" + d.attr("id", "" + a + "_from", !0, !1) + d.attr("value", e[0], !0, !1) + ' class="number-inp range-from"/><span class="separator">-</span><input' + d.attr("id", "" + a + "_to", !0, !1) + d.attr("value", e[0], !0, !1) + ' class="number-inp range-to"/></div>');
+                }.call(this, "cid" in c ? c.cid : "undefined" != typeof cid ? cid : void 0, "value" in c ? c.value : "undefined" != typeof value ? value : void 0), 
+                b.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        16: [ function(a, b, c) {
+            a("jade/runtime");
+            b.exports = function(a) {
+                var b = [];
+                return b.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        17: [ function(a, b, c) {
+            var d = a("jade/runtime");
+            b.exports = function(a) {
+                var b, c = [], e = a || {};
+                return function(a, e, f, g, h, i) {
+                    c.push("<select" + d.attr("id", a, !0, !1) + ' multiple="multiple" class="select-inp">'), 
+                    f ? function() {
+                        var a = f;
+                        if ("number" == typeof a.length) for (var e = 0, g = a.length; g > e; e++) {
+                            var h = a[e];
+                            c.push("<optgroup" + d.attr("label", e, !0, !1) + "></optgroup>"), function() {
+                                var a = h;
+                                if ("number" == typeof a.length) for (var e = 0, f = a.length; f > e; e++) {
+                                    var g = a[e];
+                                    c.push("<option" + d.attr("value", g.value, !0, !1) + d.attr("selected", i && i.indexOf(g.value) >= 0, !0, !1) + ">" + d.escape(null == (b = g.label) ? "" : b) + "</option>");
+                                } else {
+                                    var f = 0;
+                                    for (var e in a) {
+                                        f++;
+                                        var g = a[e];
+                                        c.push("<option" + d.attr("value", g.value, !0, !1) + d.attr("selected", i && i.indexOf(g.value) >= 0, !0, !1) + ">" + d.escape(null == (b = g.label) ? "" : b) + "</option>");
+                                    }
+                                }
+                            }.call(this);
+                        } else {
+                            var g = 0;
+                            for (var e in a) {
+                                g++;
+                                var h = a[e];
+                                c.push("<optgroup" + d.attr("label", e, !0, !1) + "></optgroup>"), function() {
+                                    var a = h;
+                                    if ("number" == typeof a.length) for (var e = 0, f = a.length; f > e; e++) {
+                                        var g = a[e];
+                                        c.push("<option" + d.attr("value", g.value, !0, !1) + d.attr("selected", i && i.indexOf(g.value) >= 0, !0, !1) + ">" + d.escape(null == (b = g.label) ? "" : b) + "</option>");
+                                    } else {
+                                        var f = 0;
+                                        for (var e in a) {
+                                            f++;
+                                            var g = a[e];
+                                            c.push("<option" + d.attr("value", g.value, !0, !1) + d.attr("selected", i && i.indexOf(g.value) >= 0, !0, !1) + ">" + d.escape(null == (b = g.label) ? "" : b) + "</option>");
+                                        }
+                                    }
+                                }.call(this);
+                            }
+                        }
+                    }.call(this) : function() {
+                        var a = g;
+                        if ("number" == typeof a.length) for (var e = 0, f = a.length; f > e; e++) {
+                            var h = a[e];
+                            c.push("<option" + d.attr("value", h.value, !0, !1) + d.attr("selected", i && i.indexOf(h.value) >= 0, !0, !1) + ">" + d.escape(null == (b = h.label) ? "" : b) + "</option>");
+                        } else {
+                            var f = 0;
+                            for (var e in a) {
+                                f++;
+                                var h = a[e];
+                                c.push("<option" + d.attr("value", h.value, !0, !1) + d.attr("selected", i && i.indexOf(h.value) >= 0, !0, !1) + ">" + d.escape(null == (b = h.label) ? "" : b) + "</option>");
+                            }
+                        }
+                    }.call(this), c.push("</select>"), e && c.push('<span class="btn btn-xs btn-success select-check fa fa-check"></span>');
+                }.call(this, "cid" in e ? e.cid : "undefined" != typeof cid ? cid : void 0, "multiple" in e ? e.multiple : "undefined" != typeof multiple ? multiple : void 0, "optionGroups" in e ? e.optionGroups : "undefined" != typeof optionGroups ? optionGroups : void 0, "options" in e ? e.options : "undefined" != typeof options ? options : void 0, "undefined" in e ? e.undefined : void 0, "value" in e ? e.value : "undefined" != typeof value ? value : void 0), 
+                c.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        18: [ function(a, b, c) {
+            var d = a("jade/runtime");
+            b.exports = function(a) {
+                var b = [], c = a || {};
+                return function(a) {
+                    b.push("<input" + d.attr("id", a, !0, !1) + ' class="selector-inp"/><ul' + d.attr("id", "" + a + "typelist", !0, !1) + ' class="typelist"></ul>');
+                }.call(this, "cid" in c ? c.cid : "undefined" != typeof cid ? cid : void 0), b.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        19: [ function(a, b, c) {
+            var d = a("jade/runtime");
+            b.exports = function(a) {
+                var b, c = [], e = a || {};
+                return function(a, e, f, g, h) {
+                    var i = 0;
+                    e && g && (i = 1, c.push('<li><a data-id="_custom" data-idx="-1"' + d.cls([ {
+                        active: 0 === a
+                    } ], [ !0 ]) + '><i>"' + (null == (b = g) ? "" : b) + '"</i></a></li>')), f.length ? function() {
+                        var e = f;
+                        if ("number" == typeof e.length) for (var g = 0, h = e.length; h > g; g++) {
+                            var j = e[g];
+                            c.push("<li" + d.cls([ j.cssclass ], [ !0 ]) + "><a" + d.attr("data-id", j.id, !0, !1) + d.attr("data-idx", g, !0, !1) + d.cls([ {
+                                active: g + i === a
+                            } ], [ !0 ]) + ">" + (null == (b = j.label) ? "" : b) + "</a></li>");
+                        } else {
+                            var h = 0;
+                            for (var g in e) {
+                                h++;
+                                var j = e[g];
+                                c.push("<li" + d.cls([ j.cssclass ], [ !0 ]) + "><a" + d.attr("data-id", j.id, !0, !1) + d.attr("data-idx", g, !0, !1) + d.cls([ {
+                                    active: g + i === a
+                                } ], [ !0 ]) + ">" + (null == (b = j.label) ? "" : b) + "</a></li>");
+                            }
+                        }
+                    }.call(this) : e || c.push('<li><a class="emptyres">no result for "' + d.escape(null == (b = g) ? "" : b) + '"</a></li>');
+                }.call(this, "activeIdx" in e ? e.activeIdx : "undefined" != typeof activeIdx ? activeIdx : void 0, "custom" in e ? e.custom : "undefined" != typeof custom ? custom : void 0, "list" in e ? e.list : "undefined" != typeof list ? list : void 0, "query" in e ? e.query : "undefined" != typeof query ? query : void 0, "undefined" in e ? e.undefined : void 0), 
+                c.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        20: [ function(a, b, c) {
+            var d = a("jade/runtime");
+            b.exports = function(a) {
+                var b = [], c = a || {};
+                return function(a, c) {
+                    b.push("<input" + d.attr("id", a, !0, !1) + d.attr("value", c, !0, !1) + ' class="string-inp"/>');
+                }.call(this, "cid" in c ? c.cid : "undefined" != typeof cid ? cid : void 0, "value" in c ? c.value : "undefined" != typeof value ? value : void 0), 
+                b.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        21: [ function(a, b, c) {
+            var d = a("jade/runtime");
+            b.exports = function(a) {
+                var b, c = [], e = a || {};
+                return function(a, e, f) {
+                    c.push('<div class="rm-facet-btn fa fa-remove"></div><span class="sublabel">' + d.escape(null == (b = a) ? "" : b) + ':</span><ul class="subresults">'), 
+                    e && e.length && function() {
+                        var a = e;
+                        if ("number" == typeof a.length) for (var f = 0, g = a.length; g > f; f++) {
+                            var h = a[f];
+                            c.push("<li>" + d.escape(null == (b = h) ? "" : b) + "</li>");
+                        } else {
+                            var g = 0;
+                            for (var f in a) {
+                                g++;
+                                var h = a[f];
+                                c.push("<li>" + d.escape(null == (b = h) ? "" : b) + "</li>");
+                            }
+                        }
+                    }.call(this), c.push('</ul><div class="subselect"></div>');
+                }.call(this, "label" in e ? e.label : "undefined" != typeof label ? label : void 0, "selected" in e ? e.selected : "undefined" != typeof selected ? selected : void 0, "undefined" in e ? e.undefined : void 0), 
+                c.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        22: [ function(a, b, c) {
+            a("jade/runtime");
+            b.exports = function(a) {
+                var b = [];
+                return b.push('<div class="add-facet-btn fa fa-plus"></div>'), b.join("");
+            };
+        }, {
+            "jade/runtime": 36
+        } ],
+        23: [ function(a, b, c) {
+            b.exports = {
+                LEFT: 37,
+                RIGHT: 39,
+                UP: 38,
+                DOWN: 40,
+                ESC: [ 229, 27 ],
+                ENTER: 13,
+                TAB: 9
+            };
+        }, {} ],
+        24: [ function(a, b, c) {
+            var d, e, f, g = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            }, h = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) i.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, i = {}.hasOwnProperty, j = [].indexOf || function(a) {
                 for (var b = 0, c = this.length; c > b; b++) if (b in this && this[b] === a) return b;
                 return -1;
             };
-            d = a("../../utils/keycodes"), e = a("../../models/subresults"), c = function(b) {
+            e = a("../../utils/keycodes"), f = a("../../models/subresults"), d = function(b) {
                 function c() {
-                    return this.set = f(this.set, this), this.select = f(this.select, this), this._checkSelectEmpty = f(this._checkSelectEmpty, this), 
-                    this.getValue = f(this.getValue, this), this.getResults = f(this.getResults, this), 
-                    this.close = f(this.close, this), this._onTabAction = f(this._onTabAction, this), 
-                    this.render = f(this.render, this), this._getInpSelector = f(this._getInpSelector, this), 
-                    this.getTemplateData = f(this.getTemplateData, this), this._onKey = f(this._onKey, this), 
-                    this.input = f(this.input, this), this.open = f(this.open, this), this.renderResult = f(this.renderResult, this), 
-                    this.focus = f(this.focus, this), this.events = f(this.events, this), this.initialize = f(this.initialize, this), 
+                    return this.set = g(this.set, this), this.select = g(this.select, this), this._checkSelectEmpty = g(this._checkSelectEmpty, this), 
+                    this.getValue = g(this.getValue, this), this.getResults = g(this.getResults, this), 
+                    this.close = g(this.close, this), this._onTabAction = g(this._onTabAction, this), 
+                    this.render = g(this.render, this), this._getInpSelector = g(this._getInpSelector, this), 
+                    this.getTemplateData = g(this.getTemplateData, this), this._onKey = g(this._onKey, this), 
+                    this.input = g(this.input, this), this.open = g(this.open, this), this.renderResult = g(this.renderResult, this), 
+                    this.focus = g(this.focus, this), this.events = g(this.events, this), this.initialize = g(this.initialize, this), 
                     c.__super__.constructor.apply(this, arguments);
                 }
-                return g(c, b), c.prototype.resultTemplate = a("../../tmpls/result_base.jade"), 
+                return h(c, b), c.prototype.resultTemplate = a("../../tmpls/result_base.jade"), 
                 c.prototype.initialize = function() {
-                    this.result = new e();
+                    this.result = new f();
                 }, c.prototype.events = function() {
                     var a;
                     return a = {}, a["keyup " + this._getInpSelector()] = "input", a["keydown " + this._getInpSelector()] = "input", 
@@ -788,12 +788,12 @@
                     this.$el.addClass("open"), this.isOpen = !0, this.trigger("opened");
                 }, c.prototype.input = function(a) {
                     if ("keydown" === a.type) switch (a.keyCode) {
-                      case d.ENTER:
+                      case e.ENTER:
                         this.select();
                     }
                 }, c.prototype._onKey = function(a) {
                     var b;
-                    return a.keyCode === d.TAB || (b = a.keyCode, i.call(d.TAB, b) >= 0) ? void this._onTabAction(a) : void 0;
+                    return a.keyCode === e.TAB || (b = a.keyCode, j.call(e.TAB, b) >= 0) ? void this._onTabAction(a) : void 0;
                 }, c.prototype.getTemplateData = function() {
                     var a;
                     return {
@@ -812,7 +812,7 @@
                     return !0;
                 }, c.prototype._onTabAction = function(a) {
                     a.preventDefault(), a.stopPropagation(), this.select();
-                }, c.prototype.close = function() {
+                }, c.prototype.close = function(a) {
                     this._hasTabListener(!1) && $(document).off(this._hasTabEvent(), this._onKey), this.$el.removeClass("open"), 
                     this.$el.addClass("closed"), this.isOpen = !1, this.trigger("closed", this.result);
                 }, c.prototype.getResults = function() {
@@ -822,7 +822,7 @@
                 }, c.prototype.getValue = function() {
                     return this.$inp.val();
                 }, c.prototype.getSelectModel = function() {
-                    return e.prototype.model;
+                    return f.prototype.model;
                 }, c.prototype._checkSelectEmpty = function(a) {
                     return !_.isEmpty(a) || _.isNumber(a) || _.isBoolean(a) ? !1 : (this.close(), !0);
                 }, c.prototype.select = function() {
@@ -834,34 +834,34 @@
                         value: a
                     }), this.result.add(c), this.trigger("selected", c), this.close();
                 }, c;
-            }(Backbone.View), b.exports = c;
+            }(Backbone.View), b.exports = d;
         }, {
             "../../models/subresults": 12,
             "../../tmpls/result_base.jade": 16,
             "../../utils/keycodes": 23
         } ],
-        25: [ function(a, b) {
-            var c, d, e = function(a, b) {
+        25: [ function(a, b, c) {
+            var d, e, f = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, f = function(a, b) {
+            }, g = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                for (var d in b) h.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, g = {}.hasOwnProperty;
-            d = a("../../utils/keycodes"), c = function(b) {
+            }, h = {}.hasOwnProperty;
+            e = a("../../utils/keycodes"), d = function(b) {
                 function c() {
-                    return this.select = e(this.select, this), this.getValue = e(this.getValue, this), 
-                    this.getTemplateData = e(this.getTemplateData, this), this._dateReturn = e(this._dateReturn, this), 
-                    this.renderResult = e(this.renderResult, this), this.remove = e(this.remove, this), 
-                    this.focus = e(this.focus, this), this.events = e(this.events, this), this.render = e(this.render, this), 
+                    return this.select = f(this.select, this), this.getValue = f(this.getValue, this), 
+                    this.getTemplateData = f(this.getTemplateData, this), this._dateReturn = f(this._dateReturn, this), 
+                    this.renderResult = f(this.renderResult, this), this.remove = f(this.remove, this), 
+                    this.focus = f(this.focus, this), this.events = f(this.events, this), this.render = f(this.render, this), 
                     c.__super__.constructor.apply(this, arguments);
                 }
-                return f(c, b), c.prototype.template = a("../../tmpls/daterange.jade"), c.prototype.render = function() {
+                return g(c, b), c.prototype.template = a("../../tmpls/daterange.jade"), c.prototype.render = function() {
                     c.__super__.render.apply(this, arguments);
                 }, c.prototype.forcedDateRangeOpts = {
                     opens: "right"
@@ -897,52 +897,52 @@
                         value: this.getValue()
                     }), this.result.add(b), this.trigger("selected", b), this.close();
                 }, c;
-            }(a("./base")), b.exports = c;
+            }(a("./base")), b.exports = d;
         }, {
             "../../tmpls/daterange.jade": 13,
             "../../utils/keycodes": 23,
             "./base": 24
         } ],
-        26: [ function(a, b) {
-            var c, d, e, f, g = function(a, b) {
+        26: [ function(a, b, c) {
+            var d, e, f, g, h = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, h = function(a, b) {
+            }, i = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) i.call(b, d) && (a[d] = b[d]);
+                for (var d in b) j.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, i = {}.hasOwnProperty;
-            d = a("../../utils/keycodes"), e = function(a, b) {
+            }, j = {}.hasOwnProperty;
+            e = a("../../utils/keycodes"), f = function(a, b) {
                 return a /= b, a = Math.round(a) * b;
-            }, f = function(a, b) {
+            }, g = function(a, b) {
                 return b = Math.pow(10, b), a *= b, a = Math.round(a), a /= b;
-            }, c = function(a) {
+            }, d = function(a) {
                 function b() {
-                    this._setNumber = g(this._setNumber, this), this.getValue = g(this.getValue, this), 
-                    this.crement = g(this.crement, this), this.input = g(this.input, this), this.events = g(this.events, this), 
+                    this._setNumber = h(this._setNumber, this), this.getValue = h(this.getValue, this), 
+                    this.crement = h(this.crement, this), this.input = h(this.input, this), this.events = h(this.events, this), 
                     this.setNumber = _.throttle(this._setNumber, 300, {
                         leading: !1,
                         trailing: !1
                     }), b.__super__.constructor.apply(this, arguments);
                 }
-                return h(b, a), b.prototype.events = function() {
+                return i(b, a), b.prototype.events = function() {
                     var a, b;
                     return b = {}, b["keyup " + this._getInpSelector()] = "input", b["keydown " + this._getInpSelector()] = "input", 
                     a = b, a;
                 }, b.prototype.input = function(a) {
                     var b, c;
                     if (b = $(a.currentTarget), "keydown" === a.type) switch (a.keyCode) {
-                      case d.UP:
+                      case e.UP:
                         return void this.crement(this.model.get("step"), b);
 
-                      case d.DOWN:
+                      case e.DOWN:
                         return void this.crement(-1 * this.model.get("step"), b);
 
-                      case d.ENTER:
+                      case e.ENTER:
                         return void this.select();
                     }
                     "keyup" === a.type && (c = a.currentTarget.value.replace(/[^\d]?[^-\d]+/g, ""), 
@@ -959,71 +959,71 @@
                     null == b && (b = this.$inp), isNaN(a) || (c = b.val(), a = this.valueByDefinition(a), 
                     c !== a.toString() && b.val(a));
                 }, b.prototype.valueByDefinition = function(a) {
-                    var b, c, d, g, h;
-                    return d = this.model.get("max"), g = this.model.get("min"), h = this.model.get("step"), 
-                    g > d && (c = g, g = d, d = c), null != g && g > a ? g : null != d && a > d ? d : (1 !== h && (a = e(a, h)), 
-                    b = Math.max(0, Math.ceil(Math.log(1 / h) / Math.log(10))), a = b > 0 ? f(a, b) : Math.round(a));
+                    var b, c, d, e, h;
+                    return d = this.model.get("max"), e = this.model.get("min"), h = this.model.get("step"), 
+                    e > d && (c = e, e = d, d = c), null != e && e > a ? e : null != d && a > d ? d : (1 !== h && (a = f(a, h)), 
+                    b = Math.max(0, Math.ceil(Math.log(1 / h) / Math.log(10))), a = b > 0 ? g(a, b) : Math.round(a));
                 }, b;
-            }(a("./base")), b.exports = c;
+            }(a("./base")), b.exports = d;
         }, {
             "../../utils/keycodes": 23,
             "./base": 24
         } ],
-        27: [ function(a, b) {
-            var c, d, e, f, g, h, i, j = function(a, b) {
+        27: [ function(a, b, c) {
+            var d, e, f, g, h, i, j, k = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, k = function(a, b) {
+            }, l = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) l.call(b, d) && (a[d] = b[d]);
+                for (var d in b) m.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, l = {}.hasOwnProperty;
-            i = a("../../models/subresults"), f = a("../../utils/keycodes"), g = function(a) {
+            }, m = {}.hasOwnProperty;
+            j = a("../../models/subresults"), g = a("../../utils/keycodes"), h = function(a) {
                 function b() {
-                    return this.match = j(this.match, this), b.__super__.constructor.apply(this, arguments);
+                    return this.match = k(this.match, this), b.__super__.constructor.apply(this, arguments);
                 }
-                return k(b, a), b.prototype.match = function(a) {
+                return l(b, a), b.prototype.match = function(a) {
                     var b, c;
                     return b = this.get("value") + " " + this.get("label"), c = b.toLowerCase().indexOf(a.toLowerCase()), 
                     c >= 0;
                 }, b;
-            }(i.prototype.model), h = function(a) {
+            }(j.prototype.model), i = function(a) {
                 function b() {
                     return b.__super__.constructor.apply(this, arguments);
                 }
-                return k(b, a), b.prototype.model = g, b;
-            }(i), c = function(a) {
+                return l(b, a), b.prototype.model = h, b;
+            }(j), d = function(a) {
                 function b() {
-                    return this.match = j(this.match, this), this.getLabel = j(this.getLabel, this), 
+                    return this.match = k(this.match, this), this.getLabel = k(this.getLabel, this), 
                     b.__super__.constructor.apply(this, arguments);
                 }
-                return k(b, a), b.prototype.idAttribute = "value", b.prototype.getLabel = function() {
+                return l(b, a), b.prototype.idAttribute = "value", b.prototype.getLabel = function() {
                     return this.get("label") || this.get("name") || "-";
                 }, b.prototype.match = function(a) {
                     var b, c;
                     return b = this.get("value") + " " + this.get("label"), c = b.toLowerCase().indexOf(a.toLowerCase()), 
                     c >= 0;
                 }, b;
-            }(Backbone.Model), d = function(a) {
+            }(Backbone.Model), e = function(a) {
                 function b() {
                     return b.__super__.constructor.apply(this, arguments);
                 }
-                return k(b, a), b.prototype.model = c, b;
-            }(a("../../models/backbone_sub")), e = function(a) {
+                return l(b, a), b.prototype.model = d, b;
+            }(a("../../models/backbone_sub")), f = function(a) {
                 function b(a) {
-                    this._createOptionCollection = j(this._createOptionCollection, this), this._onTabAction = j(this._onTabAction, this), 
-                    this.getResults = j(this.getResults, this), this.select = j(this.select, this), 
+                    this._createOptionCollection = k(this._createOptionCollection, this), this._onTabAction = k(this._onTabAction, this), 
+                    this.getResults = k(this.getResults, this), this.select = k(this.select, this), 
                     a.custom = !0, this.collection = this._createOptionCollection(a.model.get("options")), 
                     b.__super__.constructor.call(this, a);
                 }
-                return k(b, a), b.prototype.optDefault = {
+                return l(b, a), b.prototype.optDefault = {
                     label: "-",
                     value: "-"
-                }, b.prototype.multiSelect = !0, b.prototype.optColl = h, b.prototype.select = function() {
+                }, b.prototype.multiSelect = !0, b.prototype.optColl = i, b.prototype.select = function() {
                     var a, b, c, d, e;
                     for (c = this.model.get("value"), null == c || _.isArray(c) || (c = [ c ]), d = 0, 
                     e = c.length; e > d; d++) b = c[d], a = this.collection.get(b), null == a && (a = new this.collection.model({
@@ -1047,35 +1047,35 @@
                     }) : _.isObject(e) && b.push(_.extend({}, this.optDefault, e));
                     return new this.optColl(b);
                 }, b;
-            }(a("../selector")), b.exports = e;
+            }(a("../selector")), b.exports = f;
         }, {
             "../../models/backbone_sub": 2,
             "../../models/subresults": 12,
             "../../utils/keycodes": 23,
             "../selector": 33
         } ],
-        28: [ function(a, b) {
-            var c, d = function(a, b) {
+        28: [ function(a, b, c) {
+            var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, e = function(a, b) {
+            }, f = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
                 function c() {
-                    return this.getResults = d(this.getResults, this), this._onTabAction = d(this._onTabAction, this), 
-                    this.getTemplateData = d(this.getTemplateData, this), this.focus = d(this.focus, this), 
-                    this._opSelected = d(this._opSelected, this), this.close = d(this.close, this), 
-                    this.renderResult = d(this.renderResult, this), this.render = d(this.render, this), 
-                    this.events = d(this.events, this), c.__super__.constructor.apply(this, arguments);
+                    return this.getResults = e(this.getResults, this), this._onTabAction = e(this._onTabAction, this), 
+                    this.getTemplateData = e(this.getTemplateData, this), this.focus = e(this.focus, this), 
+                    this._opSelected = e(this._opSelected, this), this.close = e(this.close, this), 
+                    this.renderResult = e(this.renderResult, this), this.render = e(this.render, this), 
+                    this.events = e(this.events, this), c.__super__.constructor.apply(this, arguments);
                 }
-                return e(c, b), c.prototype.template = a("../../tmpls/number.jade"), c.prototype.events = function() {
+                return f(c, b), c.prototype.template = a("../../tmpls/number.jade"), c.prototype.events = function() {
                     var a, b;
                     return a = c.__super__.events.apply(this, arguments), (null != (b = this.model.get("operators")) ? b.length : void 0) || (a["blur " + this._getInpSelector()] = "select"), 
                     a;
@@ -1089,7 +1089,7 @@
                     var a, b;
                     return a = this.getResults(), b = "<li>", null != a.operator && (b += a.operator + " "), 
                     b += a.value, b += "</li>";
-                }, c.prototype.close = function() {
+                }, c.prototype.close = function(a) {
                     null != this.$inpOp && (this.$inpOp.select2("destroy"), this.$inpOp.remove(), this.$inpOp = null), 
                     c.__super__.close.apply(this, arguments);
                 }, c.prototype._opSelected = function() {
@@ -1113,33 +1113,33 @@
                         value: this.getValue()
                     };
                 }, c;
-            }(a("./number_base")), b.exports = c;
+            }(a("./number_base")), b.exports = d;
         }, {
             "../../tmpls/number.jade": 14,
             "./number_base": 26
         } ],
-        29: [ function(a, b) {
-            var c, d = function(a, b) {
+        29: [ function(a, b, c) {
+            var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, e = function(a, b) {
+            }, f = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
                 function c() {
-                    return this._onTabAction = d(this._onTabAction, this), this.getValue = d(this.getValue, this), 
-                    this.getResults = d(this.getResults, this), this.close = d(this.close, this), this.focus = d(this.focus, this), 
-                    this.render = d(this.render, this), this.renderResult = d(this.renderResult, this), 
-                    this.events = d(this.events, this), this._getInpSelector = d(this._getInpSelector, this), 
+                    return this._onTabAction = e(this._onTabAction, this), this.getValue = e(this.getValue, this), 
+                    this.getResults = e(this.getResults, this), this.close = e(this.close, this), this.focus = e(this.focus, this), 
+                    this.render = e(this.render, this), this.renderResult = e(this.renderResult, this), 
+                    this.events = e(this.events, this), this._getInpSelector = e(this._getInpSelector, this), 
                     c.__super__.constructor.apply(this, arguments);
                 }
-                return e(c, b), c.prototype.template = a("../../tmpls/range.jade"), c.prototype._getInpSelector = function(a) {
+                return f(c, b), c.prototype.template = a("../../tmpls/range.jade"), c.prototype._getInpSelector = function(a) {
                     return null == a && (a = "_from"), "input#" + this.cid + a;
                 }, c.prototype.events = function() {
                     var a;
@@ -1169,38 +1169,38 @@
                     b = this.getValue(), (null != b ? b.length : void 0) >= 2 && (a.preventDefault(), 
                     a.stopPropagation(), this.select());
                 }, c;
-            }(a("./number_base")), b.exports = c;
+            }(a("./number_base")), b.exports = d;
         }, {
             "../../tmpls/range.jade": 15,
             "./number_base": 26
         } ],
-        30: [ function(a, b) {
-            var c, d, e = function(a, b) {
+        30: [ function(a, b, c) {
+            var d, e, f = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, f = function(a, b) {
+            }, g = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                for (var d in b) h.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, g = {}.hasOwnProperty, h = [].indexOf || function(a) {
+            }, h = {}.hasOwnProperty, i = [].indexOf || function(a) {
                 for (var b = 0, c = this.length; c > b; b++) if (b in this && this[b] === a) return b;
                 return -1;
             };
-            d = a("../../utils/keycodes"), c = function(b) {
+            e = a("../../utils/keycodes"), d = function(b) {
                 function c() {
-                    return this.select = e(this.select, this), this.close = e(this.close, this), this.unselect = e(this.unselect, this), 
-                    this._createOptionCollection = e(this._createOptionCollection, this), this.getResults = e(this.getResults, this), 
-                    this.getValue = e(this.getValue, this), this._hasTabListener = e(this._hasTabListener, this), 
-                    this.getTemplateData = e(this.getTemplateData, this), this.remove = e(this.remove, this), 
-                    this._initSelect2 = e(this._initSelect2, this), this.focus = e(this.focus, this), 
-                    this.render = e(this.render, this), this._getInpSelector = e(this._getInpSelector, this), 
-                    this.events = e(this.events, this), c.__super__.constructor.apply(this, arguments);
+                    return this.select = f(this.select, this), this.close = f(this.close, this), this.unselect = f(this.unselect, this), 
+                    this._createOptionCollection = f(this._createOptionCollection, this), this.getResults = f(this.getResults, this), 
+                    this.getValue = f(this.getValue, this), this._hasTabListener = f(this._hasTabListener, this), 
+                    this.getTemplateData = f(this.getTemplateData, this), this.remove = f(this.remove, this), 
+                    this._initSelect2 = f(this._initSelect2, this), this.focus = f(this.focus, this), 
+                    this.render = f(this.render, this), this._getInpSelector = f(this._getInpSelector, this), 
+                    this.events = f(this.events, this), c.__super__.constructor.apply(this, arguments);
                 }
-                return f(c, b), c.prototype.template = a("../../tmpls/select.jade"), c.prototype.forcedModuleOpts = {}, 
+                return g(c, b), c.prototype.template = a("../../tmpls/select.jade"), c.prototype.forcedModuleOpts = {}, 
                 c.prototype.defaultModuleOpts = {
                     width: "auto",
                     multiple: !1
@@ -1231,7 +1231,7 @@
                         multiple: this.model.get("multiple"),
                         options: this._createOptionCollection(this.model.get("options"))
                     }), null == a.value || _.isArray(a.value) || (a.value = [ a.value ]), null != a.value) for (g = a.value, 
-                    e = 0, f = g.length; f > e; e++) d = g[e], h.call(_.pluck(a.options, "value"), d) < 0 && a.options.push({
+                    e = 0, f = g.length; f > e; e++) d = g[e], i.call(_.pluck(a.options, "value"), d) < 0 && a.options.push({
                         value: d,
                         label: d,
                         group: null
@@ -1268,98 +1268,98 @@
                     var a, b;
                     null != (a = this.select2) && a.destroy(), null != (b = this.$inp) && b.remove(), 
                     this.$(".select-check").remove(), c.__super__.close.apply(this, arguments);
-                }, c.prototype.select = function() {
-                    var a, b, c, d, e;
-                    if (c = this.getValue(), !(null != c ? c.length : void 0)) return void this.close();
-                    for (a = this.getSelectModel(), d = 0, e = c.length; e > d; d++) b = c[d], this.result.add(new a(b));
+                }, c.prototype.select = function(a) {
+                    var b, c, d, e, f;
+                    if (d = this.getValue(), !(null != d ? d.length : void 0)) return void this.close();
+                    for (b = this.getSelectModel(), e = 0, f = d.length; f > e; e++) c = d[e], this.result.add(new b(c));
                     this.trigger("selected", this.result), this.close();
                 }, c;
-            }(a("./base")), b.exports = c;
+            }(a("./base")), b.exports = d;
         }, {
             "../../tmpls/select.jade": 17,
             "../../utils/keycodes": 23,
             "./base": 24
         } ],
-        31: [ function(a, b) {
-            var c, d = function(a, b) {
+        31: [ function(a, b, c) {
+            var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, e = function(a, b) {
+            }, f = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
                 function c() {
-                    return this.close = d(this.close, this), this.events = d(this.events, this), c.__super__.constructor.apply(this, arguments);
+                    return this.close = e(this.close, this), this.events = e(this.events, this), c.__super__.constructor.apply(this, arguments);
                 }
-                return e(c, b), c.prototype.template = a("../../tmpls/string.jade"), c.prototype.events = function() {
+                return f(c, b), c.prototype.template = a("../../tmpls/string.jade"), c.prototype.events = function() {
                     var a;
                     return a = {}, a["keyup " + this._getInpSelector()] = "input", a["keydown " + this._getInpSelector()] = "input", 
                     a["blur " + this._getInpSelector()] = "select", a;
-                }, c.prototype.close = function() {
-                    var a;
+                }, c.prototype.close = function(a) {
+                    var b;
                     c.__super__.close.apply(this, arguments);
                     try {
-                        null != (a = this.$inp) && a.remove();
-                    } catch (b) {}
+                        null != (b = this.$inp) && b.remove();
+                    } catch (d) {}
                 }, c;
-            }(a("./base")), b.exports = c;
+            }(a("./base")), b.exports = d;
         }, {
             "../../tmpls/string.jade": 20,
             "./base": 24
         } ],
-        32: [ function(a, b) {
-            var c, d, e, f, g = function(a, b) {
+        32: [ function(a, b, c) {
+            var d, e, f, g, h = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, h = function(a, b) {
+            }, i = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) i.call(b, d) && (a[d] = b[d]);
+                for (var d in b) j.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, i = {}.hasOwnProperty, j = [].indexOf || function(a) {
+            }, j = {}.hasOwnProperty, k = [].indexOf || function(a) {
                 for (var b = 0, c = this.length; c > b; b++) if (b in this && this[b] === a) return b;
                 return -1;
             };
-            f = a("./sub"), e = a("./selector"), c = a("../utils/keycodes"), d = function(b) {
-                function d() {
-                    return this.addFacet = g(this.addFacet, this), this.genSub = g(this.genSub, this), 
-                    this.setFacet = g(this.setFacet, this), this.remFacet = g(this.remFacet, this), 
-                    this.exit = g(this.exit, this), this._onKey = g(this._onKey, this), this._addFacet = g(this._addFacet, this), 
-                    this.render = g(this.render, this), this.initialize = g(this.initialize, this), 
-                    d.__super__.constructor.apply(this, arguments);
+            g = a("./sub"), f = a("./selector"), d = a("../utils/keycodes"), e = function(b) {
+                function c() {
+                    return this.addFacet = h(this.addFacet, this), this.genSub = h(this.genSub, this), 
+                    this.setFacet = h(this.setFacet, this), this.remFacet = h(this.remFacet, this), 
+                    this.exit = h(this.exit, this), this._onKey = h(this._onKey, this), this._addFacet = h(this._addFacet, this), 
+                    this.render = h(this.render, this), this.initialize = h(this.initialize, this), 
+                    c.__super__.constructor.apply(this, arguments);
                 }
-                return h(d, b), d.prototype.template = a("../tmpls/wrapper.jade"), d.prototype.className = "iggy clearfix", 
-                d.prototype.events = {
+                return i(c, b), c.prototype.template = a("../tmpls/wrapper.jade"), c.prototype.events = {
                     "click .add-facet-btn": "_addFacet",
                     click: "_addFacet"
-                }, d.prototype.initialize = function(a) {
-                    var b, c, d, e, f;
-                    for (this.results = a.results, this.collection.on("iggy:rem", this.remFacet), this.el.className += this.className, 
-                    this.render(), $(document).on("keyup", this._onKey), e = this.collection.filter(function(a) {
+                }, c.prototype.initialize = function(a) {
+                    var b, c, d, e, f, g, h;
+                    for (this.results = a.results, this.collection.on("iggy:rem", this.remFacet), b = "iggy clearfix", 
+                    (null != (f = this.el.className) ? f.length : void 0) && (b = " " + b), this.el.className += b, 
+                    this.render(), $(document).on("keyup", this._onKey), g = this.collection.filter(function(a) {
                         return null != (null != a ? a.get("value") : void 0);
-                    }), c = 0, d = e.length; d > c; c++) b = e[c], f = this.genSub(b, !1);
-                }, d.prototype.render = function() {
+                    }), d = 0, e = g.length; e > d; d++) c = g[d], h = this.genSub(c, !1);
+                }, c.prototype.render = function() {
                     this.$el.html(this.template()), this.$addBtn = this.$(".add-facet-btn");
-                }, d.prototype._addFacet = function() {
+                }, c.prototype._addFacet = function(a) {
                     this.addFacet();
-                }, d.prototype._onKey = function(a) {
+                }, c.prototype._onKey = function(a) {
                     var b;
-                    return a.keyCode === c.ESC || (b = a.keyCode, j.call(c.ESC, b) >= 0) ? void this.exit() : void 0;
-                }, d.prototype.exit = function() {
+                    return a.keyCode === d.ESC || (b = a.keyCode, k.call(d.ESC, b) >= 0) ? void this.exit() : void 0;
+                }, c.prototype.exit = function() {
                     this.selectview && (this.selectview.close(), this.selectview = null), this.subview && (this.subview.close(), 
                     this.subview = null, this.addFacet());
-                }, d.prototype.remFacet = function(a) {
+                }, c.prototype.remFacet = function(a) {
                     this.results.remove(a.get("name"));
-                }, d.prototype.setFacet = function(a, b) {
+                }, c.prototype.setFacet = function(a, b) {
                     this.collection.remove(a), this.results.add(_.extend(b, {
                         name: a.get("name"),
                         type: a.get("type")
@@ -1368,9 +1368,9 @@
                         parse: !0,
                         _facet: a
                     });
-                }, d.prototype.genSub = function(a, b) {
+                }, c.prototype.genSub = function(a, b) {
                     var c;
-                    return null == b && (b = !0), c = new f({
+                    return null == b && (b = !0), c = new g({
                         model: a,
                         collection: this.collection
                     }), c.on("closed", function(a) {
@@ -1378,8 +1378,8 @@
                             c.off(), (null != d ? d.length : void 0) || c.remove(), a.subview = null, b && a.addFacet();
                         };
                     }(this)), c.on("selected", this.setFacet), this.$addBtn.before(c.render()), c;
-                }, d.prototype.addFacet = function() {
-                    return null != this.selectview ? void this.selectview.focus() : null != this.subview ? void this.subview.focus() : void (this.collection.length && (this.selectview = new e({
+                }, c.prototype.addFacet = function() {
+                    return null != this.selectview ? void this.selectview.focus() : null != this.subview ? void this.subview.focus() : void (this.collection.length && (this.selectview = new f({
                         collection: this.collection,
                         custom: !1
                     }), this.$addBtn.before(this.selectview.render()), this.selectview.focus(), this.selectview.on("closed", function(a) {
@@ -1392,62 +1392,62 @@
                             b.set("value", null), a.subview = a.genSub(b), a.subview.open();
                         };
                     }(this))));
-                }, d;
-            }(Backbone.View), b.exports = d;
+                }, c;
+            }(Backbone.View), b.exports = e;
         }, {
             "../tmpls/wrapper.jade": 22,
             "../utils/keycodes": 23,
             "./selector": 33,
             "./sub": 34
         } ],
-        33: [ function(a, b) {
-            var c, d, e = function(a, b) {
+        33: [ function(a, b, c) {
+            var d, e, f = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, f = function(a, b) {
+            }, g = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) g.call(b, d) && (a[d] = b[d]);
+                for (var d in b) h.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, g = {}.hasOwnProperty;
-            c = a("../utils/keycodes"), d = function(b) {
-                function d(a) {
-                    this.selectActive = e(this.selectActive, this), this.select = e(this.select, this), 
-                    this.move = e(this.move, this), this.search = e(this.search, this), this.focus = e(this.focus, this), 
-                    this.selected = e(this.selected, this), this._onClick = e(this._onClick, this), 
-                    this.checkOptionsEmpty = e(this.checkOptionsEmpty, this), this.scrollHelper = e(this.scrollHelper, this), 
-                    this._checkScroll = e(this._checkScroll, this), this.renderRes = e(this.renderRes, this), 
-                    this.render = e(this.render, this), this.getTemplateData = e(this.getTemplateData, this), 
-                    this.initialize = e(this.initialize, this), this.events = e(this.events, this), 
-                    this.className = e(this.className, this), this.custom = a.custom || !1, this.activeIdx = 0, 
-                    this.currQuery = "", d.__super__.constructor.apply(this, arguments);
+            }, h = {}.hasOwnProperty;
+            d = a("../utils/keycodes"), e = function(b) {
+                function c(a) {
+                    this.selectActive = f(this.selectActive, this), this.select = f(this.select, this), 
+                    this.move = f(this.move, this), this.search = f(this.search, this), this.focus = f(this.focus, this), 
+                    this.selected = f(this.selected, this), this._onClick = f(this._onClick, this), 
+                    this.checkOptionsEmpty = f(this.checkOptionsEmpty, this), this.scrollHelper = f(this.scrollHelper, this), 
+                    this._checkScroll = f(this._checkScroll, this), this.renderRes = f(this.renderRes, this), 
+                    this.render = f(this.render, this), this.getTemplateData = f(this.getTemplateData, this), 
+                    this.initialize = f(this.initialize, this), this.events = f(this.events, this), 
+                    this.className = f(this.className, this), this.custom = a.custom || !1, this.activeIdx = 0, 
+                    this.currQuery = "", c.__super__.constructor.apply(this, arguments);
                 }
-                return f(d, b), d.prototype.template = a("../tmpls/selector.jade"), d.prototype.templateEl = a("../tmpls/selectorli.jade"), 
-                d.prototype.multiSelect = !1, d.prototype.className = function() {
+                return g(c, b), c.prototype.template = a("../tmpls/selector.jade"), c.prototype.templateEl = a("../tmpls/selectorli.jade"), 
+                c.prototype.multiSelect = !1, c.prototype.className = function() {
                     var a;
                     return a = [ "add-facet" ], this.custom && a.push("custom"), a.join(" ");
-                }, d.prototype.events = function() {
+                }, c.prototype.events = function() {
                     var a;
                     return a = {
                         "mousedown a": "_onClick"
                     }, a["focus input#" + this.cid] = "open", a["keydown input#" + this.cid] = "search", 
                     a["keyup input#" + this.cid] = "search", a;
-                }, d.prototype.initialize = function() {
+                }, c.prototype.initialize = function(a) {
                     this.searchcoll = this.collection.sub(function() {
                         return !0;
                     }), this.result = new this.collection.constructor(), this.listenTo(this.searchcoll, "remove", this.renderRes), 
                     this.listenTo(this.searchcoll, "remove", this.checkOptionsEmpty);
-                }, d.prototype.getTemplateData = function() {
-                    return _.extend(d.__super__.getTemplateData.apply(this, arguments), {
+                }, c.prototype.getTemplateData = function() {
+                    return _.extend(c.__super__.getTemplateData.apply(this, arguments), {
                         custom: this.custom
                     });
-                }, d.prototype.render = function() {
-                    return d.__super__.render.apply(this, arguments), this.$list = this.$el.find("#" + this.cid + "typelist"), 
+                }, c.prototype.render = function() {
+                    return c.__super__.render.apply(this, arguments), this.$list = this.$el.find("#" + this.cid + "typelist"), 
                     this.renderRes(), this.el;
-                }, d.prototype.renderRes = function() {
+                }, c.prototype.renderRes = function() {
                     var a, b, c, d, e, f, g, h, i, j;
                     for (this.$list.empty(), d = [], i = this.searchcoll.models, f = e = 0, g = i.length; g > e; f = ++e) h = i[f], 
                     c = h.getLabel(), b = h.id, a = h.get("cssclass"), (null != (j = this.currQuery) ? j.length : void 0) > 1 && (c = c.replace(new RegExp(this.currQuery, "gi"), function(a) {
@@ -1463,21 +1463,21 @@
                         activeIdx: this.activeIdx,
                         custom: this.custom
                     })), this._checkScroll(), this.$list;
-                }, d.prototype._scrollTill = 198, d.prototype._checkScroll = function() {
+                }, c.prototype._scrollTill = 198, c.prototype._checkScroll = function() {
                     var a;
                     return a = this.$list.height(), a > 0 ? void this.scrollHelper(a) : void setTimeout(function(a) {
                         return function() {
                             return a.scrollHelper(a.$list.height());
                         };
                     }(this), 0);
-                }, d.prototype.scrollHelper = function(a) {
-                    this.scrolling = a >= this._scrollTill ? !0 : !1;
-                }, d.prototype.checkOptionsEmpty = function() {}, d.prototype._onClick = function(a) {
+                }, c.prototype.scrollHelper = function(a) {
+                    a >= this._scrollTill ? this.scrolling = !0 : this.scrolling = !1;
+                }, c.prototype.checkOptionsEmpty = function() {}, c.prototype._onClick = function(a) {
                     var b, c;
                     return a.stopPropagation(), a.preventDefault(), b = this.$(a.currentTarget).data("id"), 
                     null != b && (c = this.collection.get(b), null != c) ? (this.selected(c), this.multiSelect || this.close(), 
                     !1) : void 0;
-                }, d.prototype.selected = function(a) {
+                }, c.prototype.selected = function(a) {
                     var b, c;
                     try {
                         if (null != a.onlyExec) return void (null != a && "function" == typeof a.exec && a.exec());
@@ -1490,9 +1490,9 @@
                         }
                     }
                     null != a && (this.searchcoll.remove(a), this.result.add(a), this.trigger("selected", a));
-                }, d.prototype.focus = function() {
+                }, c.prototype.focus = function() {
                     this.$inp.focus();
-                }, d.prototype.search = function(a) {
+                }, c.prototype.search = function(a) {
                     var b;
                     if ("keydown" !== a.type) b = a.currentTarget.value.toLowerCase(), b !== this.currQuery && (this.currQuery = b, 
                     this.searchcoll.updateSubFilter(function(a) {
@@ -1501,16 +1501,16 @@
                             return null != a.result.get(c.id) ? !1 : (null != b ? b.length : void 0) ? d = c.match(b) : !0;
                         };
                     }(this), !1), this.activeIdx = 0, this.renderRes()); else switch (a.keyCode) {
-                      case c.UP:
+                      case d.UP:
                         return void this.move(!0);
 
-                      case c.DOWN:
+                      case d.DOWN:
                         return void this.move(!1);
 
-                      case c.ENTER:
+                      case d.ENTER:
                         return void this.selectActive(!0);
                     }
-                }, d.prototype.move = function(a) {
+                }, c.prototype.move = function(a) {
                     var b, c, d, e, f, g, h, i, j, k;
                     if (null == a && (a = !1), f = this.$el.find(".typelist a"), d = (null != (k = this.currQuery) ? k.length : void 0) ? 0 : 1, 
                     j = 0, a) {
@@ -1524,12 +1524,13 @@
                     this.scrolling && (e = b.outerHeight(), h = e * (g + 1), c = this.$el.find(".typelist"), 
                     i = c.scrollTop(), h > i + this._scrollTill ? c.scrollTop(h - this._scrollTill) : i + e > h && c.scrollTop(h - e)), 
                     this.activeIdx = g;
-                }, d.prototype.select = function() {}, d.prototype.selectActive = function(a) {
+                }, c.prototype.select = function() {}, c.prototype.selectActive = function(a) {
                     var b, c, d;
                     if (null == a && (a = !1), c = this.$el.find(".typelist a.active").removeClass("active").data(), 
                     b = this.$inp.val(), null == c && this.multiSelect && a && !(null != b ? b.length : void 0)) return void this.close();
                     if (null != c) {
-                        if (this.activeIdx = 0, (null != c ? c.idx : void 0) >= 0 && this.searchcoll.length) this.selected(this.collection.get(c.id)); else {
+                        if (this.activeIdx = 0, (null != c ? c.idx : void 0) >= 0 && this.searchcoll.length) console.log("got", this.collection.get(c.id), this.collection, c.id), 
+                        this.selected(this.collection.get(c.id)); else {
                             if (null != (d = this.currQuery) ? !d.length : !0) return;
                             this.selected(new this.collection.model({
                                 value: this.currQuery,
@@ -1538,58 +1539,58 @@
                         }
                         this.multiSelect || this.close();
                     }
-                }, d;
-            }(a("./facets/base")), b.exports = d;
+                }, c;
+            }(a("./facets/base")), b.exports = e;
         }, {
             "../tmpls/selector.jade": 18,
             "../tmpls/selectorli.jade": 19,
             "../utils/keycodes": 23,
             "./facets/base": 24
         } ],
-        34: [ function(a, b) {
-            var c, d = function(a, b) {
+        34: [ function(a, b, c) {
+            var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
                 };
-            }, e = function(a, b) {
+            }, f = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, f = {}.hasOwnProperty;
-            c = function(b) {
+            }, g = {}.hasOwnProperty;
+            d = function(b) {
                 function c() {
-                    return this.open = d(this.open, this), this.generateSub = d(this.generateSub, this), 
-                    this.close = d(this.close, this), this.focus = d(this.focus, this), this.isOpen = d(this.isOpen, this), 
-                    this.selected = d(this.selected, this), this.remove = d(this.remove, this), this.del = d(this.del, this), 
-                    this.render = d(this.render, this), this.initialize = d(this.initialize, this), 
+                    return this.open = e(this.open, this), this.generateSub = e(this.generateSub, this), 
+                    this.close = e(this.close, this), this.focus = e(this.focus, this), this.isOpen = e(this.isOpen, this), 
+                    this.selected = e(this.selected, this), this.remove = e(this.remove, this), this.del = e(this.del, this), 
+                    this.render = e(this.render, this), this.initialize = e(this.initialize, this), 
                     c.__super__.constructor.apply(this, arguments);
                 }
-                return e(c, b), c.prototype.template = a("../tmpls/sub.jade"), c.prototype.className = "sub", 
+                return f(c, b), c.prototype.template = a("../tmpls/sub.jade"), c.prototype.className = "sub", 
                 c.prototype.initialize = function() {
                     this.result = new Backbone.Collection();
                 }, c.prototype.events = {
                     "click .rm-facet-btn": "del"
-                }, c.prototype.render = function() {
-                    var a, b, c, d, e, f, g, h;
-                    for (c = [], h = this.result.models, e = d = 0, f = h.length; f > d; e = ++d) {
-                        g = h[e];
+                }, c.prototype.render = function(a) {
+                    var b, c, d, e, f, g, h, i;
+                    for (d = [], i = this.result.models, f = e = 0, g = i.length; g > e; f = ++e) {
+                        h = i[f];
                         try {
-                            c.push(g.getLabel());
-                        } catch (i) {
-                            a = i;
+                            d.push(h.getLabel());
+                        } catch (j) {
+                            b = j;
                             try {
                                 console.error("Issue #24: CATCH - Class:" + this.constructor.name + " - model:" + JSON.stringify(this.model.toJSON()) + " - result:" + JSON.stringify(this.result.toJSON()));
-                            } catch (i) {
-                                b = i, console.error("Issue #24: CATCH");
+                            } catch (j) {
+                                c = j, console.error("Issue #24: CATCH");
                             }
                         }
                     }
                     return this.$el.html(this.template({
                         label: this.model.getLabel(),
-                        selected: c
+                        selected: d
                     })), this.$sub = this.$(".subselect"), this.$results = this.$(".subresults"), this.generateSub(), 
                     this.el;
                 }, c.prototype.del = function(a) {
@@ -1626,11 +1627,11 @@
                     var a;
                     this.generateSub(), null != (a = this.selectview) && a.focus();
                 }, c;
-            }(Backbone.View), b.exports = c;
+            }(Backbone.View), b.exports = d;
         }, {
             "../tmpls/sub.jade": 21
         } ],
-        35: [ function() {}, {} ],
+        35: [ function(a, b, c) {}, {} ],
         36: [ function(b, c, d) {
             (function(e) {
                 !function(b) {
@@ -1673,18 +1674,25 @@
                                     return a[b];
                                 }) : [ a ]).filter(d).join(" ");
                             }
-                            c.merge = function f(a, b) {
+                            function f(a) {
+                                return h[a] || a;
+                            }
+                            function g(a) {
+                                var b = String(a).replace(i, f);
+                                return b === "" + a ? a : b;
+                            }
+                            c.merge = function j(a, b) {
                                 if (1 === arguments.length) {
-                                    for (var c = a[0], e = 1; e < a.length; e++) c = f(c, a[e]);
+                                    for (var c = a[0], e = 1; e < a.length; e++) c = j(c, a[e]);
                                     return c;
                                 }
-                                var g = a["class"], h = b["class"];
-                                (g || h) && (g = g || [], h = h || [], Array.isArray(g) || (g = [ g ]), Array.isArray(h) || (h = [ h ]), 
-                                a["class"] = g.concat(h).filter(d));
-                                for (var i in b) "class" != i && (a[i] = b[i]);
+                                var f = a["class"], g = b["class"];
+                                (f || g) && (f = f || [], g = g || [], Array.isArray(f) || (f = [ f ]), Array.isArray(g) || (g = [ g ]), 
+                                a["class"] = f.concat(g).filter(d));
+                                for (var h in b) "class" != h && (a[h] = b[h]);
                                 return a;
                             }, c.joinClasses = e, c.cls = function(a, b) {
-                                for (var d = [], f = 0; f < a.length; f++) d.push(b && b[f] ? c.escape(e([ a[f] ])) : e(a[f]));
+                                for (var d = [], f = 0; f < a.length; f++) b && b[f] ? d.push(c.escape(e([ a[f] ]))) : d.push(e(a[f]));
                                 var g = e(d);
                                 return g.length ? ' class="' + g + '"' : "";
                             }, c.style = function(a) {
@@ -1704,23 +1712,27 @@
                                     "class" == h ? (i = e(i)) && d.push(" " + h + '="' + i + '"') : d.push(c.attr(h, i, !1, b));
                                 }
                                 return d.join("");
-                            }, c.escape = function(a) {
-                                var b = String(a).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-                                return b === "" + a ? a : b;
-                            }, c.rethrow = function g(b, c, d, e) {
+                            };
+                            var h = {
+                                "&": "&amp;",
+                                "<": "&lt;",
+                                ">": "&gt;",
+                                '"': "&quot;"
+                            }, i = /[&<>"]/g;
+                            c.escape = g, c.rethrow = function k(b, c, d, e) {
                                 if (!(b instanceof Error)) throw b;
                                 if (!("undefined" == typeof window && c || e)) throw b.message += " on line " + d, 
                                 b;
                                 try {
                                     e = e || a("fs").readFileSync(c, "utf8");
                                 } catch (f) {
-                                    g(b, null, d);
+                                    k(b, null, d);
                                 }
-                                var h = 3, i = e.split("\n"), j = Math.max(d - h, 0), k = Math.min(i.length, d + h), h = i.slice(j, k).map(function(a, b) {
-                                    var c = b + j + 1;
+                                var g = 3, h = e.split("\n"), i = Math.max(d - g, 0), j = Math.min(h.length, d + g), g = h.slice(i, j).map(function(a, b) {
+                                    var c = b + i + 1;
                                     return (c == d ? "  > " : "    ") + c + "| " + a;
                                 }).join("\n");
-                                throw b.path = c, b.message = (c || "Jade") + ":" + d + "\n" + h + "\n\n" + b.message, 
+                                throw b.path = c, b.message = (c || "Jade") + ":" + d + "\n" + g + "\n\n" + b.message, 
                                 b;
                             }, c.DebugItem = function(a, b) {
                                 this.lineno = a, this.filename = b;
@@ -1728,7 +1740,7 @@
                         }, {
                             fs: 2
                         } ],
-                        2: [ function() {}, {} ]
+                        2: [ function(a, b, c) {}, {} ]
                     }, {}, [ 1 ])(1);
                 });
             }).call(this, "undefined" != typeof global ? global : "undefined" != typeof self ? self : "undefined" != typeof window ? window : {});
