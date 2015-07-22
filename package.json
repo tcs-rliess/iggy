@@ -1,6 +1,6 @@
 {
   "name": "iggy",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Browser search module to use with Backbone.js",
   "keywords": [],
   "homepage": "https://github.com/mpneuried/iggy",
@@ -34,7 +34,7 @@
     "jadeify": "4.x",
     "coffeeify": "1.x",
 
-    "backbone": "1.1.x",
+    "backbone": "1.2.x",
     "jquery": "2.1.x",
     "bootstrap": "3.3.x",
     "moment": "2.10.x",

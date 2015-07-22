@@ -1,5 +1,5 @@
 /*
- * IGGY 0.0.17 ( 2015-07-22 )
+ * IGGY 0.0.18 ( 2015-07-22 )
  * http://mpneuried.github.io/iggy/
  *
  * Released under the MIT license
@@ -49,7 +49,7 @@
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
             }, q = {}.hasOwnProperty;
-            m = a("./views/main"), d = a("./models/backbone_sub"), k = a("./models/facet_string"), 
+            m = a("./views/main"), d = a("./models/facets"), k = a("./models/facet_string"), 
             e = a("./models/facet_array"), j = a("./models/facet_select"), h = a("./models/facet_number"), 
             i = a("./models/facet_range"), f = a("./models/facet_daterange"), g = a("./models/facet_event"), 
             n = a("./models/results"), l = function(a) {
@@ -151,7 +151,6 @@
                 }, b;
             }(Backbone.Events), b.exports = l;
         }, {
-            "./models/backbone_sub": 2,
             "./models/facet_array": 3,
             "./models/facet_daterange": 5,
             "./models/facet_event": 6,
@@ -159,8 +158,9 @@
             "./models/facet_range": 8,
             "./models/facet_select": 9,
             "./models/facet_string": 10,
-            "./models/results": 11,
-            "./views/main": 32
+            "./models/facets": 11,
+            "./models/results": 12,
+            "./views/main": 33
         } ],
         2: [ function(a, b, c) {
             var d, e = function(a, b) {
@@ -240,7 +240,7 @@
                 return e(c, b), c.prototype.SubView = a("../views/facets/subarray"), c;
             }(a("./facet_string")), b.exports = d;
         }, {
-            "../views/facets/subarray": 27,
+            "../views/facets/subarray": 28,
             "./facet_string": 10
         } ],
         4: [ function(a, b, c) {
@@ -279,7 +279,7 @@
                 }, c;
             }(Backbone.Model), b.exports = d;
         }, {
-            "../views/facets/base": 24
+            "../views/facets/base": 25
         } ],
         5: [ function(a, b, c) {
             var d, e = function(a, b) {
@@ -306,7 +306,7 @@
                 }, c;
             }(a("./facet_base")), b.exports = d;
         }, {
-            "../views/facets/daterange": 25,
+            "../views/facets/daterange": 26,
             "./facet_base": 4
         } ],
         6: [ function(a, b, c) {
@@ -364,7 +364,7 @@
                 }, c;
             }(a("./facet_base")), b.exports = d;
         }, {
-            "../views/facets/subnumber": 28,
+            "../views/facets/subnumber": 29,
             "./facet_base": 4
         } ],
         8: [ function(a, b, c) {
@@ -394,7 +394,7 @@
                 }, c;
             }(a("./facet_base")), b.exports = d;
         }, {
-            "../views/facets/subrange": 29,
+            "../views/facets/subrange": 30,
             "./facet_base": 4
         } ],
         9: [ function(a, b, c) {
@@ -421,7 +421,7 @@
                 }, c;
             }(a("./facet_base")), b.exports = d;
         }, {
-            "../views/facets/subselect": 30,
+            "../views/facets/subselect": 31,
             "./facet_base": 4
         } ],
         10: [ function(a, b, c) {
@@ -448,10 +448,30 @@
                 }, c;
             }(a("./facet_base")), b.exports = d;
         }, {
-            "../views/facets/substring": 31,
+            "../views/facets/substring": 32,
             "./facet_base": 4
         } ],
         11: [ function(a, b, c) {
+            var d, e = function(a, b) {
+                function c() {
+                    this.constructor = a;
+                }
+                for (var d in b) f.call(b, d) && (a[d] = b[d]);
+                return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
+                a;
+            }, f = {}.hasOwnProperty;
+            d = function(a) {
+                function b() {
+                    return b.__super__.constructor.apply(this, arguments);
+                }
+                return e(b, a), b.prototype.modelId = function(a) {
+                    return a.name;
+                }, b;
+            }(a("./backbone_sub")), b.exports = d;
+        }, {
+            "./backbone_sub": 2
+        } ],
+        12: [ function(a, b, c) {
             var d, e, f = function(a, b) {
                 function c() {
                     this.constructor = a;
@@ -488,7 +508,7 @@
                 }, b;
             }(Backbone.Collection), b.exports = e;
         }, {} ],
-        12: [ function(a, b, c) {
+        13: [ function(a, b, c) {
             var d, e, f = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -517,7 +537,7 @@
         }, {
             "./backbone_sub": 2
         } ],
-        13: [ function(a, b, c) {
+        14: [ function(a, b, c) {
             var d = a("jade/runtime");
             b.exports = function(a) {
                 var b = [], c = a || {};
@@ -526,9 +546,9 @@
                 }.call(this, "cid" in c ? c.cid : "undefined" != typeof cid ? cid : void 0), b.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        14: [ function(a, b, c) {
+        15: [ function(a, b, c) {
             var d = a("jade/runtime");
             b.exports = function(a) {
                 var b, c = [], e = a || {};
@@ -552,9 +572,9 @@
                 c.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        15: [ function(a, b, c) {
+        16: [ function(a, b, c) {
             var d = a("jade/runtime");
             b.exports = function(a) {
                 var b = [], c = a || {};
@@ -566,18 +586,18 @@
                 b.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        16: [ function(a, b, c) {
+        17: [ function(a, b, c) {
             a("jade/runtime");
             b.exports = function(a) {
                 var b = [];
                 return b.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        17: [ function(a, b, c) {
+        18: [ function(a, b, c) {
             var d = a("jade/runtime");
             b.exports = function(a) {
                 var b, c = [], e = a || {};
@@ -640,9 +660,9 @@
                 c.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        18: [ function(a, b, c) {
+        19: [ function(a, b, c) {
             var d = a("jade/runtime");
             b.exports = function(a) {
                 var b = [], c = a || {};
@@ -651,9 +671,9 @@
                 }.call(this, "cid" in c ? c.cid : "undefined" != typeof cid ? cid : void 0), b.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        19: [ function(a, b, c) {
+        20: [ function(a, b, c) {
             var d = a("jade/runtime");
             b.exports = function(a) {
                 var b, c = [], e = a || {};
@@ -683,9 +703,9 @@
                 c.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        20: [ function(a, b, c) {
+        21: [ function(a, b, c) {
             var d = a("jade/runtime");
             b.exports = function(a) {
                 var b = [], c = a || {};
@@ -695,9 +715,9 @@
                 b.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        21: [ function(a, b, c) {
+        22: [ function(a, b, c) {
             var d = a("jade/runtime");
             b.exports = function(a) {
                 var b, c = [], e = a || {};
@@ -721,18 +741,18 @@
                 c.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        22: [ function(a, b, c) {
+        23: [ function(a, b, c) {
             a("jade/runtime");
             b.exports = function(a) {
                 var b = [];
                 return b.push('<div class="add-facet-btn fa fa-plus"></div>'), b.join("");
             };
         }, {
-            "jade/runtime": 36
+            "jade/runtime": 37
         } ],
-        23: [ function(a, b, c) {
+        24: [ function(a, b, c) {
             b.exports = {
                 LEFT: 37,
                 RIGHT: 39,
@@ -743,7 +763,7 @@
                 TAB: 9
             };
         }, {} ],
-        24: [ function(a, b, c) {
+        25: [ function(a, b, c) {
             var d, e, f, g = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -836,11 +856,11 @@
                 }, c;
             }(Backbone.View), b.exports = d;
         }, {
-            "../../models/subresults": 12,
-            "../../tmpls/result_base.jade": 16,
-            "../../utils/keycodes": 23
+            "../../models/subresults": 13,
+            "../../tmpls/result_base.jade": 17,
+            "../../utils/keycodes": 24
         } ],
-        25: [ function(a, b, c) {
+        26: [ function(a, b, c) {
             var d, e, f = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -899,11 +919,11 @@
                 }, c;
             }(a("./base")), b.exports = d;
         }, {
-            "../../tmpls/daterange.jade": 13,
-            "../../utils/keycodes": 23,
-            "./base": 24
+            "../../tmpls/daterange.jade": 14,
+            "../../utils/keycodes": 24,
+            "./base": 25
         } ],
-        26: [ function(a, b, c) {
+        27: [ function(a, b, c) {
             var d, e, f, g, h = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -966,10 +986,10 @@
                 }, b;
             }(a("./base")), b.exports = d;
         }, {
-            "../../utils/keycodes": 23,
-            "./base": 24
+            "../../utils/keycodes": 24,
+            "./base": 25
         } ],
-        27: [ function(a, b, c) {
+        28: [ function(a, b, c) {
             var d, e, f, g, h, i, j, k = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -1050,11 +1070,11 @@
             }(a("../selector")), b.exports = f;
         }, {
             "../../models/backbone_sub": 2,
-            "../../models/subresults": 12,
-            "../../utils/keycodes": 23,
-            "../selector": 33
+            "../../models/subresults": 13,
+            "../../utils/keycodes": 24,
+            "../selector": 34
         } ],
-        28: [ function(a, b, c) {
+        29: [ function(a, b, c) {
             var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -1115,10 +1135,10 @@
                 }, c;
             }(a("./number_base")), b.exports = d;
         }, {
-            "../../tmpls/number.jade": 14,
-            "./number_base": 26
+            "../../tmpls/number.jade": 15,
+            "./number_base": 27
         } ],
-        29: [ function(a, b, c) {
+        30: [ function(a, b, c) {
             var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -1171,10 +1191,10 @@
                 }, c;
             }(a("./number_base")), b.exports = d;
         }, {
-            "../../tmpls/range.jade": 15,
-            "./number_base": 26
+            "../../tmpls/range.jade": 16,
+            "./number_base": 27
         } ],
-        30: [ function(a, b, c) {
+        31: [ function(a, b, c) {
             var d, e, f = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -1276,11 +1296,11 @@
                 }, c;
             }(a("./base")), b.exports = d;
         }, {
-            "../../tmpls/select.jade": 17,
-            "../../utils/keycodes": 23,
-            "./base": 24
+            "../../tmpls/select.jade": 18,
+            "../../utils/keycodes": 24,
+            "./base": 25
         } ],
-        31: [ function(a, b, c) {
+        32: [ function(a, b, c) {
             var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -1310,10 +1330,10 @@
                 }, c;
             }(a("./base")), b.exports = d;
         }, {
-            "../../tmpls/string.jade": 20,
-            "./base": 24
+            "../../tmpls/string.jade": 21,
+            "./base": 25
         } ],
-        32: [ function(a, b, c) {
+        33: [ function(a, b, c) {
             var d, e, f, g, h = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -1395,12 +1415,12 @@
                 }, c;
             }(Backbone.View), b.exports = e;
         }, {
-            "../tmpls/wrapper.jade": 22,
-            "../utils/keycodes": 23,
-            "./selector": 33,
-            "./sub": 34
+            "../tmpls/wrapper.jade": 23,
+            "../utils/keycodes": 24,
+            "./selector": 34,
+            "./sub": 35
         } ],
-        33: [ function(a, b, c) {
+        34: [ function(a, b, c) {
             var d, e, f = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -1542,12 +1562,12 @@
                 }, c;
             }(a("./facets/base")), b.exports = e;
         }, {
-            "../tmpls/selector.jade": 18,
-            "../tmpls/selectorli.jade": 19,
-            "../utils/keycodes": 23,
-            "./facets/base": 24
+            "../tmpls/selector.jade": 19,
+            "../tmpls/selectorli.jade": 20,
+            "../utils/keycodes": 24,
+            "./facets/base": 25
         } ],
-        34: [ function(a, b, c) {
+        35: [ function(a, b, c) {
             var d, e = function(a, b) {
                 return function() {
                     return a.apply(b, arguments);
@@ -1629,10 +1649,10 @@
                 }, c;
             }(Backbone.View), b.exports = d;
         }, {
-            "../tmpls/sub.jade": 21
+            "../tmpls/sub.jade": 22
         } ],
-        35: [ function(a, b, c) {}, {} ],
-        36: [ function(b, c, d) {
+        36: [ function(a, b, c) {}, {} ],
+        37: [ function(b, c, d) {
             (function(e) {
                 !function(b) {
                     if ("object" == typeof d && "undefined" != typeof c) c.exports = b(); else if ("function" == typeof a && a.amd) a([], b); else {
@@ -1745,7 +1765,7 @@
                 });
             }).call(this, "undefined" != typeof global ? global : "undefined" != typeof self ? self : "undefined" != typeof window ? window : {});
         }, {
-            fs: 35
+            fs: 36
         } ]
     }, {}, [ 1 ])(1);
 });
