@@ -20,10 +20,10 @@ class MainView extends Backbone.View
 		if @el.className?.length
 			_cl = " " + _cl
 		@el.className += _cl
-		
 		@render()
 		$( document ).on "keyup", @_onKey
-
+		@_outerClickListen()
+		
 		for fct in @collection.filter( ( fct )->return fct?.get( "value" )? )
 			subview = @genSub( fct, false )
 		
@@ -44,16 +44,19 @@ class MainView extends Backbone.View
 			return
 		return
 	
-	exit: =>
+	exit: ( nextAdd = true )=>
+		console.log "exit", @el.id, nextAdd, @selectview, @subview
+		if @subview
+			@subview.close()
+			@subview = null
+			@addFacet() if nextAdd
+		
 		if @selectview
 			#console.log "MAIN REMOVE SELECT"
 			@selectview.close()
 			@selectview = null
 
-		if @subview
-			@subview.close()
-			@subview = null
-			@addFacet()
+		
 		return
 
 	remFacet: ( facetM )=>
@@ -84,13 +87,13 @@ class MainView extends Backbone.View
 
 	addFacet: =>
 		if @selectview?
-			#console.log "STOP @ SELECT EXIST"
+			console.log "STOP @ SELECT EXIST"
 			@selectview.focus()
 			return
 
 		if @subview?
-			#console.log "STOP @ SUB EXIST"
-			@subview.focus()
+			console.log "STOP @ SUB EXIST"
+			@subview.close()
 			return
 
 		if not @collection.length
@@ -101,6 +104,7 @@ class MainView extends Backbone.View
 
 		@$addBtn.before( @selectview.render() )
 		@selectview.focus()
+		
 
 		@selectview.on "closed", ( results )=>
 			#console.log "SELECT VIEW CLOSED", results?.length
@@ -119,5 +123,17 @@ class MainView extends Backbone.View
 			@subview.open()
 			return
 		return
+	
+	_outerClickListen: =>
+		jQuery( document ).on "click", @_outerClick
+		return
+
+	_outerClick: ( evnt )=>
+		evnt.stopPropagation()
+		_posWrp = @el.compareDocumentPosition( evnt.target )
+		if not ( _posWrp is 0 or _posWrp - 16 >= 0 )
+			@exit( false )
+		return
+	
 
 module.exports = MainView

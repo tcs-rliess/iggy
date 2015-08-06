@@ -110,6 +110,7 @@ class FacetSubsSelect extends require( "./base" )
 		return
 	
 	select: ( evnt )=>
+		evnt.stopPropagation() if evnt?.stopPropagation
 		_vals = @getValue()
 		if not _vals?.length
 			@close()
