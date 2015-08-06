@@ -29,7 +29,7 @@ class SelectorView extends require( "./facets/base" )
 		@searchcoll = @collection.sub( ->true )
 		@result = new @collection.constructor()
 		
-		#@listenTo( @searchcoll, "add", @renderRes )
+		@listenTo( @searchcoll, "add", @renderRes )
 		@listenTo( @searchcoll, "remove", @renderRes )
 		@listenTo( @searchcoll, "remove", @checkOptionsEmpty )
 		
