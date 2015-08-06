@@ -45,7 +45,7 @@ class MainView extends Backbone.View
 		return
 	
 	exit: ( nextAdd = true )=>
-		console.log "exit", @el.id, nextAdd, @selectview, @subview
+		#console.log "exit", @el.id, nextAdd, @selectview, @subview
 		if @subview
 			@subview.close()
 			@subview = null
@@ -87,12 +87,12 @@ class MainView extends Backbone.View
 
 	addFacet: =>
 		if @selectview?
-			console.log "STOP @ SELECT EXIST"
+			#console.log "STOP @ SELECT EXIST"
 			@selectview.focus()
 			return
 
 		if @subview?
-			console.log "STOP @ SUB EXIST"
+			#console.log "STOP @ SUB EXIST"
 			@subview.close()
 			return
 

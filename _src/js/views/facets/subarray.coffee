@@ -29,15 +29,29 @@ class FacetSubArray extends require( "../selector" )
 		label: "-"
 		value: "-"
 
-	multiSelect: true
+	selectCount: 0
 
 	optColl: StringOptions
 
 	constructor: ( options )->
+		if options.model.get( "count" )?
+			@selectCount = options.model.get( "count" )
 		options.custom = true
+		if options.model.get( "custom" )?
+			options.custom = Boolean( options.model.get( "custom" ) )
+			
 		@collection = @_createOptionCollection( options.model.get( "options" ) )
+		
+		if not options.custom
+			@selectCount = @collection.length
+			
 		super( options )
 		return
+	
+	_isFull: =>
+		if @selectCount <= 0
+			return false
+		return ( @result or []).length >= @selectCount
 		
 	select: =>
 		_vals = @model.get( "value" )

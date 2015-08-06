@@ -3,7 +3,7 @@ KEYCODES = require( "../utils/keycodes" )
 class SelectorView extends require( "./facets/base" )
 	template: require( "../tmpls/selector.jade" )
 	templateEl: require( "../tmpls/selectorli.jade" )
-	multiSelect: false
+	selectCount: 1
 
 	className: =>
 		cls = [ "add-facet" ]
@@ -99,10 +99,13 @@ class SelectorView extends require( "./facets/base" )
 			return
 			
 		@selected( _mdl )
-		if not @multiSelect
+		if @_isFull()
 			@close()
 		return false
-
+	
+	_isFull: =>
+		return true
+	
 	selected: ( mdl )=>
 		try
 			if mdl.onlyExec?
@@ -198,7 +201,7 @@ class SelectorView extends require( "./facets/base" )
 			
 		_search = @$inp.val()
 		
-		if  not _sel? and @multiSelect and isEnterEvent and not _search?.length
+		if  not _sel? and @selectCount isnt 1 and isEnterEvent and not _search?.length
 			@close()
 			return
 			
@@ -207,15 +210,14 @@ class SelectorView extends require( "./facets/base" )
 		
 		@activeIdx = 0
 		if _sel?.idx >= 0 and @searchcoll.length
-			console.log "got", @collection.get( _sel.id ), @collection, _sel.id
 			@selected( @collection.get( _sel.id ) )
 		else if @currQuery?.length
 			@selected( new @collection.model( value: @currQuery, custom: true ) )
 			@$inp.val( "" )
 		else
 			return
-
-		if not @multiSelect
+	
+		if @_isFull()
 			@close()
 		return
 
