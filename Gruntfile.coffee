@@ -3,7 +3,7 @@ path = require( "path" )
 
 module.exports = (grunt) ->
 
-	banner = 
+	banner =
 	
 	# Project configuration.
 	grunt.initConfig
@@ -17,14 +17,8 @@ module.exports = (grunt) ->
  * https://github.com/mpneuried/iggy/blob/master/LICENSE
 */
 
-""" 
+"""
 		regarde:
-			js:
-				files: ["_src/**/*.coffee"]
-				tasks: [ "build-core-js-debug"]
-			tmpls:
-				files: ["_src/**/*.jade"]
-				tasks: [ "build-core-js-debug"]
 			css:
 				files: ["_src/css/**/*.styl"]
 				tasks: [ "build-core-css"]
@@ -61,9 +55,22 @@ module.exports = (grunt) ->
 						external: true
 				files:
 					'js/iggy.debug.js': "_src/js/main.coffee"
+			
+			dev:
+				options:
+					watch: true
+					keepAlive: true
+					transform: ["jadeify", "coffeeify"]
+					browserifyOptions:
+						debug: true
+						extensions: ".coffee"
+						standalone: "IGGY"
+						external: true
+				files:
+					'js/iggy.debug.js': "_src/js/main.coffee"
 
 			
-		copy: 
+		copy:
 			release:
 				src: ['css/iggy.css']
 				dest: 'dist/css/iggy.css'
@@ -72,14 +79,14 @@ module.exports = (grunt) ->
 		# 	local:
 		# 		configFile: 'karma.conf.coffee'
 
-		uglify: 
+		uglify:
 			options:
 				compress: true
 				beautify: true
 				banner: "<%= banner %>"
 
-			release: 
-				files: 
+			release:
+				files:
 					'dist/js/iggy.js': "js/iggy.js"
 		
 
@@ -97,6 +104,7 @@ module.exports = (grunt) ->
 	
 	# ALIAS TASKS
 	grunt.registerTask "watch", "regarde"
+	grunt.registerTask "watcher", ["browserify:dev"]
 	grunt.registerTask "default", "build"
 	grunt.registerTask "clear", [ "clean:base" ]
 	#grunt.registerTask "test-local", "karma:local"
