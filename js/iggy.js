@@ -829,7 +829,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (cid, value) {
 buf.push("<div class=\"rangeinp\">");
 var _vals = value ? value : []
-buf.push("<input" + (jade.attr("id", "" + (cid) + "_from", true, false)) + (jade.attr("value", _vals[0], true, false)) + " class=\"number-inp range-from\"/><span class=\"separator\">-</span><input" + (jade.attr("id", "" + (cid) + "_to", true, false)) + (jade.attr("value", _vals[0], true, false)) + " class=\"number-inp range-to\"/></div>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
+buf.push("<input" + (jade.attr("id", "" + (cid) + "_from", true, false)) + (jade.attr("value", _vals[0], true, false)) + " class=\"number-inp range-from\"/><span class=\"separator\">-</span><input" + (jade.attr("id", "" + (cid) + "_to", true, false)) + (jade.attr("value", _vals[1], true, false)) + " class=\"number-inp range-to\"/></div>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
 },{"jade/runtime":37}],17:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -1095,6 +1095,7 @@ FacetSubsBase = (function(superClass) {
     this.close = bind(this.close, this);
     this._onTabAction = bind(this._onTabAction, this);
     this.render = bind(this.render, this);
+    this.reopen = bind(this.reopen, this);
     this._getInpSelector = bind(this._getInpSelector, this);
     this.getTemplateData = bind(this.getTemplateData, this);
     this._onKey = bind(this._onKey, this);
@@ -1109,7 +1110,8 @@ FacetSubsBase = (function(superClass) {
 
   FacetSubsBase.prototype.resultTemplate = require("../../tmpls/result_base.jade");
 
-  FacetSubsBase.prototype.initialize = function() {
+  FacetSubsBase.prototype.initialize = function(options) {
+    this.sub = options.sub;
     this.result = new SubResults();
   };
 
@@ -1127,8 +1129,14 @@ FacetSubsBase = (function(superClass) {
     this.$inp.focus();
   };
 
-  FacetSubsBase.prototype.renderResult = function() {
+  FacetSubsBase.prototype.renderResult = function(renderEmpty) {
     var _list, i, idx, len, model, ref;
+    if (renderEmpty == null) {
+      renderEmpty = false;
+    }
+    if (renderEmpty) {
+      return "<li></li>";
+    }
     _list = [];
     ref = this.result.models;
     for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
@@ -1171,6 +1179,13 @@ FacetSubsBase = (function(superClass) {
 
   FacetSubsBase.prototype._getInpSelector = function() {
     return "input#" + this.cid;
+  };
+
+  FacetSubsBase.prototype.reopen = function(pView) {
+    this.$el.removeClass("closed");
+    this.$el.addClass("open");
+    this.render();
+    pView.open();
   };
 
   FacetSubsBase.prototype.render = function() {
@@ -1240,11 +1255,18 @@ FacetSubsBase = (function(superClass) {
 
   FacetSubsBase.prototype.set = function(val) {
     var _ModelConst, _model;
-    _ModelConst = this.getSelectModel();
-    _model = new _ModelConst({
-      value: val
-    });
-    this.result.add(_model);
+    _model = this.result.first();
+    if (_model == null) {
+      _ModelConst = this.getSelectModel();
+      _model = new _ModelConst({
+        value: val
+      });
+      this.result.add(_model);
+    } else {
+      _model.set({
+        value: val
+      });
+    }
     this.trigger("selected", _model);
     this.close();
   };
@@ -1424,14 +1446,13 @@ FacetNumberBase = (function(superClass) {
   }
 
   FacetNumberBase.prototype.events = function() {
-    var _evnts, obj;
-    _evnts = (
+    var obj;
+    return (
       obj = {},
       obj["keyup " + (this._getInpSelector())] = "input",
       obj["keydown " + (this._getInpSelector())] = "input",
       obj
     );
-    return _evnts;
   };
 
   FacetNumberBase.prototype.input = function(evnt) {
@@ -1619,29 +1640,56 @@ FacetSubArray = (function(superClass) {
     value: "-"
   };
 
-  FacetSubArray.prototype.multiSelect = true;
+  FacetSubArray.prototype.selectCount = 0;
 
   FacetSubArray.prototype.optColl = StringOptions;
+
+  FacetSubArray.prototype.events = function() {
+    var _evnts;
+    _evnts = FacetSubArray.__super__.events.apply(this, arguments);
+    _evnts["blur input#" + this.cid] = "close";
+    return _evnts;
+  };
 
   function FacetSubArray(options) {
     this._createOptionCollection = bind(this._createOptionCollection, this);
     this._onTabAction = bind(this._onTabAction, this);
     this.getResults = bind(this.getResults, this);
+    this.reopen = bind(this.reopen, this);
     this.select = bind(this.select, this);
+    this._isFull = bind(this._isFull, this);
+    this.events = bind(this.events, this);
+    if (options.model.get("count") != null) {
+      this.selectCount = options.model.get("count");
+    }
     options.custom = true;
+    if (options.model.get("custom") != null) {
+      options.custom = Boolean(options.model.get("custom"));
+    }
     this.collection = this._createOptionCollection(options.model.get("options"));
+    if (!options.custom && this.selectCount <= 0) {
+      this.selectCount = this.collection.length;
+    }
     FacetSubArray.__super__.constructor.call(this, options);
     return;
   }
 
+  FacetSubArray.prototype._isFull = function() {
+    if (this.selectCount <= 0) {
+      return false;
+    }
+    return (this.result || []).length >= this.selectCount;
+  };
+
   FacetSubArray.prototype.select = function() {
-    var _mdl, _val, _vals, i, len;
+    var _mdl, _val, _vals, i, len, ref;
     _vals = this.model.get("value");
     if ((_vals != null) && !_.isArray(_vals)) {
       _vals = [_vals];
     }
-    for (i = 0, len = _vals.length; i < len; i++) {
-      _val = _vals[i];
+    ref = (this.selectCount <= 0 ? _vals : _vals.slice(0, this.selectCount));
+    for (i = 0, len = ref.length; i < len; i++) {
+      _val = ref[i];
       _mdl = this.collection.get(_val);
       if (_mdl == null) {
         _mdl = new this.collection.model({
@@ -1652,6 +1700,13 @@ FacetSubArray = (function(superClass) {
       this.selected(_mdl);
     }
     this.close();
+  };
+
+  FacetSubArray.prototype.reopen = function(pView) {
+    if (this._isFull()) {
+      return;
+    }
+    FacetSubArray.__super__.reopen.apply(this, arguments);
   };
 
   FacetSubArray.prototype.getResults = function() {
@@ -1712,8 +1767,10 @@ FacetSubsNumber = (function(superClass) {
     this.getResults = bind(this.getResults, this);
     this._onTabAction = bind(this._onTabAction, this);
     this.getTemplateData = bind(this.getTemplateData, this);
+    this.reopen = bind(this.reopen, this);
     this.focus = bind(this.focus, this);
     this._opSelected = bind(this._opSelected, this);
+    this.select = bind(this.select, this);
     this.close = bind(this.close, this);
     this.renderResult = bind(this.renderResult, this);
     this.render = bind(this.render, this);
@@ -1724,11 +1781,9 @@ FacetSubsNumber = (function(superClass) {
   FacetSubsNumber.prototype.template = require("../../tmpls/number.jade");
 
   FacetSubsNumber.prototype.events = function() {
-    var _evnts, ref;
+    var _evnts;
     _evnts = FacetSubsNumber.__super__.events.apply(this, arguments);
-    if (!((ref = this.model.get("operators")) != null ? ref.length : void 0)) {
-      _evnts["blur " + (this._getInpSelector())] = "select";
-    }
+    _evnts["blur " + (this._getInpSelector())] = "select";
     return _evnts;
   };
 
@@ -1744,8 +1799,14 @@ FacetSubsNumber = (function(superClass) {
     }
   };
 
-  FacetSubsNumber.prototype.renderResult = function() {
+  FacetSubsNumber.prototype.renderResult = function(renderEmpty) {
     var _res, _s;
+    if (renderEmpty == null) {
+      renderEmpty = false;
+    }
+    if (renderEmpty) {
+      return "<li></li>";
+    }
     _res = this.getResults();
     _s = "<li>";
     if (_res.operator != null) {
@@ -1765,6 +1826,27 @@ FacetSubsNumber = (function(superClass) {
     FacetSubsNumber.__super__.close.apply(this, arguments);
   };
 
+  FacetSubsNumber.prototype.select = function(evnt) {
+    var _posWrp, ref;
+    if ((evnt != null ? evnt.relatedTarget : void 0) != null) {
+      _posWrp = this.el.compareDocumentPosition(evnt != null ? evnt.relatedTarget : void 0);
+      if (!(_posWrp === 0 || _posWrp - 16 >= 0)) {
+        evnt.stopPropagation();
+        return;
+      }
+    }
+    if ((evnt != null) && ((evnt != null ? evnt.relatedTarget : void 0) === this.$inp.get(0) || (evnt != null ? evnt.relatedTarget : void 0) === ((ref = this.$inpOp) != null ? ref.get(0) : void 0))) {
+      evnt.stopPropagation();
+      return;
+    }
+    if (this.$inpOp != null) {
+      this.model.set({
+        operator: this.$inpOp.val()
+      });
+    }
+    FacetSubsNumber.__super__.select.apply(this, arguments);
+  };
+
   FacetSubsNumber.prototype._opSelected = function() {
     this.selectedOP = true;
     this.focus();
@@ -1779,6 +1861,17 @@ FacetSubsNumber = (function(superClass) {
       return;
     }
     FacetSubsNumber.__super__.focus.apply(this, arguments);
+  };
+
+  FacetSubsNumber.prototype.reopen = function(pView) {
+    var _oldOp, _oldVal;
+    _oldVal = this.result.first().get("value");
+    _oldOp = this.result.first();
+    this.model.set({
+      value: _oldVal
+    });
+    pView.$results.empty().html(this.renderResult(true));
+    FacetSubsNumber.__super__.reopen.apply(this, arguments);
   };
 
   FacetSubsNumber.prototype.getTemplateData = function() {
@@ -1834,6 +1927,8 @@ FacetSubsRange = (function(superClass) {
     this.getValue = bind(this.getValue, this);
     this.getResults = bind(this.getResults, this);
     this.close = bind(this.close, this);
+    this.select = bind(this.select, this);
+    this.reopen = bind(this.reopen, this);
     this.focus = bind(this.focus, this);
     this.render = bind(this.render, this);
     this.renderResult = bind(this.renderResult, this);
@@ -1859,12 +1954,20 @@ FacetSubsRange = (function(superClass) {
       obj["keydown " + (this._getInpSelector())] = "input",
       obj["keyup " + (this._getInpSelector("_to"))] = "input",
       obj["keydown " + (this._getInpSelector("_to"))] = "input",
+      obj["blur " + (this._getInpSelector())] = "select",
+      obj["blur " + (this._getInpSelector("_to"))] = "select",
       obj
     );
   };
 
-  FacetSubsRange.prototype.renderResult = function() {
+  FacetSubsRange.prototype.renderResult = function(renderEmpty) {
     var _res;
+    if (renderEmpty == null) {
+      renderEmpty = false;
+    }
+    if (renderEmpty) {
+      return "<li></li>";
+    }
     _res = this.getResults();
     return "<li>" + _res.value.join(" - ") + "</li>";
   };
@@ -1881,8 +1984,28 @@ FacetSubsRange = (function(superClass) {
     FacetSubsRange.__super__.focus.apply(this, arguments);
   };
 
+  FacetSubsRange.prototype.reopen = function(pView) {
+    var _oldVal;
+    _oldVal = this.result.first().get("value");
+    this.model.set({
+      value: _oldVal
+    });
+    pView.$results.empty().html(this.renderResult(true));
+    FacetSubsRange.__super__.reopen.apply(this, arguments);
+  };
+
+  FacetSubsRange.prototype.select = function(evnt) {
+    if ((evnt != null) && ((evnt != null ? evnt.relatedTarget : void 0) === this.$inp.get(0) || (evnt != null ? evnt.relatedTarget : void 0) === this.$inpTo.get(0))) {
+      evnt.stopPropagation();
+      return;
+    }
+    FacetSubsRange.__super__.select.apply(this, arguments);
+  };
+
   FacetSubsRange.prototype.close = function() {
-    this.$(".rangeinp").remove();
+    try {
+      this.$(".rangeinp").remove();
+    } catch (_error) {}
     FacetSubsRange.__super__.close.apply(this, arguments);
   };
 
@@ -1945,6 +2068,7 @@ FacetSubsSelect = (function(superClass) {
     this.getTemplateData = bind(this.getTemplateData, this);
     this.remove = bind(this.remove, this);
     this._initSelect2 = bind(this._initSelect2, this);
+    this.reopen = bind(this.reopen, this);
     this.focus = bind(this.focus, this);
     this.render = bind(this.render, this);
     this._getInpSelector = bind(this._getInpSelector, this);
@@ -1984,6 +2108,8 @@ FacetSubsSelect = (function(superClass) {
     this.select2.open();
     return FacetSubsSelect.__super__.focus.apply(this, arguments);
   };
+
+  FacetSubsSelect.prototype.reopen = function(pView) {};
 
   FacetSubsSelect.prototype._initSelect2 = function() {
     var _opts;
@@ -2115,6 +2241,9 @@ FacetSubsSelect = (function(superClass) {
 
   FacetSubsSelect.prototype.select = function(evnt) {
     var ModelConst, _val, _vals, i, len;
+    if (evnt != null ? evnt.stopPropagation : void 0) {
+      evnt.stopPropagation();
+    }
     _vals = this.getValue();
     if (!(_vals != null ? _vals.length : void 0)) {
       this.close();
@@ -2146,6 +2275,7 @@ FacetSubString = (function(superClass) {
   extend(FacetSubString, superClass);
 
   function FacetSubString() {
+    this.reopen = bind(this.reopen, this);
     this.close = bind(this.close, this);
     this.events = bind(this.events, this);
     return FacetSubString.__super__.constructor.apply(this, arguments);
@@ -2174,6 +2304,16 @@ FacetSubString = (function(superClass) {
     } catch (_error) {}
   };
 
+  FacetSubString.prototype.reopen = function(pView) {
+    var _oldVal;
+    _oldVal = this.result.first().get("value");
+    this.model.set({
+      value: _oldVal
+    });
+    pView.$results.empty().html(this.renderResult(true));
+    FacetSubString.__super__.reopen.apply(this, arguments);
+  };
+
   return FacetSubString;
 
 })(require("./base"));
@@ -2198,6 +2338,8 @@ MainView = (function(superClass) {
   extend(MainView, superClass);
 
   function MainView() {
+    this._outerClick = bind(this._outerClick, this);
+    this._outerClickListen = bind(this._outerClickListen, this);
     this.addFacet = bind(this.addFacet, this);
     this.genSub = bind(this.genSub, this);
     this.setFacet = bind(this.setFacet, this);
@@ -2228,6 +2370,7 @@ MainView = (function(superClass) {
     this.el.className += _cl;
     this.render();
     $(document).on("keyup", this._onKey);
+    this._outerClickListen();
     ref1 = this.collection.filter(function(fct) {
       return (fct != null ? fct.get("value") : void 0) != null;
     });
@@ -2235,6 +2378,11 @@ MainView = (function(superClass) {
       fct = ref1[i];
       subview = this.genSub(fct, false);
     }
+    this.collection.on("add", (function(_this) {
+      return function() {
+        _this.$addBtn.show();
+      };
+    })(this));
   };
 
   MainView.prototype.render = function() {
@@ -2254,15 +2402,20 @@ MainView = (function(superClass) {
     }
   };
 
-  MainView.prototype.exit = function() {
-    if (this.selectview) {
-      this.selectview.close();
-      this.selectview = null;
+  MainView.prototype.exit = function(nextAdd) {
+    if (nextAdd == null) {
+      nextAdd = true;
     }
     if (this.subview) {
       this.subview.close();
       this.subview = null;
-      this.addFacet();
+      if (nextAdd) {
+        this.addFacet();
+      }
+    }
+    if (this.selectview) {
+      this.selectview.close();
+      this.selectview = null;
     }
   };
 
@@ -2280,6 +2433,9 @@ MainView = (function(superClass) {
       parse: true,
       _facet: facetM
     });
+    if (!this.collection.length) {
+      this.$addBtn.hide();
+    }
   };
 
   MainView.prototype.genSub = function(facetM, addAfter) {
@@ -2293,13 +2449,20 @@ MainView = (function(superClass) {
     });
     subview.on("closed", (function(_this) {
       return function(results) {
-        subview.off();
         if (!(results != null ? results.length : void 0)) {
           subview.remove();
         }
         _this.subview = null;
         if (addAfter) {
           _this.addFacet();
+        }
+      };
+    })(this));
+    subview.on("reopen", (function(_this) {
+      return function() {
+        var ref;
+        if ((ref = _this.selectview) != null) {
+          ref.close();
         }
       };
     })(this));
@@ -2314,7 +2477,7 @@ MainView = (function(superClass) {
       return;
     }
     if (this.subview != null) {
-      this.subview.focus();
+      this.subview.close();
       return;
     }
     if (!this.collection.length) {
@@ -2328,11 +2491,9 @@ MainView = (function(superClass) {
     this.selectview.focus();
     this.selectview.on("closed", (function(_this) {
       return function(results) {
-        _this.selectview.off();
         _this.selectview.remove();
         _this.selectview = null;
         if (!(results != null ? results.length : void 0) && (_this.subview != null)) {
-          _this.subview.off();
           _this.subview.remove();
           _this.subview = null;
         }
@@ -2345,6 +2506,19 @@ MainView = (function(superClass) {
         _this.subview.open();
       };
     })(this));
+  };
+
+  MainView.prototype._outerClickListen = function() {
+    jQuery(document).on("click", this._outerClick);
+  };
+
+  MainView.prototype._outerClick = function(evnt) {
+    var _posWrp;
+    evnt.stopPropagation();
+    _posWrp = this.el.compareDocumentPosition(evnt.target);
+    if (!(_posWrp === 0 || _posWrp - 16 >= 0)) {
+      this.exit(false);
+    }
   };
 
   return MainView;
@@ -2369,7 +2543,7 @@ SelectorView = (function(superClass) {
 
   SelectorView.prototype.templateEl = require("../tmpls/selectorli.jade");
 
-  SelectorView.prototype.multiSelect = false;
+  SelectorView.prototype.selectCount = 1;
 
   SelectorView.prototype.className = function() {
     var cls;
@@ -2400,6 +2574,7 @@ SelectorView = (function(superClass) {
     this.search = bind(this.search, this);
     this.focus = bind(this.focus, this);
     this.selected = bind(this.selected, this);
+    this._isFull = bind(this._isFull, this);
     this._onClick = bind(this._onClick, this);
     this.checkOptionsEmpty = bind(this.checkOptionsEmpty, this);
     this.scrollHelper = bind(this.scrollHelper, this);
@@ -2422,6 +2597,7 @@ SelectorView = (function(superClass) {
       return true;
     });
     this.result = new this.collection.constructor();
+    this.listenTo(this.searchcoll, "add", this.renderRes);
     this.listenTo(this.searchcoll, "remove", this.renderRes);
     this.listenTo(this.searchcoll, "remove", this.checkOptionsEmpty);
   };
@@ -2509,10 +2685,14 @@ SelectorView = (function(superClass) {
       return;
     }
     this.selected(_mdl);
-    if (!this.multiSelect) {
+    if (this._isFull()) {
       this.close();
     }
     return false;
+  };
+
+  SelectorView.prototype._isFull = function() {
+    return true;
   };
 
   SelectorView.prototype.selected = function(mdl) {
@@ -2628,7 +2808,7 @@ SelectorView = (function(superClass) {
     }
     _sel = this.$el.find(".typelist a.active").removeClass("active").data();
     _search = this.$inp.val();
-    if ((_sel == null) && this.multiSelect && isEnterEvent && !(_search != null ? _search.length : void 0)) {
+    if ((_sel == null) && this.selectCount !== 1 && isEnterEvent && !(_search != null ? _search.length : void 0)) {
       this.close();
       return;
     }
@@ -2637,7 +2817,6 @@ SelectorView = (function(superClass) {
     }
     this.activeIdx = 0;
     if ((_sel != null ? _sel.idx : void 0) >= 0 && this.searchcoll.length) {
-      console.log("got", this.collection.get(_sel.id), this.collection, _sel.id);
       this.selected(this.collection.get(_sel.id));
     } else if ((ref = this.currQuery) != null ? ref.length : void 0) {
       this.selected(new this.collection.model({
@@ -2648,7 +2827,7 @@ SelectorView = (function(superClass) {
     } else {
       return;
     }
-    if (!this.multiSelect) {
+    if (this._isFull()) {
       this.close();
     }
   };
@@ -2671,6 +2850,7 @@ ViewSub = (function(superClass) {
 
   function ViewSub() {
     this.open = bind(this.open, this);
+    this.attachSubEvents = bind(this.attachSubEvents, this);
     this.generateSub = bind(this.generateSub, this);
     this.close = bind(this.close, this);
     this.focus = bind(this.focus, this);
@@ -2678,6 +2858,7 @@ ViewSub = (function(superClass) {
     this.selected = bind(this.selected, this);
     this.remove = bind(this.remove, this);
     this.del = bind(this.del, this);
+    this.reopen = bind(this.reopen, this);
     this.render = bind(this.render, this);
     this.initialize = bind(this.initialize, this);
     return ViewSub.__super__.constructor.apply(this, arguments);
@@ -2688,7 +2869,9 @@ ViewSub = (function(superClass) {
   ViewSub.prototype.className = "sub";
 
   ViewSub.prototype.initialize = function() {
+    this._isOpen = false;
     this.result = new Backbone.Collection();
+    this.$el.on("click", this.reopen);
   };
 
   ViewSub.prototype.events = {
@@ -2723,6 +2906,15 @@ ViewSub = (function(superClass) {
     return this.el;
   };
 
+  ViewSub.prototype.reopen = function(evnt) {
+    if (!this._isOpen && (this.selectview != null)) {
+      this.selectview.reopen(this);
+    }
+    evnt.preventDefault();
+    evnt.stopPropagation();
+    this.trigger("reopen");
+  };
+
   ViewSub.prototype.del = function(evnt) {
     evnt.stopPropagation();
     evnt.preventDefault();
@@ -2735,6 +2927,7 @@ ViewSub = (function(superClass) {
 
   ViewSub.prototype.remove = function() {
     var ref;
+    this._isOpen = false;
     if ((ref = this.selectview) != null) {
       ref.remove();
     }
@@ -2742,7 +2935,9 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.selected = function(optMdl) {
-    this.result.add(optMdl);
+    this.result.add(optMdl, {
+      merge: true
+    });
     this.$results.html(this.selectview.renderResult());
     this.trigger("selected", this.model, this.selectview.getResults());
   };
@@ -2764,6 +2959,7 @@ ViewSub = (function(superClass) {
 
   ViewSub.prototype.close = function() {
     var ref;
+    this._isOpen = false;
     if (this.selectview != null) {
       if ((ref = this.selectview) != null) {
         ref.close();
@@ -2775,14 +2971,25 @@ ViewSub = (function(superClass) {
   ViewSub.prototype.generateSub = function() {
     var ref;
     if (this.selectview != null) {
+      this.attachSubEvents();
       return this.selectview;
     }
     this.selectview = new this.model.SubView({
+      sub: this,
       model: this.model,
       el: this.$sub
     });
+    this.attachSubEvents();
+    this.$el.append(this.selectview.render());
+    if (((ref = this.model) != null ? ref.get("value") : void 0) != null) {
+      this.selectview.select();
+    }
+  };
+
+  ViewSub.prototype.attachSubEvents = function() {
     this.selectview.on("closed", (function(_this) {
       return function(result) {
+        _this._isOpen = false;
         _this.selectview.off();
         if (!result.length) {
           _this.selectview.remove();
@@ -2800,10 +3007,6 @@ ViewSub = (function(superClass) {
         }
       };
     })(this));
-    this.$el.append(this.selectview.render());
-    if (((ref = this.model) != null ? ref.get("value") : void 0) != null) {
-      this.selectview.select();
-    }
   };
 
   ViewSub.prototype.open = function() {
@@ -2812,6 +3015,7 @@ ViewSub = (function(superClass) {
     if ((ref = this.selectview) != null) {
       ref.focus();
     }
+    this._isOpen = true;
   };
 
   return ViewSub;

@@ -1,5 +1,5 @@
 /*
- * IGGY 0.0.18 ( 2015-07-22 )
+ * IGGY 0.1.0 ( 2015-08-07 )
  * http://mpneuried.github.io/iggy/
  *
  * Released under the MIT license
@@ -581,7 +581,7 @@
                 return function(a, c) {
                     b.push('<div class="rangeinp">');
                     var e = c ? c : [];
-                    b.push("<input" + d.attr("id", "" + a + "_from", !0, !1) + d.attr("value", e[0], !0, !1) + ' class="number-inp range-from"/><span class="separator">-</span><input' + d.attr("id", "" + a + "_to", !0, !1) + d.attr("value", e[0], !0, !1) + ' class="number-inp range-to"/></div>');
+                    b.push("<input" + d.attr("id", "" + a + "_from", !0, !1) + d.attr("value", e[0], !0, !1) + ' class="number-inp range-from"/><span class="separator">-</span><input' + d.attr("id", "" + a + "_to", !0, !1) + d.attr("value", e[1], !0, !1) + ' class="number-inp range-to"/></div>');
                 }.call(this, "cid" in c ? c.cid : "undefined" != typeof cid ? cid : void 0, "value" in c ? c.value : "undefined" != typeof value ? value : void 0), 
                 b.join("");
             };
@@ -784,26 +784,27 @@
                     return this.set = g(this.set, this), this.select = g(this.select, this), this._checkSelectEmpty = g(this._checkSelectEmpty, this), 
                     this.getValue = g(this.getValue, this), this.getResults = g(this.getResults, this), 
                     this.close = g(this.close, this), this._onTabAction = g(this._onTabAction, this), 
-                    this.render = g(this.render, this), this._getInpSelector = g(this._getInpSelector, this), 
+                    this.render = g(this.render, this), this.reopen = g(this.reopen, this), this._getInpSelector = g(this._getInpSelector, this), 
                     this.getTemplateData = g(this.getTemplateData, this), this._onKey = g(this._onKey, this), 
                     this.input = g(this.input, this), this.open = g(this.open, this), this.renderResult = g(this.renderResult, this), 
                     this.focus = g(this.focus, this), this.events = g(this.events, this), this.initialize = g(this.initialize, this), 
                     c.__super__.constructor.apply(this, arguments);
                 }
                 return h(c, b), c.prototype.resultTemplate = a("../../tmpls/result_base.jade"), 
-                c.prototype.initialize = function() {
-                    this.result = new f();
+                c.prototype.initialize = function(a) {
+                    this.sub = a.sub, this.result = new f();
                 }, c.prototype.events = function() {
                     var a;
                     return a = {}, a["keyup " + this._getInpSelector()] = "input", a["keydown " + this._getInpSelector()] = "input", 
                     a;
                 }, c.prototype.focus = function() {
                     this.$inp.focus();
-                }, c.prototype.renderResult = function() {
-                    var a, b, c, d, e, f;
-                    for (a = [], f = this.result.models, c = b = 0, d = f.length; d > b; c = ++b) e = f[c], 
-                    a.push(e.getLabel());
-                    return "<li>" + a.join("</li><li>") + "</li>";
+                }, c.prototype.renderResult = function(a) {
+                    var b, c, d, e, f, g;
+                    if (null == a && (a = !1), a) return "<li></li>";
+                    for (b = [], g = this.result.models, d = c = 0, e = g.length; e > c; d = ++c) f = g[d], 
+                    b.push(f.getLabel());
+                    return "<li>" + b.join("</li><li>") + "</li>";
                 }, c.prototype.open = function() {
                     this.$el.addClass("open"), this.isOpen = !0, this.trigger("opened");
                 }, c.prototype.input = function(a) {
@@ -822,6 +823,8 @@
                     };
                 }, c.prototype._getInpSelector = function() {
                     return "input#" + this.cid;
+                }, c.prototype.reopen = function(a) {
+                    this.$el.removeClass("closed"), this.$el.addClass("open"), this.render(), a.open();
                 }, c.prototype.render = function() {
                     var a;
                     a = this.template(this.getTemplateData()), this.$el.html(a), this.$inp = this.$el.find(this._getInpSelector()), 
@@ -850,9 +853,11 @@
                     a = this.getValue(), this._checkSelectEmpty(a) || this.set(a);
                 }, c.prototype.set = function(a) {
                     var b, c;
-                    b = this.getSelectModel(), c = new b({
+                    c = this.result.first(), null == c ? (b = this.getSelectModel(), c = new b({
                         value: a
-                    }), this.result.add(c), this.trigger("selected", c), this.close();
+                    }), this.result.add(c)) : c.set({
+                        value: a
+                    }), this.trigger("selected", c), this.close();
                 }, c;
             }(Backbone.View), b.exports = d;
         }, {
@@ -950,9 +955,9 @@
                     }), b.__super__.constructor.apply(this, arguments);
                 }
                 return i(b, a), b.prototype.events = function() {
-                    var a, b;
-                    return b = {}, b["keyup " + this._getInpSelector()] = "input", b["keydown " + this._getInpSelector()] = "input", 
-                    a = b, a;
+                    var a;
+                    return a = {}, a["keyup " + this._getInpSelector()] = "input", a["keydown " + this._getInpSelector()] = "input", 
+                    a;
                 }, b.prototype.input = function(a) {
                     var b, c;
                     if (b = $(a.currentTarget), "keydown" === a.type) switch (a.keyCode) {
@@ -1036,21 +1041,32 @@
             }(a("../../models/backbone_sub")), f = function(a) {
                 function b(a) {
                     this._createOptionCollection = k(this._createOptionCollection, this), this._onTabAction = k(this._onTabAction, this), 
-                    this.getResults = k(this.getResults, this), this.select = k(this.select, this), 
-                    a.custom = !0, this.collection = this._createOptionCollection(a.model.get("options")), 
+                    this.getResults = k(this.getResults, this), this.reopen = k(this.reopen, this), 
+                    this.select = k(this.select, this), this._isFull = k(this._isFull, this), this.events = k(this.events, this), 
+                    null != a.model.get("count") && (this.selectCount = a.model.get("count")), a.custom = !0, 
+                    null != a.model.get("custom") && (a.custom = Boolean(a.model.get("custom"))), this.collection = this._createOptionCollection(a.model.get("options")), 
+                    !a.custom && this.selectCount <= 0 && (this.selectCount = this.collection.length), 
                     b.__super__.constructor.call(this, a);
                 }
                 return l(b, a), b.prototype.optDefault = {
                     label: "-",
                     value: "-"
-                }, b.prototype.multiSelect = !0, b.prototype.optColl = i, b.prototype.select = function() {
-                    var a, b, c, d, e;
-                    for (c = this.model.get("value"), null == c || _.isArray(c) || (c = [ c ]), d = 0, 
-                    e = c.length; e > d; d++) b = c[d], a = this.collection.get(b), null == a && (a = new this.collection.model({
+                }, b.prototype.selectCount = 0, b.prototype.optColl = i, b.prototype.events = function() {
+                    var a;
+                    return a = b.__super__.events.apply(this, arguments), a["blur input#" + this.cid] = "close", 
+                    a;
+                }, b.prototype._isFull = function() {
+                    return this.selectCount <= 0 ? !1 : (this.result || []).length >= this.selectCount;
+                }, b.prototype.select = function() {
+                    var a, b, c, d, e, f;
+                    for (c = this.model.get("value"), null == c || _.isArray(c) || (c = [ c ]), f = this.selectCount <= 0 ? c : c.slice(0, this.selectCount), 
+                    d = 0, e = f.length; e > d; d++) b = f[d], a = this.collection.get(b), null == a && (a = new this.collection.model({
                         value: b,
                         custom: !0
                     })), this.selected(a);
                     this.close();
+                }, b.prototype.reopen = function(a) {
+                    this._isFull() || b.__super__.reopen.apply(this, arguments);
                 }, b.prototype.getResults = function() {
                     return {
                         value: this.result.pluck("value")
@@ -1090,14 +1106,14 @@
             d = function(b) {
                 function c() {
                     return this.getResults = e(this.getResults, this), this._onTabAction = e(this._onTabAction, this), 
-                    this.getTemplateData = e(this.getTemplateData, this), this.focus = e(this.focus, this), 
-                    this._opSelected = e(this._opSelected, this), this.close = e(this.close, this), 
-                    this.renderResult = e(this.renderResult, this), this.render = e(this.render, this), 
-                    this.events = e(this.events, this), c.__super__.constructor.apply(this, arguments);
+                    this.getTemplateData = e(this.getTemplateData, this), this.reopen = e(this.reopen, this), 
+                    this.focus = e(this.focus, this), this._opSelected = e(this._opSelected, this), 
+                    this.select = e(this.select, this), this.close = e(this.close, this), this.renderResult = e(this.renderResult, this), 
+                    this.render = e(this.render, this), this.events = e(this.events, this), c.__super__.constructor.apply(this, arguments);
                 }
                 return f(c, b), c.prototype.template = a("../../tmpls/number.jade"), c.prototype.events = function() {
-                    var a, b;
-                    return a = c.__super__.events.apply(this, arguments), (null != (b = this.model.get("operators")) ? b.length : void 0) || (a["blur " + this._getInpSelector()] = "select"), 
+                    var a;
+                    return a = c.__super__.events.apply(this, arguments), a["blur " + this._getInpSelector()] = "select", 
                     a;
                 }, c.prototype.render = function() {
                     var a;
@@ -1105,17 +1121,28 @@
                     this.$inpOp.select2({
                         width: "auto"
                     }), this.$inpOp.on("select2:close", this._opSelected));
-                }, c.prototype.renderResult = function() {
-                    var a, b;
-                    return a = this.getResults(), b = "<li>", null != a.operator && (b += a.operator + " "), 
-                    b += a.value, b += "</li>";
+                }, c.prototype.renderResult = function(a) {
+                    var b, c;
+                    return null == a && (a = !1), a ? "<li></li>" : (b = this.getResults(), c = "<li>", 
+                    null != b.operator && (c += b.operator + " "), c += b.value, c += "</li>");
                 }, c.prototype.close = function(a) {
                     null != this.$inpOp && (this.$inpOp.select2("destroy"), this.$inpOp.remove(), this.$inpOp = null), 
                     c.__super__.close.apply(this, arguments);
+                }, c.prototype.select = function(a) {
+                    var b, d;
+                    return (null == (null != a ? a.relatedTarget : void 0) || (b = this.el.compareDocumentPosition(null != a ? a.relatedTarget : void 0), 
+                    0 === b || b - 16 >= 0)) && (null == a || (null != a ? a.relatedTarget : void 0) !== this.$inp.get(0) && (null != a ? a.relatedTarget : void 0) !== (null != (d = this.$inpOp) ? d.get(0) : void 0)) ? (null != this.$inpOp && this.model.set({
+                        operator: this.$inpOp.val()
+                    }), void c.__super__.select.apply(this, arguments)) : void a.stopPropagation();
                 }, c.prototype._opSelected = function() {
                     this.selectedOP = !0, this.focus();
                 }, c.prototype.focus = function(a) {
                     return null == a && (a = !1), null == this.$inpOp || this.selectedOP ? void c.__super__.focus.apply(this, arguments) : void this.$inpOp.select2("open");
+                }, c.prototype.reopen = function(a) {
+                    var b, d;
+                    d = this.result.first().get("value"), b = this.result.first(), this.model.set({
+                        value: d
+                    }), a.$results.empty().html(this.renderResult(!0)), c.__super__.reopen.apply(this, arguments);
                 }, c.prototype.getTemplateData = function() {
                     return _.extend(c.__super__.getTemplateData.apply(this, arguments), {
                         operators: this.model.get("operators"),
@@ -1154,10 +1181,10 @@
             d = function(b) {
                 function c() {
                     return this._onTabAction = e(this._onTabAction, this), this.getValue = e(this.getValue, this), 
-                    this.getResults = e(this.getResults, this), this.close = e(this.close, this), this.focus = e(this.focus, this), 
-                    this.render = e(this.render, this), this.renderResult = e(this.renderResult, this), 
-                    this.events = e(this.events, this), this._getInpSelector = e(this._getInpSelector, this), 
-                    c.__super__.constructor.apply(this, arguments);
+                    this.getResults = e(this.getResults, this), this.close = e(this.close, this), this.select = e(this.select, this), 
+                    this.reopen = e(this.reopen, this), this.focus = e(this.focus, this), this.render = e(this.render, this), 
+                    this.renderResult = e(this.renderResult, this), this.events = e(this.events, this), 
+                    this._getInpSelector = e(this._getInpSelector, this), c.__super__.constructor.apply(this, arguments);
                 }
                 return f(c, b), c.prototype.template = a("../../tmpls/range.jade"), c.prototype._getInpSelector = function(a) {
                     return null == a && (a = "_from"), "input#" + this.cid + a;
@@ -1165,16 +1192,27 @@
                     var a;
                     return a = {}, a["keyup " + this._getInpSelector()] = "input", a["keydown " + this._getInpSelector()] = "input", 
                     a["keyup " + this._getInpSelector("_to")] = "input", a["keydown " + this._getInpSelector("_to")] = "input", 
+                    a["blur " + this._getInpSelector()] = "select", a["blur " + this._getInpSelector("_to")] = "select", 
                     a;
-                }, c.prototype.renderResult = function() {
-                    var a;
-                    return a = this.getResults(), "<li>" + a.value.join(" - ") + "</li>";
+                }, c.prototype.renderResult = function(a) {
+                    var b;
+                    return null == a && (a = !1), a ? "<li></li>" : (b = this.getResults(), "<li>" + b.value.join(" - ") + "</li>");
                 }, c.prototype.render = function() {
                     c.__super__.render.apply(this, arguments), this.$inpTo = this.$el.find(this._getInpSelector("_to"));
                 }, c.prototype.focus = function(a) {
                     null == a && (a = !1), c.__super__.focus.apply(this, arguments);
+                }, c.prototype.reopen = function(a) {
+                    var b;
+                    b = this.result.first().get("value"), this.model.set({
+                        value: b
+                    }), a.$results.empty().html(this.renderResult(!0)), c.__super__.reopen.apply(this, arguments);
+                }, c.prototype.select = function(a) {
+                    return null == a || (null != a ? a.relatedTarget : void 0) !== this.$inp.get(0) && (null != a ? a.relatedTarget : void 0) !== this.$inpTo.get(0) ? void c.__super__.select.apply(this, arguments) : void a.stopPropagation();
                 }, c.prototype.close = function() {
-                    this.$(".rangeinp").remove(), c.__super__.close.apply(this, arguments);
+                    try {
+                        this.$(".rangeinp").remove();
+                    } catch (a) {}
+                    c.__super__.close.apply(this, arguments);
                 }, c.prototype.getResults = function() {
                     var a;
                     return a = {
@@ -1216,8 +1254,8 @@
                     this._createOptionCollection = f(this._createOptionCollection, this), this.getResults = f(this.getResults, this), 
                     this.getValue = f(this.getValue, this), this._hasTabListener = f(this._hasTabListener, this), 
                     this.getTemplateData = f(this.getTemplateData, this), this.remove = f(this.remove, this), 
-                    this._initSelect2 = f(this._initSelect2, this), this.focus = f(this.focus, this), 
-                    this.render = f(this.render, this), this._getInpSelector = f(this._getInpSelector, this), 
+                    this._initSelect2 = f(this._initSelect2, this), this.reopen = f(this.reopen, this), 
+                    this.focus = f(this.focus, this), this.render = f(this.render, this), this._getInpSelector = f(this._getInpSelector, this), 
                     this.events = f(this.events, this), c.__super__.constructor.apply(this, arguments);
                 }
                 return g(c, b), c.prototype.template = a("../../tmpls/select.jade"), c.prototype.forcedModuleOpts = {}, 
@@ -1234,7 +1272,7 @@
                     c.__super__.render.apply(this, arguments), this._initSelect2();
                 }, c.prototype.focus = function() {
                     return this._initSelect2(), this.select2.open(), c.__super__.focus.apply(this, arguments);
-                }, c.prototype._initSelect2 = function() {
+                }, c.prototype.reopen = function(a) {}, c.prototype._initSelect2 = function() {
                     var a;
                     null == this.select2 && (a = _.extend({}, this.defaultModuleOpts, this.model.get("opts"), {
                         multiple: this.model.get("multiple")
@@ -1290,7 +1328,8 @@
                     this.$(".select-check").remove(), c.__super__.close.apply(this, arguments);
                 }, c.prototype.select = function(a) {
                     var b, c, d, e, f;
-                    if (d = this.getValue(), !(null != d ? d.length : void 0)) return void this.close();
+                    if ((null != a ? a.stopPropagation : void 0) && a.stopPropagation(), d = this.getValue(), 
+                    !(null != d ? d.length : void 0)) return void this.close();
                     for (b = this.getSelectModel(), e = 0, f = d.length; f > e; e++) c = d[e], this.result.add(new b(c));
                     this.trigger("selected", this.result), this.close();
                 }, c;
@@ -1315,7 +1354,8 @@
             }, g = {}.hasOwnProperty;
             d = function(b) {
                 function c() {
-                    return this.close = e(this.close, this), this.events = e(this.events, this), c.__super__.constructor.apply(this, arguments);
+                    return this.reopen = e(this.reopen, this), this.close = e(this.close, this), this.events = e(this.events, this), 
+                    c.__super__.constructor.apply(this, arguments);
                 }
                 return f(c, b), c.prototype.template = a("../../tmpls/string.jade"), c.prototype.events = function() {
                     var a;
@@ -1327,6 +1367,11 @@
                     try {
                         null != (b = this.$inp) && b.remove();
                     } catch (d) {}
+                }, c.prototype.reopen = function(a) {
+                    var b;
+                    b = this.result.first().get("value"), this.model.set({
+                        value: b
+                    }), a.$results.empty().html(this.renderResult(!0)), c.__super__.reopen.apply(this, arguments);
                 }, c;
             }(a("./base")), b.exports = d;
         }, {
@@ -1351,10 +1396,10 @@
             };
             g = a("./sub"), f = a("./selector"), d = a("../utils/keycodes"), e = function(b) {
                 function c() {
-                    return this.addFacet = h(this.addFacet, this), this.genSub = h(this.genSub, this), 
-                    this.setFacet = h(this.setFacet, this), this.remFacet = h(this.remFacet, this), 
-                    this.exit = h(this.exit, this), this._onKey = h(this._onKey, this), this._addFacet = h(this._addFacet, this), 
-                    this.render = h(this.render, this), this.initialize = h(this.initialize, this), 
+                    return this._outerClick = h(this._outerClick, this), this._outerClickListen = h(this._outerClickListen, this), 
+                    this.addFacet = h(this.addFacet, this), this.genSub = h(this.genSub, this), this.setFacet = h(this.setFacet, this), 
+                    this.remFacet = h(this.remFacet, this), this.exit = h(this.exit, this), this._onKey = h(this._onKey, this), 
+                    this._addFacet = h(this._addFacet, this), this.render = h(this.render, this), this.initialize = h(this.initialize, this), 
                     c.__super__.constructor.apply(this, arguments);
                 }
                 return i(c, b), c.prototype.template = a("../tmpls/wrapper.jade"), c.prototype.events = {
@@ -1364,9 +1409,14 @@
                     var b, c, d, e, f, g, h;
                     for (this.results = a.results, this.collection.on("iggy:rem", this.remFacet), b = "iggy clearfix", 
                     (null != (f = this.el.className) ? f.length : void 0) && (b = " " + b), this.el.className += b, 
-                    this.render(), $(document).on("keyup", this._onKey), g = this.collection.filter(function(a) {
+                    this.render(), $(document).on("keyup", this._onKey), this._outerClickListen(), g = this.collection.filter(function(a) {
                         return null != (null != a ? a.get("value") : void 0);
                     }), d = 0, e = g.length; e > d; d++) c = g[d], h = this.genSub(c, !1);
+                    this.collection.on("add", function(a) {
+                        return function() {
+                            a.$addBtn.show();
+                        };
+                    }(this));
                 }, c.prototype.render = function() {
                     this.$el.html(this.template()), this.$addBtn = this.$(".add-facet-btn");
                 }, c.prototype._addFacet = function(a) {
@@ -1374,9 +1424,9 @@
                 }, c.prototype._onKey = function(a) {
                     var b;
                     return a.keyCode === d.ESC || (b = a.keyCode, k.call(d.ESC, b) >= 0) ? void this.exit() : void 0;
-                }, c.prototype.exit = function() {
-                    this.selectview && (this.selectview.close(), this.selectview = null), this.subview && (this.subview.close(), 
-                    this.subview = null, this.addFacet());
+                }, c.prototype.exit = function(a) {
+                    null == a && (a = !0), this.subview && (this.subview.close(), this.subview = null, 
+                    a && this.addFacet()), this.selectview && (this.selectview.close(), this.selectview = null);
                 }, c.prototype.remFacet = function(a) {
                     this.results.remove(a.get("name"));
                 }, c.prototype.setFacet = function(a, b) {
@@ -1387,7 +1437,7 @@
                         merge: !0,
                         parse: !0,
                         _facet: a
-                    });
+                    }), this.collection.length || this.$addBtn.hide();
                 }, c.prototype.genSub = function(a, b) {
                     var c;
                     return null == b && (b = !0), c = new g({
@@ -1395,23 +1445,33 @@
                         collection: this.collection
                     }), c.on("closed", function(a) {
                         return function(d) {
-                            c.off(), (null != d ? d.length : void 0) || c.remove(), a.subview = null, b && a.addFacet();
+                            (null != d ? d.length : void 0) || c.remove(), a.subview = null, b && a.addFacet();
+                        };
+                    }(this)), c.on("reopen", function(a) {
+                        return function() {
+                            var b;
+                            null != (b = a.selectview) && b.close();
                         };
                     }(this)), c.on("selected", this.setFacet), this.$addBtn.before(c.render()), c;
                 }, c.prototype.addFacet = function() {
-                    return null != this.selectview ? void this.selectview.focus() : null != this.subview ? void this.subview.focus() : void (this.collection.length && (this.selectview = new f({
+                    return null != this.selectview ? void this.selectview.focus() : null != this.subview ? void this.subview.close() : void (this.collection.length && (this.selectview = new f({
                         collection: this.collection,
                         custom: !1
                     }), this.$addBtn.before(this.selectview.render()), this.selectview.focus(), this.selectview.on("closed", function(a) {
                         return function(b) {
-                            a.selectview.off(), a.selectview.remove(), a.selectview = null, (null != b ? b.length : void 0) || null == a.subview || (a.subview.off(), 
-                            a.subview.remove(), a.subview = null);
+                            a.selectview.remove(), a.selectview = null, (null != b ? b.length : void 0) || null == a.subview || (a.subview.remove(), 
+                            a.subview = null);
                         };
                     }(this)), this.selectview.on("selected", function(a) {
                         return function(b) {
                             b.set("value", null), a.subview = a.genSub(b), a.subview.open();
                         };
                     }(this))));
+                }, c.prototype._outerClickListen = function() {
+                    jQuery(document).on("click", this._outerClick);
+                }, c.prototype._outerClick = function(a) {
+                    var b;
+                    a.stopPropagation(), b = this.el.compareDocumentPosition(a.target), 0 === b || b - 16 >= 0 || this.exit(!1);
                 }, c;
             }(Backbone.View), b.exports = e;
         }, {
@@ -1437,7 +1497,7 @@
                 function c(a) {
                     this.selectActive = f(this.selectActive, this), this.select = f(this.select, this), 
                     this.move = f(this.move, this), this.search = f(this.search, this), this.focus = f(this.focus, this), 
-                    this.selected = f(this.selected, this), this._onClick = f(this._onClick, this), 
+                    this.selected = f(this.selected, this), this._isFull = f(this._isFull, this), this._onClick = f(this._onClick, this), 
                     this.checkOptionsEmpty = f(this.checkOptionsEmpty, this), this.scrollHelper = f(this.scrollHelper, this), 
                     this._checkScroll = f(this._checkScroll, this), this.renderRes = f(this.renderRes, this), 
                     this.render = f(this.render, this), this.getTemplateData = f(this.getTemplateData, this), 
@@ -1446,7 +1506,7 @@
                     this.currQuery = "", c.__super__.constructor.apply(this, arguments);
                 }
                 return g(c, b), c.prototype.template = a("../tmpls/selector.jade"), c.prototype.templateEl = a("../tmpls/selectorli.jade"), 
-                c.prototype.multiSelect = !1, c.prototype.className = function() {
+                c.prototype.selectCount = 1, c.prototype.className = function() {
                     var a;
                     return a = [ "add-facet" ], this.custom && a.push("custom"), a.join(" ");
                 }, c.prototype.events = function() {
@@ -1458,8 +1518,8 @@
                 }, c.prototype.initialize = function(a) {
                     this.searchcoll = this.collection.sub(function() {
                         return !0;
-                    }), this.result = new this.collection.constructor(), this.listenTo(this.searchcoll, "remove", this.renderRes), 
-                    this.listenTo(this.searchcoll, "remove", this.checkOptionsEmpty);
+                    }), this.result = new this.collection.constructor(), this.listenTo(this.searchcoll, "add", this.renderRes), 
+                    this.listenTo(this.searchcoll, "remove", this.renderRes), this.listenTo(this.searchcoll, "remove", this.checkOptionsEmpty);
                 }, c.prototype.getTemplateData = function() {
                     return _.extend(c.__super__.getTemplateData.apply(this, arguments), {
                         custom: this.custom
@@ -1495,8 +1555,10 @@
                 }, c.prototype.checkOptionsEmpty = function() {}, c.prototype._onClick = function(a) {
                     var b, c;
                     return a.stopPropagation(), a.preventDefault(), b = this.$(a.currentTarget).data("id"), 
-                    null != b && (c = this.collection.get(b), null != c) ? (this.selected(c), this.multiSelect || this.close(), 
+                    null != b && (c = this.collection.get(b), null != c) ? (this.selected(c), this._isFull() && this.close(), 
                     !1) : void 0;
+                }, c.prototype._isFull = function() {
+                    return !0;
                 }, c.prototype.selected = function(a) {
                     var b, c;
                     try {
@@ -1547,17 +1609,16 @@
                 }, c.prototype.select = function() {}, c.prototype.selectActive = function(a) {
                     var b, c, d;
                     if (null == a && (a = !1), c = this.$el.find(".typelist a.active").removeClass("active").data(), 
-                    b = this.$inp.val(), null == c && this.multiSelect && a && !(null != b ? b.length : void 0)) return void this.close();
+                    b = this.$inp.val(), null == c && 1 !== this.selectCount && a && !(null != b ? b.length : void 0)) return void this.close();
                     if (null != c) {
-                        if (this.activeIdx = 0, (null != c ? c.idx : void 0) >= 0 && this.searchcoll.length) console.log("got", this.collection.get(c.id), this.collection, c.id), 
-                        this.selected(this.collection.get(c.id)); else {
+                        if (this.activeIdx = 0, (null != c ? c.idx : void 0) >= 0 && this.searchcoll.length) this.selected(this.collection.get(c.id)); else {
                             if (null != (d = this.currQuery) ? !d.length : !0) return;
                             this.selected(new this.collection.model({
                                 value: this.currQuery,
                                 custom: !0
                             })), this.$inp.val("");
                         }
-                        this.multiSelect || this.close();
+                        this._isFull() && this.close();
                     }
                 }, c;
             }(a("./facets/base")), b.exports = e;
@@ -1582,15 +1643,16 @@
             }, g = {}.hasOwnProperty;
             d = function(b) {
                 function c() {
-                    return this.open = e(this.open, this), this.generateSub = e(this.generateSub, this), 
-                    this.close = e(this.close, this), this.focus = e(this.focus, this), this.isOpen = e(this.isOpen, this), 
-                    this.selected = e(this.selected, this), this.remove = e(this.remove, this), this.del = e(this.del, this), 
+                    return this.open = e(this.open, this), this.attachSubEvents = e(this.attachSubEvents, this), 
+                    this.generateSub = e(this.generateSub, this), this.close = e(this.close, this), 
+                    this.focus = e(this.focus, this), this.isOpen = e(this.isOpen, this), this.selected = e(this.selected, this), 
+                    this.remove = e(this.remove, this), this.del = e(this.del, this), this.reopen = e(this.reopen, this), 
                     this.render = e(this.render, this), this.initialize = e(this.initialize, this), 
                     c.__super__.constructor.apply(this, arguments);
                 }
                 return f(c, b), c.prototype.template = a("../tmpls/sub.jade"), c.prototype.className = "sub", 
                 c.prototype.initialize = function() {
-                    this.result = new Backbone.Collection();
+                    this._isOpen = !1, this.result = new Backbone.Collection(), this.$el.on("click", this.reopen);
                 }, c.prototype.events = {
                     "click .rm-facet-btn": "del"
                 }, c.prototype.render = function(a) {
@@ -1613,14 +1675,19 @@
                         selected: d
                     })), this.$sub = this.$(".subselect"), this.$results = this.$(".subresults"), this.generateSub(), 
                     this.el;
+                }, c.prototype.reopen = function(a) {
+                    this._isOpen || null == this.selectview || this.selectview.reopen(this), a.preventDefault(), 
+                    a.stopPropagation(), this.trigger("reopen");
                 }, c.prototype.del = function(a) {
                     return a.stopPropagation(), a.preventDefault(), this.collection.trigger("iggy:rem", this.model), 
                     this.collection.add(this.model), this.remove(), this.trigger("closed"), !1;
                 }, c.prototype.remove = function() {
                     var a;
-                    return null != (a = this.selectview) && a.remove(), c.__super__.remove.apply(this, arguments);
+                    return this._isOpen = !1, null != (a = this.selectview) && a.remove(), c.__super__.remove.apply(this, arguments);
                 }, c.prototype.selected = function(a) {
-                    this.result.add(a), this.$results.html(this.selectview.renderResult()), this.trigger("selected", this.model, this.selectview.getResults());
+                    this.result.add(a, {
+                        merge: !0
+                    }), this.$results.html(this.selectview.renderResult()), this.trigger("selected", this.model, this.selectview.getResults());
                 }, c.prototype.isOpen = function() {
                     return null != this.selectview;
                 }, c.prototype.focus = function() {
@@ -1628,24 +1695,28 @@
                     return null != this.selectview ? void (null != (a = this.selectview) && a.focus()) : void this.open();
                 }, c.prototype.close = function() {
                     var a;
-                    return null != this.selectview ? void (null != (a = this.selectview) && a.close()) : void 0;
+                    return this._isOpen = !1, null != this.selectview ? void (null != (a = this.selectview) && a.close()) : void 0;
                 }, c.prototype.generateSub = function() {
                     var a;
-                    return null != this.selectview ? this.selectview : (this.selectview = new this.model.SubView({
+                    return null != this.selectview ? (this.attachSubEvents(), this.selectview) : (this.selectview = new this.model.SubView({
+                        sub: this,
                         model: this.model,
                         el: this.$sub
-                    }), this.selectview.on("closed", function(a) {
+                    }), this.attachSubEvents(), this.$el.append(this.selectview.render()), void (null != (null != (a = this.model) ? a.get("value") : void 0) && this.selectview.select()));
+                }, c.prototype.attachSubEvents = function() {
+                    this.selectview.on("closed", function(a) {
                         return function(b) {
-                            a.selectview.off(), b.length || a.selectview.remove(), a.trigger("closed", b), b.length || a.remove();
+                            a._isOpen = !1, a.selectview.off(), b.length || a.selectview.remove(), a.trigger("closed", b), 
+                            b.length || a.remove();
                         };
                     }(this)), this.selectview.on("selected", function(a) {
                         return function(b) {
                             b && a.selected(b);
                         };
-                    }(this)), this.$el.append(this.selectview.render()), void (null != (null != (a = this.model) ? a.get("value") : void 0) && this.selectview.select()));
+                    }(this));
                 }, c.prototype.open = function() {
                     var a;
-                    this.generateSub(), null != (a = this.selectview) && a.focus();
+                    this.generateSub(), null != (a = this.selectview) && a.focus(), this._isOpen = !0;
                 }, c;
             }(Backbone.View), b.exports = d;
         }, {

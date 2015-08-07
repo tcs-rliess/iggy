@@ -35,6 +35,18 @@ jQuery( function( $ ){
 		options: [ "pizza", "pasta", "carne" ]
 	},{
 		type: "array",
+		name: "arrayselsingle",
+		label: "Array Select Single",
+		count: 1,
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "array",
+		name: "arrayseltwo",
+		label: "Array Select Two",
+		count: 2,
+		options: [ "a", "b", "c", "d" ]
+	},{
+		type: "array",
 		name: "arrayempty",
 		label: "Array Empty",
 		//value: [ "custom", "values", "predefined" ],
@@ -43,6 +55,7 @@ jQuery( function( $ ){
 		type: "array",
 		name: "arraylabels",
 		label: "Array Labels",
+		custom: false,
 		//value: [ "m", "s"],
 		options: [ 
 			{ value: "m", label: "München" },
@@ -211,9 +224,29 @@ jQuery( function( $ ){
 		value: "custom",
 		options: [ "pizza", "pasta", "carne" ]
 	},{
+		type: "array",
+		name: "select_array_multi",
+		label: "Select Array Multi",
+		custom: false,
+		value: [ "pizza", "carne" ],
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "array",
+		name: "select_array_single",
+		label: "Select Array Single",
+		custom: false,
+		count: 1,
+		value: [ "pizza", "carne" ],
+		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "number",
+		name: "numbersimple",
+		label: "Number-Simple",
+		value: 23
+	},{
 		type: "number",
 		name: "numberop",
-		label: "Nummer-OP",
+		label: "Number-OP",
 		min: 0,
 		max: 100,
 		step: 1,
