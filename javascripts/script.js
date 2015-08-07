@@ -37,6 +37,13 @@ jQuery( function( $ ){
 		options: []
 	},{
 		type: "array",
+		name: "array_count",
+		label: "Array Count 2",
+		custom: false,
+		count: 2,
+		options: [ "A", "B", "C", "D", "E" ]
+	},{
+		type: "array",
 		name: "arraylabel",
 		label: "Array Labels",
 		options: [ 
