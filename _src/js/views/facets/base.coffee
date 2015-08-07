@@ -4,7 +4,8 @@ SubResults = require( "../../models/subresults" )
 class FacetSubsBase extends Backbone.View
 	resultTemplate: require( "../../tmpls/result_base.jade" )
 
-	initialize: =>
+	initialize: ( options )=>
+		@sub = options.sub
 		@result = new SubResults()
 		return
 
@@ -16,7 +17,9 @@ class FacetSubsBase extends Backbone.View
 		@$inp.focus()
 		return
 
-	renderResult: =>
+	renderResult: ( renderEmpty = false )=>
+		if renderEmpty
+			return "<li></li>"
 		_list = []
 		for model, idx in @result.models
 			_list.push model.getLabel()
@@ -48,9 +51,16 @@ class FacetSubsBase extends Backbone.View
 
 	_getInpSelector: =>
 		return "input##{@cid}"
-
+	
+	reopen: ( pView )=>
+		@$el.removeClass( "closed" )
+		@$el.addClass( "open" )
+		@render()
+		pView.open()
+		return
+	
 	render: =>
-		_tmpl = @template( @getTemplateData() )
+		_tmpl = @template(  @getTemplateData() )
 		@$el.html( _tmpl )
 		@$inp = @$el.find( @_getInpSelector() )
 		$( document ).on @_hasTabEvent(), @_onKey if @_hasTabListener( true )
@@ -98,9 +108,13 @@ class FacetSubsBase extends Backbone.View
 		return
 
 	set: ( val )=>
-		_ModelConst = @getSelectModel()
-		_model = new _ModelConst( value: val )
-		@result.add( _model )
+		_model = @result.first()
+		if not _model?
+			_ModelConst = @getSelectModel()
+			_model = new _ModelConst( value: val )
+			@result.add( _model )
+		else
+			_model.set( value: val )
 		@trigger( "selected", _model )
 		@close()
 		return

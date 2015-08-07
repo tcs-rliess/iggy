@@ -27,6 +27,10 @@ class MainView extends Backbone.View
 		for fct in @collection.filter( ( fct )->return fct?.get( "value" )? )
 			subview = @genSub( fct, false )
 		
+		@collection.on "add", =>
+			@$addBtn.show()
+			return
+		
 		return
 
 	render: =>
@@ -45,7 +49,6 @@ class MainView extends Backbone.View
 		return
 	
 	exit: ( nextAdd = true )=>
-		#console.log "exit", @el.id, nextAdd, @selectview, @subview
 		if @subview
 			@subview.close()
 			@subview = null
@@ -67,6 +70,8 @@ class MainView extends Backbone.View
 		@collection.remove( facetM )
 
 		@results.add( _.extend( data, { name: facetM.get( "name" ), type: facetM.get( "type" ) } ), { merge: true, parse: true, _facet: facetM } )
+		if not @collection.length
+			@$addBtn.hide()
 		return
 
 	genSub: ( facetM, addAfter = true )=>
@@ -74,12 +79,16 @@ class MainView extends Backbone.View
 		
 		subview.on "closed", ( results )=>
 			#console.log "SUB VIEW CLOSED", results?.length
-			subview.off()
+			#subview.off()
 			subview.remove() if not results?.length
 			@subview = null
 			@addFacet() if addAfter
 			return
-
+		
+		subview.on "reopen", =>
+			@selectview?.close()
+			return
+			
 		subview.on( "selected", @setFacet )
 		
 		@$addBtn.before( subview.render() )
@@ -108,11 +117,11 @@ class MainView extends Backbone.View
 
 		@selectview.on "closed", ( results )=>
 			#console.log "SELECT VIEW CLOSED", results?.length
-			@selectview.off()
+			#@selectview.off()
 			@selectview.remove()
 			@selectview = null
 			if not results?.length and @subview?
-				@subview.off()
+				#@subview.off()
 				@subview.remove()
 				@subview = null
 			return

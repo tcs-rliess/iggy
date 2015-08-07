@@ -18,7 +18,7 @@ class FacetSubsSelect extends require( "./base" )
 
 	_getInpSelector: =>
 		return "select##{@cid}"
-
+		
 	render: =>
 		super
 		@_initSelect2()
@@ -30,6 +30,9 @@ class FacetSubsSelect extends require( "./base" )
 		#else
 			#@$inp.select2( "open" )
 		return super
+	
+	reopen: ( pView )=>
+		return
 
 	_initSelect2: =>
 		if not @select2?

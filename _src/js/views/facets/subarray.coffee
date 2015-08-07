@@ -32,7 +32,13 @@ class FacetSubArray extends require( "../selector" )
 	selectCount: 0
 
 	optColl: StringOptions
-
+	
+	events: =>
+		_evnts = super
+		#if not @model.get( "operators" )?.length
+		_evnts[ "blur input##{@cid}" ] = "close"
+		return _evnts
+	
 	constructor: ( options )->
 		if options.model.get( "count" )?
 			@selectCount = options.model.get( "count" )
@@ -42,7 +48,7 @@ class FacetSubArray extends require( "../selector" )
 			
 		@collection = @_createOptionCollection( options.model.get( "options" ) )
 		
-		if not options.custom
+		if not options.custom and @selectCount <= 0
 			@selectCount = @collection.length
 			
 		super( options )
@@ -57,15 +63,20 @@ class FacetSubArray extends require( "../selector" )
 		_vals = @model.get( "value" )
 		if _vals? and not _.isArray( _vals )
 			_vals = [ _vals ]
-			
-		for _val in _vals
+		for _val in ( if @selectCount <= 0 then _vals else _vals[...@selectCount] )
 			_mdl = @collection.get( _val )
 			if not _mdl?
 				_mdl = new @collection.model( value: _val, custom: true )
 			@selected( _mdl )
 		@close()
 		return
-		
+	
+	reopen: ( pView )=>
+		if @_isFull()
+			return
+		super
+		return
+	
 	getResults: =>
 		value: @result.pluck( "value" )
 	

@@ -3,7 +3,9 @@ class ViewSub extends Backbone.View
 	className: "sub"
 
 	initialize: =>
+		@_isOpen = false
 		@result = new Backbone.Collection()
+		@$el.on "click", @reopen
 		return
 
 	events:
@@ -26,7 +28,15 @@ class ViewSub extends Backbone.View
 
 		@generateSub()
 		return @el
-
+	
+	reopen: ( evnt )=>
+		if not @_isOpen and @selectview?
+			@selectview.reopen( @ )
+		evnt.preventDefault()
+		evnt.stopPropagation()
+		@trigger( "reopen" )
+		return
+		
 	del: ( evnt )=>
 		evnt.stopPropagation()
 		evnt.preventDefault()
@@ -37,11 +47,12 @@ class ViewSub extends Backbone.View
 		return false
 
 	remove: =>
+		@_isOpen = false
 		@selectview?.remove()
 		return super
 
 	selected: ( optMdl )=>
-		@result.add( optMdl )
+		@result.add( optMdl, { merge: true } )
 		@$results.html( @selectview.renderResult() )
 		@trigger( "selected", @model, @selectview.getResults() )
 		return
@@ -57,6 +68,7 @@ class ViewSub extends Backbone.View
 		return
 
 	close: =>
+		@_isOpen = false
 		if @selectview?
 			@selectview?.close()
 			return
@@ -64,10 +76,20 @@ class ViewSub extends Backbone.View
 
 	generateSub: =>
 		if @selectview?
+			@attachSubEvents()
 			return @selectview
 			
-		@selectview = new @model.SubView( model: @model, el: @$sub )
+		@selectview = new @model.SubView( sub: @, model: @model, el: @$sub )
+		@attachSubEvents()
+			
+		@$el.append( @selectview.render() )
+		if @model?.get( "value" )?
+			@selectview.select()
+		return
+		
+	attachSubEvents: =>
 		@selectview.on "closed", ( result )=>
+			@_isOpen = false
 			@selectview.off()
 			@selectview.remove() if not result.length
 			#@selectview = null
@@ -79,16 +101,13 @@ class ViewSub extends Backbone.View
 			if mdl
 				@selected( mdl )
 			return
-			
-		@$el.append( @selectview.render() )
-		if @model?.get( "value" )?
-			@selectview.select()
 		return
-
+		
 	open: =>
 		@generateSub()
 
 		@selectview?.focus()
+		@_isOpen = true
 		return
 
 module.exports = ViewSub

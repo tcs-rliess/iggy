@@ -9,8 +9,12 @@ class FacetSubsRange extends require( "./number_base" )
 		"keydown #{@_getInpSelector()}": "input"
 		"keyup #{@_getInpSelector( "_to" )}": "input"
 		"keydown #{@_getInpSelector( "_to" )}": "input"
+		"blur #{@_getInpSelector()}": "select"
+		"blur #{@_getInpSelector( "_to" )}": "select"
 
-	renderResult: =>
+	renderResult: ( renderEmpty = false )=>
+		if renderEmpty
+			return "<li></li>"
 		_res = @getResults()
 		return "<li>" +_res.value.join( " - " ) + "</li>"
 
@@ -22,9 +26,25 @@ class FacetSubsRange extends require( "./number_base" )
 	focus: ( inp = false )=>
 		super
 		return
-
+	
+	
+	reopen: ( pView )=>
+		_oldVal = @result.first().get( "value" )
+		@model.set( value: _oldVal )
+		pView.$results.empty().html( @renderResult( true ) )
+		super
+		return
+		
+	select: ( evnt )=>
+		if evnt? and ( evnt?.relatedTarget is @$inp.get(0) or evnt?.relatedTarget is @$inpTo.get(0) )
+			evnt.stopPropagation()
+			return
+		super
+		return
+	
 	close: =>
-		@$( ".rangeinp" ).remove()
+		try
+			@$( ".rangeinp" ).remove()
 		super
 		return
 
