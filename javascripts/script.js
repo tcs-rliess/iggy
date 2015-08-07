@@ -34,12 +34,19 @@ jQuery( function( $ ){
 		type: "array",
 		name: "array_empty",
 		label: "Array Empty",
+		count: 0,
 		options: []
+	},{
+		type: "array",
+		name: "array_single",
+		label: "Array Single",
+		custom: false,
+		count: 1,
+		options: [ "A", "B", "C", "D", "E" ]
 	},{
 		type: "array",
 		name: "array_count",
 		label: "Array Count 2",
-		custom: false,
 		count: 2,
 		options: [ "A", "B", "C", "D", "E" ]
 	},{
