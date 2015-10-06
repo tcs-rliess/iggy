@@ -99,14 +99,14 @@ class SelectorView extends require( "./facets/base" )
 			return
 			
 		@selected( _mdl )
-		if @_isFull()
-			@close()
 		return false
 	
 	_isFull: =>
 		return true
 	
 	selected: ( mdl )=>
+		if @_isFull()
+			@close()
 		try
 			if mdl.onlyExec?
 				mdl?.exec?()
@@ -216,9 +216,6 @@ class SelectorView extends require( "./facets/base" )
 			@$inp.val( "" )
 		else
 			return
-	
-		if @_isFull()
-			@close()
 		return
 
 module.exports = SelectorView
