@@ -1,5 +1,98 @@
 jQuery( function( $ ){
+	
+	var TestAdapter, BaseAdapter,
+		bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+		extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+		hasProp = {}.hasOwnProperty;
 
+	BaseAdapter = $.fn.select2.amd.require("select2/data/ajax");
+
+	TestAdapter = (function(superClass) {
+		extend(TestAdapter, superClass);
+
+		function TestAdapter($element, options) {
+			this.query = bind(this.query, this);
+			this.current = bind(this.current, this);
+			TestAdapter.__super__.constructor.apply(this, arguments);
+			this.fetch = $.Deferred();
+			setTimeout((function(_this) {
+				return function() {
+					
+					_this.fetch.resolve([
+						{
+							id: 27,
+							text: "opt 27"
+						}, {
+							id: 28,
+							text: "opt 28"
+						}, {
+							id: 29,
+							text: "opt 29"
+						}, {
+							id: 30,
+							text: "opt 30"
+						}, {
+							id: 31,
+							text: "opt 31"
+						}, {
+							id: 32,
+							text: "opt 32"
+						}, {
+							id: 33,
+							text: "opt 33"
+						}
+					]);
+				};
+			})(this), 1000);
+			return;
+		}
+
+		TestAdapter.prototype.current = function(callback) {
+			var id, selected;
+			id = this.$element.val();
+			selected = [];
+			
+			this.fetch.then((function(_this) {
+				return function(items) {
+					var models;
+					if( id == undefined || id.length <= 0 ){
+						callback(selected);
+						return
+					}
+					models = _.filter(items, function( el ){
+						return id.indexOf( el.id.toString() ) >= 0
+					});
+					callback(models);
+				};
+			})(this));
+		};
+
+		TestAdapter.prototype.query = function(params, callback) {
+			this.fetch.then((function(_this) {
+				return function(items) {
+					var matcher, results;
+					matcher = _this.options.get("matcher");
+					results = [];
+					_.each(items, function(model) {
+						var match;
+						match = matcher(params, model);
+						if (match != null) {
+							results.push(match);
+						}
+					});
+					callback({
+						results: results
+					});
+				};
+			})(this));
+		};
+
+		return TestAdapter;
+
+	})(BaseAdapter);
+	
+	console.log(TestAdapter);
+	
 	var _printQuery = function( data, target ){
 		$( target || "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
 	}
@@ -131,6 +224,15 @@ jQuery( function( $ ){
 					};
 				}
 			}
+		}
+	},{
+		type: "select",
+		name: "selectapapter",
+		label: "Select Adapter",
+		multiple: true,
+		//value: [ "custom", "values", "predefined" ],
+		opts: {
+			dataAdapter: TestAdapter
 		}
 	},{
 		type: "number",
@@ -265,6 +367,39 @@ jQuery( function( $ ){
 		name: "range",
 		label: "Number Range",
 		value: [ 23, 42 ]
+	},{
+		type: "select",
+		name: "selectajax",
+		label: "Select Ajax",
+		multiple: true,
+		value: [ "2", "3" ],
+		opts: {
+			ajax:{
+				url: "http://jsonplaceholder.typicode.com/users",
+				processResults: function( data ){
+					var i, len, user
+						ret = [];
+					for (i = 0, len = data.length; i < len; i++) {
+						user = data[i];
+						ret.push( { id: user.id, text: user.name } )
+
+					}
+					console.log("processResults", ret);
+					return {
+						results: ret
+					};
+				}
+			}
+		}
+	},{
+		type: "select",
+		name: "selectapapter",
+		label: "Select Adapter",
+		multiple: true,
+		value: [ "28", "31" ],
+		opts: {
+			dataAdapter: TestAdapter
+		}
 	},{
 		type: "select",
 		name: "select_group",

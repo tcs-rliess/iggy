@@ -25,7 +25,9 @@ class FacetSubsSelect extends require( "./base" )
 		return
 
 	focus: ()=>
+		@model.set( "waitForAsync", false )
 		@_initSelect2()
+		@select2.$container.show()
 		@select2.open()
 		#else
 			#@$inp.select2( "open" )
@@ -41,10 +43,20 @@ class FacetSubsSelect extends require( "./base" )
 			@select2 = @$inp.data( "select2" )
 			if not @model.get( "multiple" )
 				@$inp.on "select2:select", @select
+			
+			@select2.dataAdapter.current ( results )=>
+				if @model.get( "waitForAsync" )
+					_data = []
+					for result in results
+						_data.push @_convertValue( result )
+					@_select( _data )
+					@close()
+				return
+				
 			@select2.$container.on "click", @_sel2open
 			@select2.$element.hide()
 			$( document ).on @_hasTabEvent(), @_onKey if @model.get( "multiple" )
-		return
+		return @select2
 
 	_sel2open: ( evnt )->
 		evnt.stopPropagation()
@@ -78,12 +90,16 @@ class FacetSubsSelect extends require( "./base" )
 		
 	getValue: =>
 		_vals = []
-		for data in @select2?.data() or []
-			_data = {}
-			_data.value = data.id
-			_data.label = data.text if data.text?
-			_vals.push( _data )
+		for data in @_initSelect2()?.data() or []
+			
+			_vals.push( @_convertValue( data ) )
 		return _vals
+	
+	_convertValue: ( data )=>
+		_data = {}
+		_data.value = data.id
+		_data.label = data.text if data.text?
+		return _data
 
 	getResults: =>
 		value: @result.pluck( "value" )
@@ -106,7 +122,12 @@ class FacetSubsSelect extends require( "./base" )
 		return
 
 	close: =>
-		@select2?.destroy()
+		if @model.get( "waitForAsync" )
+			return
+		
+		if @select2?
+			#@select2?.destroy()
+			@select2.$container.hide()
 		@$inp?.remove()
 		@$( ".select-check" ).remove()
 		super
@@ -118,12 +139,17 @@ class FacetSubsSelect extends require( "./base" )
 		if not _vals?.length
 			@close()
 			return
+		@_select( _vals )
+
+		@close()
+		return
+	
+	_select: ( _vals )=>
+		@model.set( "waitForAsync", false )
 		ModelConst = @getSelectModel()
 		for _val in _vals
 			@result.add( new ModelConst( _val ) )
 		@trigger( "selected", @result )
-
-		@close()
 		return
 
 module.exports = FacetSubsSelect
