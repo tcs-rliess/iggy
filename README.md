@@ -14,6 +14,7 @@ Browser search module to use with Backbone.js
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.1.1|2015-10-07|Bugfix select2 and datepicker position #36; Optimized select2 to handle async DataAdapters #35; Added `labeltemplate` setting to design the labels #34;Type `array` can now used with async options #33|
 |0.1.0|2015-08-07|Abbiblity to change simple elements or add values to array types (cuurently not availible for select2 types); Added close on outerclick; added array features `count:12` and `custom:false|true`;bugfix facet remove render;|
 |0.0.18|2015-07-22|added `modelId` to handle the id attributes for Backbone `1.2.x`|
 |0.0.17|2015-07-22|fix css bug #27; removed unused tests, updated dependencies|

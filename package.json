@@ -1,6 +1,6 @@
 {
   "name": "iggy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Browser search module to use with Backbone.js",
   "keywords": [],
   "homepage": "https://github.com/mpneuried/iggy",
@@ -38,7 +38,7 @@
     "jquery": "2.1.x",
     "bootstrap": "3.3.x",
     "moment": "2.10.x",
-    "font-awesome": "4.3.x",
+    "font-awesome": "4.4.x",
     "bootstrap-daterangepicker": "dangrossman/bootstrap-daterangepicker",
     "select2": "4.0.x"
   }

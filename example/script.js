@@ -91,8 +91,6 @@ jQuery( function( $ ){
 
 	})(BaseAdapter);
 	
-	console.log(TestAdapter);
-	
 	var _printQuery = function( data, target ){
 		$( target || "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
 	}
@@ -111,6 +109,7 @@ jQuery( function( $ ){
 		type: "event",
 		name: "run",
 		label: "Suchen",
+		labeltemplate: "<i class='fa fa-search'></i> {{label}}",
 		event: "run",
 		cssclass: "runsearch"
 		//value: "first"
@@ -118,6 +117,7 @@ jQuery( function( $ ){
 		type: "string",
 		name: "simple",
 		label: "Simple",
+		labeltemplate: "<i class='fa fa-quote-left'></i> <strong>{{label}}</strong> <i class='fa fa-quote-right'></i> ",
 		options: [ "frist", "second", "last" ],
 		//value: "first"
 	},{
@@ -149,7 +149,6 @@ jQuery( function( $ ){
 		name: "arraylabels",
 		label: "Array Labels",
 		custom: false,
-		//value: [ "m", "s"],
 		options: [ 
 			{ value: "m", label: "München" },
 			{ value: "hh", label: "Hamburg" },
@@ -157,6 +156,23 @@ jQuery( function( $ ){
 			{ value: "k", label: "Köln" },
 			{ value: "s", label: "Stuttgart" }
 		]
+	},{
+		type: "array",
+		name: "arrayasyncopt",
+		label: "Array Async Options",
+		options: function( currentSelection, facet, cb ){
+			//console.log(currentSelection, facet, cb);
+			setTimeout( function(){
+				cb( [ 
+					{ value: "m", label: "München" },
+					{ value: "hh", label: "Hamburg" },
+					{ value: "b", label: "Berlin" },
+					{ value: "k", label: "Köln" },
+					{ value: "s", label: "Stuttgart" }
+				])
+			}, 1000 )
+			
+		}
 	},{
 		type: "select",
 		name: "selsingle",
@@ -218,7 +234,6 @@ jQuery( function( $ ){
 						ret.push( { id: user.id, text: user.name } )
 
 					}
-					console.log("processResults", ret);
 					return {
 						results: ret
 					};
@@ -297,7 +312,7 @@ jQuery( function( $ ){
 	}
 	for (i = j = 0; j <= 100; i = ++j) {
 		facets2.push( {
-			type: "select",
+			type: j % 2 === 0 ? "array" : "select",
 			name: "simple" + i,
 			label: "Simple " + i,
 			multiple: true,
@@ -340,6 +355,24 @@ jQuery( function( $ ){
 		count: 1,
 		value: [ "pizza", "carne" ],
 		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "array",
+		name: "arrayasyncopt",
+		label: "Array Async Options",
+		value: [ "m", "hh" ],
+		options: function( currentSelection, facet, cb ){
+			//console.log(currentSelection, facet, cb);
+			setTimeout( function(){
+				cb( [ 
+					{ value: "m", label: "München" },
+					{ value: "hh", label: "Hamburg" },
+					{ value: "b", label: "Berlin" },
+					{ value: "k", label: "Köln" },
+					{ value: "s", label: "Stuttgart" }
+				])
+			}, 1000 )
+			
+		}
 	},{
 		type: "number",
 		name: "numbersimple",
@@ -384,7 +417,6 @@ jQuery( function( $ ){
 						ret.push( { id: user.id, text: user.name } )
 
 					}
-					console.log("processResults", ret);
 					return {
 						results: ret
 					};

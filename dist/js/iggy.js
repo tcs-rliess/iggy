@@ -1,5 +1,5 @@
 /*
- * IGGY 0.1.0 ( 2015-08-07 )
+ * IGGY 0.1.1 ( 2015-10-07 )
  * http://mpneuried.github.io/iggy/
  *
  * Released under the MIT license
@@ -416,7 +416,8 @@
                 }
                 return f(c, b), c.prototype.SubView = a("../views/facets/subselect"), c.prototype.defaults = function() {
                     return $.extend(c.__super__.defaults.apply(this, arguments), {
-                        options: []
+                        options: [],
+                        waitForAsync: !0
                     });
                 }, c;
             }(a("./facet_base")), b.exports = d;
@@ -736,7 +737,7 @@
                                 c.push("<li>" + d.escape(null == (b = h) ? "" : b) + "</li>");
                             }
                         }
-                    }.call(this), c.push('</ul><div class="subselect"></div>');
+                    }.call(this), c.push('</ul><div class="subselect"></div><div class="loader"><i class="fa fa-cog fa-spin"></i></div>');
                 }.call(this, "label" in e ? e.label : "undefined" != typeof label ? label : void 0, "selected" in e ? e.selected : "undefined" != typeof selected ? selected : void 0, "undefined" in e ? e.undefined : void 0), 
                 c.join("");
             };
@@ -1042,10 +1043,10 @@
                 function b(a) {
                     this._createOptionCollection = k(this._createOptionCollection, this), this._onTabAction = k(this._onTabAction, this), 
                     this.getResults = k(this.getResults, this), this.reopen = k(this.reopen, this), 
-                    this.select = k(this.select, this), this._isFull = k(this._isFull, this), this.events = k(this.events, this), 
-                    null != a.model.get("count") && (this.selectCount = a.model.get("count")), a.custom = !0, 
-                    null != a.model.get("custom") && (a.custom = Boolean(a.model.get("custom"))), this.collection = this._createOptionCollection(a.model.get("options")), 
-                    !a.custom && this.selectCount <= 0 && (this.selectCount = this.collection.length), 
+                    this.select = k(this.select, this), this._isFull = k(this._isFull, this), this.close = k(this.close, this), 
+                    this.events = k(this.events, this), this.loading = !1, null != a.model.get("count") && (this.selectCount = a.model.get("count")), 
+                    a.custom = !0, null != a.model.get("custom") && (a.custom = Boolean(a.model.get("custom"))), 
+                    this.collection = this._createOptionCollection(a.model.get("options")), !a.custom && this.selectCount <= 0 && (this.selectCount = this.collection.length), 
                     b.__super__.constructor.call(this, a);
                 }
                 return l(b, a), b.prototype.optDefault = {
@@ -1055,16 +1056,22 @@
                     var a;
                     return a = b.__super__.events.apply(this, arguments), a["blur input#" + this.cid] = "close", 
                     a;
+                }, b.prototype.close = function(a) {
+                    return this.loading ? (null != a && a.preventDefault(), null != a && a.stopPropagation(), 
+                    void this.focus()) : b.__super__.close.apply(this, arguments);
                 }, b.prototype._isFull = function() {
                     return this.selectCount <= 0 ? !1 : (this.result || []).length >= this.selectCount;
                 }, b.prototype.select = function() {
                     var a, b, c, d, e, f;
-                    for (c = this.model.get("value"), null == c || _.isArray(c) || (c = [ c ]), f = this.selectCount <= 0 ? c : c.slice(0, this.selectCount), 
-                    d = 0, e = f.length; e > d; d++) b = f[d], a = this.collection.get(b), null == a && (a = new this.collection.model({
-                        value: b,
-                        custom: !0
-                    })), this.selected(a);
-                    this.close();
+                    if (!this.loading && (c = this.model.get("value"), null == c || _.isArray(c) || (c = [ c ]), 
+                    null != c ? c.length : void 0)) {
+                        for (f = this.selectCount <= 0 ? c : c.slice(0, this.selectCount), d = 0, e = f.length; e > d; d++) b = f[d], 
+                        a = this.collection.get(b), null == a && (a = new this.collection.model({
+                            value: b,
+                            custom: !0
+                        })), this.selected(a);
+                        this.close();
+                    }
                 }, b.prototype.reopen = function(a) {
                     this._isFull() || b.__super__.reopen.apply(this, arguments);
                 }, b.prototype.getResults = function() {
@@ -1075,13 +1082,23 @@
                     var b;
                     return a.preventDefault(), a.stopPropagation(), b = this.$inp.val(), (null != b ? b.length : void 0) ? void this.selectActive() : void this.close();
                 }, b.prototype._createOptionCollection = function(a) {
-                    var b, c, d, e;
-                    if (_.isFunction(a)) return a(this._createOptionCollection);
-                    for (b = [], c = 0, d = a.length; d > c; c++) e = a[c], _.isString(e) || _.isNumber(e) ? b.push({
-                        value: e,
-                        label: e
-                    }) : _.isObject(e) && b.push(_.extend({}, this.optDefault, e));
-                    return new this.optColl(b);
+                    var b, c, d, e, f;
+                    if (_.isFunction(a)) return this.loading = !0, b = new this.optColl([]), setTimeout(function(c) {
+                        return function() {
+                            return c.$el.parent().addClass("loading"), a(c.result, c.model, function(a) {
+                                var d, e, f, g;
+                                for (f = e = 0, g = a.length; g > e; f = ++e) d = a[f], a[f] = _.extend({}, c.optDefault, d, {
+                                    custom: !1
+                                });
+                                b.add(a), c.loading = !1, c.$el.parent().removeClass("loading"), c.select();
+                            });
+                        };
+                    }(this), 0), b;
+                    for (c = [], d = 0, e = a.length; e > d; d++) f = a[d], _.isString(f) || _.isNumber(f) ? c.push({
+                        value: f,
+                        label: f
+                    }) : _.isObject(f) && c.push(_.extend({}, this.optDefault, f));
+                    return new this.optColl(c);
                 }, b;
             }(a("../selector")), b.exports = f;
         }, {
@@ -1250,8 +1267,9 @@
             };
             e = a("../../utils/keycodes"), d = function(b) {
                 function c() {
-                    return this.select = f(this.select, this), this.close = f(this.close, this), this.unselect = f(this.unselect, this), 
-                    this._createOptionCollection = f(this._createOptionCollection, this), this.getResults = f(this.getResults, this), 
+                    return this._select = f(this._select, this), this.select = f(this.select, this), 
+                    this.close = f(this.close, this), this.unselect = f(this.unselect, this), this._createOptionCollection = f(this._createOptionCollection, this), 
+                    this.getResults = f(this.getResults, this), this._convertValue = f(this._convertValue, this), 
                     this.getValue = f(this.getValue, this), this._hasTabListener = f(this._hasTabListener, this), 
                     this.getTemplateData = f(this.getTemplateData, this), this.remove = f(this.remove, this), 
                     this._initSelect2 = f(this._initSelect2, this), this.reopen = f(this.reopen, this), 
@@ -1269,16 +1287,30 @@
                 }, c.prototype._getInpSelector = function() {
                     return "select#" + this.cid;
                 }, c.prototype.render = function() {
-                    c.__super__.render.apply(this, arguments), this._initSelect2();
+                    c.__super__.render.apply(this, arguments);
                 }, c.prototype.focus = function() {
-                    return this._initSelect2(), this.select2.open(), c.__super__.focus.apply(this, arguments);
+                    return this.model.set("waitForAsync", !1), this._initSelect2(), this.select2.$container.show(), 
+                    this.select2.open(), c.__super__.focus.apply(this, arguments);
                 }, c.prototype.reopen = function(a) {}, c.prototype._initSelect2 = function() {
                     var a;
-                    null == this.select2 && (a = _.extend({}, this.defaultModuleOpts, this.model.get("opts"), {
+                    return null == this.select2 && (a = _.extend({}, this.defaultModuleOpts, this.model.get("opts"), {
                         multiple: this.model.get("multiple")
                     }, this.forcedModuleOpts), this.$inp.select2(a), this.select2 = this.$inp.data("select2"), 
-                    this.model.get("multiple") || this.$inp.on("select2:select", this.select), this.select2.$container.on("click", this._sel2open), 
-                    this.select2.$element.hide(), this.model.get("multiple") && $(document).on(this._hasTabEvent(), this._onKey));
+                    this.model.get("multiple") || this.$inp.on("select2:select", this.select), this.select2.on("results:all", function(a) {
+                        return function() {
+                            a.select2.selection.$search.focus();
+                        };
+                    }(this)), this.select2.dataAdapter.current(function(a) {
+                        return function(b) {
+                            var c, d, e, f;
+                            if (a.model.get("waitForAsync")) {
+                                for (c = [], d = 0, e = b.length; e > d; d++) f = b[d], c.push(a._convertValue(f));
+                                a._select(c), a.close();
+                            }
+                        };
+                    }(this)), this.select2.$container.on("click", this._sel2open), this.select2.$element.hide(), 
+                    this.model.get("multiple") && $(document).on(this._hasTabEvent(), this._onKey)), 
+                    this.select2;
                 }, c.prototype._sel2open = function(a) {
                     return a.stopPropagation(), !1;
                 }, c.prototype.remove = function() {
@@ -1301,11 +1333,13 @@
                 }, c.prototype._hasTabEvent = function() {
                     return "keyup";
                 }, c.prototype.getValue = function() {
-                    var a, b, c, d, e, f, g;
-                    for (b = [], g = (null != (f = this.select2) ? f.data() : void 0) || [], d = 0, 
-                    e = g.length; e > d; d++) c = g[d], a = {}, a.value = c.id, null != c.text && (a.label = c.text), 
-                    b.push(a);
-                    return b;
+                    var a, b, c, d, e, f;
+                    for (a = [], f = (null != (e = this._initSelect2()) ? e.data() : void 0) || [], 
+                    c = 0, d = f.length; d > c; c++) b = f[c], a.push(this._convertValue(b));
+                    return a;
+                }, c.prototype._convertValue = function(a) {
+                    var b;
+                    return b = {}, b.value = a.id, null != a.text && (b.label = a.text), b;
                 }, c.prototype.getResults = function() {
                     return {
                         value: this.result.pluck("value")
@@ -1323,15 +1357,18 @@
                     var b, c;
                     this.result.remove(null != (b = a.params) && null != (c = b.data) ? c.id : void 0);
                 }, c.prototype.close = function() {
-                    var a, b;
-                    null != (a = this.select2) && a.destroy(), null != (b = this.$inp) && b.remove(), 
-                    this.$(".select-check").remove(), c.__super__.close.apply(this, arguments);
+                    var a;
+                    this.model.get("waitForAsync") || (null != this.select2 && this.select2.$container.hide(), 
+                    null != (a = this.$inp) && a.remove(), this.$(".select-check").remove(), c.__super__.close.apply(this, arguments));
                 }, c.prototype.select = function(a) {
-                    var b, c, d, e, f;
-                    if ((null != a ? a.stopPropagation : void 0) && a.stopPropagation(), d = this.getValue(), 
-                    !(null != d ? d.length : void 0)) return void this.close();
-                    for (b = this.getSelectModel(), e = 0, f = d.length; f > e; e++) c = d[e], this.result.add(new b(c));
-                    this.trigger("selected", this.result), this.close();
+                    var b;
+                    return (null != a ? a.stopPropagation : void 0) && a.stopPropagation(), b = this.getValue(), 
+                    (null != b ? b.length : void 0) ? (this._select(b), void this.close()) : void this.close();
+                }, c.prototype._select = function(a) {
+                    var b, c, d, e;
+                    for (this.model.set("waitForAsync", !1), b = this.getSelectModel(), d = 0, e = a.length; e > d; d++) c = a[d], 
+                    this.result.add(new b(c));
+                    this.trigger("selected", this.result);
                 }, c;
             }(a("./base")), b.exports = d;
         }, {
@@ -1528,9 +1565,10 @@
                     return c.__super__.render.apply(this, arguments), this.$list = this.$el.find("#" + this.cid + "typelist"), 
                     this.renderRes(), this.el;
                 }, c.prototype.renderRes = function() {
-                    var a, b, c, d, e, f, g, h, i, j;
-                    for (this.$list.empty(), d = [], i = this.searchcoll.models, f = e = 0, g = i.length; g > e; f = ++e) h = i[f], 
-                    c = h.getLabel(), b = h.id, a = h.get("cssclass"), (null != (j = this.currQuery) ? j.length : void 0) > 1 && (c = c.replace(new RegExp(this.currQuery, "gi"), function(a) {
+                    var a, b, c, d, e, f, g, h, i, j, k;
+                    for (this.$list.empty(), d = [], j = this.searchcoll.models, g = f = 0, h = j.length; h > f; g = ++f) i = j[g], 
+                    c = i.getLabel(), e = i.get("labeltemplate"), null != e && (c = e.replace("{{label}}", c)), 
+                    b = i.id, a = i.get("cssclass"), (null != (k = this.currQuery) ? k.length : void 0) > 1 && (c = c.replace(new RegExp(this.currQuery, "gi"), function(a) {
                         return "<b>" + a + "</b>";
                     })), d.push({
                         label: c,
@@ -1555,20 +1593,20 @@
                 }, c.prototype.checkOptionsEmpty = function() {}, c.prototype._onClick = function(a) {
                     var b, c;
                     return a.stopPropagation(), a.preventDefault(), b = this.$(a.currentTarget).data("id"), 
-                    null != b && (c = this.collection.get(b), null != c) ? (this.selected(c), this._isFull() && this.close(), 
-                    !1) : void 0;
+                    null != b && (c = this.collection.get(b), null != c) ? (this.selected(c), !1) : void 0;
                 }, c.prototype._isFull = function() {
                     return !0;
                 }, c.prototype.selected = function(a) {
-                    var b, c;
+                    var b, c, d, e;
+                    this._isFull() && this.close();
                     try {
                         if (null != a.onlyExec) return void (null != a && "function" == typeof a.exec && a.exec());
                     } catch (d) {
                         b = d;
                         try {
                             console.error("Issue #23: CATCH - Class:" + this.constructor.name + " - activeIdx:" + this.activeIdx + " - collection:" + JSON.stringify(this.collection.toJSON()));
-                        } catch (d) {
-                            c = d, console.error("Issue #23: CATCH");
+                        } catch (e) {
+                            c = e, console.error("Issue #23: CATCH");
                         }
                     }
                     null != a && (this.searchcoll.remove(a), this.result.add(a), this.trigger("selected", a));
@@ -1610,15 +1648,12 @@
                     var b, c, d;
                     if (null == a && (a = !1), c = this.$el.find(".typelist a.active").removeClass("active").data(), 
                     b = this.$inp.val(), null == c && 1 !== this.selectCount && a && !(null != b ? b.length : void 0)) return void this.close();
-                    if (null != c) {
-                        if (this.activeIdx = 0, (null != c ? c.idx : void 0) >= 0 && this.searchcoll.length) this.selected(this.collection.get(c.id)); else {
-                            if (null != (d = this.currQuery) ? !d.length : !0) return;
-                            this.selected(new this.collection.model({
-                                value: this.currQuery,
-                                custom: !0
-                            })), this.$inp.val("");
-                        }
-                        this._isFull() && this.close();
+                    if (null != c) if (this.activeIdx = 0, (null != c ? c.idx : void 0) >= 0 && this.searchcoll.length) this.selected(this.collection.get(c.id)); else {
+                        if (null != (d = this.currQuery) ? !d.length : !0) return;
+                        this.selected(new this.collection.model({
+                            value: this.currQuery,
+                            custom: !0
+                        })), this.$inp.val("");
                     }
                 }, c;
             }(a("./facets/base")), b.exports = e;
@@ -1656,17 +1691,17 @@
                 }, c.prototype.events = {
                     "click .rm-facet-btn": "del"
                 }, c.prototype.render = function(a) {
-                    var b, c, d, e, f, g, h, i;
-                    for (d = [], i = this.result.models, f = e = 0, g = i.length; g > e; f = ++e) {
-                        h = i[f];
+                    var b, c, d, e, f, g, h, i, j, k;
+                    for (d = [], k = this.result.models, h = g = 0, i = k.length; i > g; h = ++g) {
+                        j = k[h];
                         try {
-                            d.push(h.getLabel());
-                        } catch (j) {
-                            b = j;
+                            d.push(j.getLabel());
+                        } catch (e) {
+                            b = e;
                             try {
                                 console.error("Issue #24: CATCH - Class:" + this.constructor.name + " - model:" + JSON.stringify(this.model.toJSON()) + " - result:" + JSON.stringify(this.result.toJSON()));
-                            } catch (j) {
-                                c = j, console.error("Issue #24: CATCH");
+                            } catch (f) {
+                                c = f, console.error("Issue #24: CATCH");
                             }
                         }
                     }

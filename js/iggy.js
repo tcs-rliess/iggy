@@ -609,7 +609,8 @@ FctSelect = (function(superClass) {
 
   FctSelect.prototype.defaults = function() {
     return $.extend(FctSelect.__super__.defaults.apply(this, arguments), {
-      options: []
+      options: [],
+      waitForAsync: true
     });
   };
 
@@ -1048,7 +1049,7 @@ buf.push("<li>" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) +
 }).call(this);
 
 }
-buf.push("</ul><div class=\"subselect\"></div>");}.call(this,"label" in locals_for_with?locals_for_with.label:typeof label!=="undefined"?label:undefined,"selected" in locals_for_with?locals_for_with.selected:typeof selected!=="undefined"?selected:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
+buf.push("</ul><div class=\"subselect\"></div><div class=\"loader\"><i class=\"fa fa-cog fa-spin\"></i></div>");}.call(this,"label" in locals_for_with?locals_for_with.label:typeof label!=="undefined"?label:undefined,"selected" in locals_for_with?locals_for_with.selected:typeof selected!=="undefined"?selected:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
 };
 },{"jade/runtime":37}],23:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -1651,6 +1652,20 @@ FacetSubArray = (function(superClass) {
     return _evnts;
   };
 
+  FacetSubArray.prototype.close = function(evnt) {
+    if (this.loading) {
+      if (evnt != null) {
+        evnt.preventDefault();
+      }
+      if (evnt != null) {
+        evnt.stopPropagation();
+      }
+      this.focus();
+      return;
+    }
+    return FacetSubArray.__super__.close.apply(this, arguments);
+  };
+
   function FacetSubArray(options) {
     this._createOptionCollection = bind(this._createOptionCollection, this);
     this._onTabAction = bind(this._onTabAction, this);
@@ -1658,7 +1673,9 @@ FacetSubArray = (function(superClass) {
     this.reopen = bind(this.reopen, this);
     this.select = bind(this.select, this);
     this._isFull = bind(this._isFull, this);
+    this.close = bind(this.close, this);
     this.events = bind(this.events, this);
+    this.loading = false;
     if (options.model.get("count") != null) {
       this.selectCount = options.model.get("count");
     }
@@ -1683,9 +1700,15 @@ FacetSubArray = (function(superClass) {
 
   FacetSubArray.prototype.select = function() {
     var _mdl, _val, _vals, i, len, ref;
+    if (this.loading) {
+      return;
+    }
     _vals = this.model.get("value");
     if ((_vals != null) && !_.isArray(_vals)) {
       _vals = [_vals];
+    }
+    if (!(_vals != null ? _vals.length : void 0)) {
+      return;
     }
     ref = (this.selectCount <= 0 ? _vals : _vals.slice(0, this.selectCount));
     for (i = 0, len = ref.length; i < len; i++) {
@@ -1728,9 +1751,29 @@ FacetSubArray = (function(superClass) {
   };
 
   FacetSubArray.prototype._createOptionCollection = function(options) {
-    var _opts, i, len, opt;
+    var _coll, _opts, i, len, opt;
     if (_.isFunction(options)) {
-      return options(this._createOptionCollection);
+      this.loading = true;
+      _coll = new this.optColl([]);
+      setTimeout((function(_this) {
+        return function() {
+          _this.$el.parent().addClass("loading");
+          return options(_this.result, _this.model, function(aOpts) {
+            var _opt, i, idx, len;
+            for (idx = i = 0, len = aOpts.length; i < len; idx = ++i) {
+              _opt = aOpts[idx];
+              aOpts[idx] = _.extend({}, _this.optDefault, _opt, {
+                custom: false
+              });
+            }
+            _coll.add(aOpts);
+            _this.loading = false;
+            _this.$el.parent().removeClass("loading");
+            _this.select();
+          });
+        };
+      })(this), 0);
+      return _coll;
     }
     _opts = [];
     for (i = 0, len = options.length; i < len; i++) {
@@ -2005,7 +2048,7 @@ FacetSubsRange = (function(superClass) {
   FacetSubsRange.prototype.close = function() {
     try {
       this.$(".rangeinp").remove();
-    } catch (_error) {}
+    } catch (undefined) {}
     FacetSubsRange.__super__.close.apply(this, arguments);
   };
 
@@ -2058,11 +2101,13 @@ FacetSubsSelect = (function(superClass) {
   extend(FacetSubsSelect, superClass);
 
   function FacetSubsSelect() {
+    this._select = bind(this._select, this);
     this.select = bind(this.select, this);
     this.close = bind(this.close, this);
     this.unselect = bind(this.unselect, this);
     this._createOptionCollection = bind(this._createOptionCollection, this);
     this.getResults = bind(this.getResults, this);
+    this._convertValue = bind(this._convertValue, this);
     this.getValue = bind(this.getValue, this);
     this._hasTabListener = bind(this._hasTabListener, this);
     this.getTemplateData = bind(this.getTemplateData, this);
@@ -2100,11 +2145,12 @@ FacetSubsSelect = (function(superClass) {
 
   FacetSubsSelect.prototype.render = function() {
     FacetSubsSelect.__super__.render.apply(this, arguments);
-    this._initSelect2();
   };
 
   FacetSubsSelect.prototype.focus = function() {
+    this.model.set("waitForAsync", false);
     this._initSelect2();
+    this.select2.$container.show();
     this.select2.open();
     return FacetSubsSelect.__super__.focus.apply(this, arguments);
   };
@@ -2122,12 +2168,32 @@ FacetSubsSelect = (function(superClass) {
       if (!this.model.get("multiple")) {
         this.$inp.on("select2:select", this.select);
       }
+      this.select2.on("results:all", (function(_this) {
+        return function() {
+          _this.select2.selection.$search.focus();
+        };
+      })(this));
+      this.select2.dataAdapter.current((function(_this) {
+        return function(results) {
+          var _data, i, len, result;
+          if (_this.model.get("waitForAsync")) {
+            _data = [];
+            for (i = 0, len = results.length; i < len; i++) {
+              result = results[i];
+              _data.push(_this._convertValue(result));
+            }
+            _this._select(_data);
+            _this.close();
+          }
+        };
+      })(this));
       this.select2.$container.on("click", this._sel2open);
       this.select2.$element.hide();
       if (this.model.get("multiple")) {
         $(document).on(this._hasTabEvent(), this._onKey);
       }
     }
+    return this.select2;
   };
 
   FacetSubsSelect.prototype._sel2open = function(evnt) {
@@ -2180,19 +2246,24 @@ FacetSubsSelect = (function(superClass) {
   };
 
   FacetSubsSelect.prototype.getValue = function() {
-    var _data, _vals, data, i, len, ref, ref1;
+    var _vals, data, i, len, ref, ref1;
     _vals = [];
-    ref1 = ((ref = this.select2) != null ? ref.data() : void 0) || [];
+    ref1 = ((ref = this._initSelect2()) != null ? ref.data() : void 0) || [];
     for (i = 0, len = ref1.length; i < len; i++) {
       data = ref1[i];
-      _data = {};
-      _data.value = data.id;
-      if (data.text != null) {
-        _data.label = data.text;
-      }
-      _vals.push(_data);
+      _vals.push(this._convertValue(data));
     }
     return _vals;
+  };
+
+  FacetSubsSelect.prototype._convertValue = function(data) {
+    var _data;
+    _data = {};
+    _data.value = data.id;
+    if (data.text != null) {
+      _data.label = data.text;
+    }
+    return _data;
   };
 
   FacetSubsSelect.prototype.getResults = function() {
@@ -2228,19 +2299,22 @@ FacetSubsSelect = (function(superClass) {
   };
 
   FacetSubsSelect.prototype.close = function() {
-    var ref, ref1;
-    if ((ref = this.select2) != null) {
-      ref.destroy();
+    var ref;
+    if (this.model.get("waitForAsync")) {
+      return;
     }
-    if ((ref1 = this.$inp) != null) {
-      ref1.remove();
+    if (this.select2 != null) {
+      this.select2.$container.hide();
+    }
+    if ((ref = this.$inp) != null) {
+      ref.remove();
     }
     this.$(".select-check").remove();
     FacetSubsSelect.__super__.close.apply(this, arguments);
   };
 
   FacetSubsSelect.prototype.select = function(evnt) {
-    var ModelConst, _val, _vals, i, len;
+    var _vals;
     if (evnt != null ? evnt.stopPropagation : void 0) {
       evnt.stopPropagation();
     }
@@ -2249,13 +2323,19 @@ FacetSubsSelect = (function(superClass) {
       this.close();
       return;
     }
+    this._select(_vals);
+    this.close();
+  };
+
+  FacetSubsSelect.prototype._select = function(_vals) {
+    var ModelConst, _val, i, len;
+    this.model.set("waitForAsync", false);
     ModelConst = this.getSelectModel();
     for (i = 0, len = _vals.length; i < len; i++) {
       _val = _vals[i];
       this.result.add(new ModelConst(_val));
     }
     this.trigger("selected", this.result);
-    this.close();
   };
 
   return FacetSubsSelect;
@@ -2301,7 +2381,7 @@ FacetSubString = (function(superClass) {
       if ((ref = this.$inp) != null) {
         ref.remove();
       }
-    } catch (_error) {}
+    } catch (undefined) {}
   };
 
   FacetSubString.prototype.reopen = function(pView) {
@@ -2616,13 +2696,17 @@ SelectorView = (function(superClass) {
   };
 
   SelectorView.prototype.renderRes = function() {
-    var _cssclass, _id, _lbl, _list, i, idx, len, model, ref, ref1;
+    var _cssclass, _id, _lbl, _list, _tmpl, i, idx, len, model, ref, ref1;
     this.$list.empty();
     _list = [];
     ref = this.searchcoll.models;
     for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
       model = ref[idx];
       _lbl = model.getLabel();
+      _tmpl = model.get("labeltemplate");
+      if (_tmpl != null) {
+        _lbl = _tmpl.replace("{{label}}", _lbl);
+      }
       _id = model.id;
       _cssclass = model.get("cssclass");
       if (((ref1 = this.currQuery) != null ? ref1.length : void 0) > 1) {
@@ -2685,9 +2769,6 @@ SelectorView = (function(superClass) {
       return;
     }
     this.selected(_mdl);
-    if (this._isFull()) {
-      this.close();
-    }
     return false;
   };
 
@@ -2696,7 +2777,10 @@ SelectorView = (function(superClass) {
   };
 
   SelectorView.prototype.selected = function(mdl) {
-    var _err, _errerr;
+    var _err, _errerr, error, error1;
+    if (this._isFull()) {
+      this.close();
+    }
     try {
       if (mdl.onlyExec != null) {
         if (mdl != null) {
@@ -2706,12 +2790,12 @@ SelectorView = (function(superClass) {
         }
         return;
       }
-    } catch (_error) {
-      _err = _error;
+    } catch (error) {
+      _err = error;
       try {
         console.error("Issue #23: CATCH - Class:" + this.constructor.name + " - activeIdx:" + this.activeIdx + " - collection:" + (JSON.stringify(this.collection.toJSON())));
-      } catch (_error) {
-        _errerr = _error;
+      } catch (error1) {
+        _errerr = error1;
         console.error("Issue #23: CATCH");
       }
     }
@@ -2827,9 +2911,6 @@ SelectorView = (function(superClass) {
     } else {
       return;
     }
-    if (this._isFull()) {
-      this.close();
-    }
   };
 
   return SelectorView;
@@ -2879,19 +2960,19 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.render = function(optMdl) {
-    var _err, _errerr, _list, i, idx, len, model, ref;
+    var _err, _errerr, _list, error, error1, i, idx, len, model, ref;
     _list = [];
     ref = this.result.models;
     for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
       model = ref[idx];
       try {
         _list.push(model.getLabel());
-      } catch (_error) {
-        _err = _error;
+      } catch (error) {
+        _err = error;
         try {
           console.error("Issue #24: CATCH - Class:" + this.constructor.name + " - model:" + (JSON.stringify(this.model.toJSON())) + " - result:" + (JSON.stringify(this.result.toJSON())));
-        } catch (_error) {
-          _errerr = _error;
+        } catch (error1) {
+          _errerr = error1;
           console.error("Issue #24: CATCH");
         }
       }
