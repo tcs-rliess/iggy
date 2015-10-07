@@ -39,7 +39,16 @@ class FacetSubArray extends require( "../selector" )
 		_evnts[ "blur input##{@cid}" ] = "close"
 		return _evnts
 	
+	close: ( evnt )=>
+		if @loading
+			evnt?.preventDefault()
+			evnt?.stopPropagation()
+			@focus()
+			return
+		return super
+	
 	constructor: ( options )->
+		@loading = false
 		if options.model.get( "count" )?
 			@selectCount = options.model.get( "count" )
 		options.custom = true
@@ -60,9 +69,15 @@ class FacetSubArray extends require( "../selector" )
 		return ( @result or []).length >= @selectCount
 		
 	select: =>
+		if @loading
+			return
+			
 		_vals = @model.get( "value" )
 		if _vals? and not _.isArray( _vals )
 			_vals = [ _vals ]
+		if not _vals?.length
+			return
+			
 		for _val in ( if @selectCount <= 0 then _vals else _vals[...@selectCount] )
 			_mdl = @collection.get( _val )
 			if not _mdl?
@@ -92,7 +107,22 @@ class FacetSubArray extends require( "../selector" )
 		
 	_createOptionCollection: ( options )=>
 		if _.isFunction( options )
-			return options( @_createOptionCollection )
+			@loading = true
+			_coll = new @optColl( [] )
+			
+			setTimeout( =>
+				@$el.parent().addClass( "loading" )
+				options @result, @model, ( aOpts )=>
+					for _opt, idx in aOpts
+						aOpts[idx] = _.extend( {}, @optDefault, _opt, { custom: false } )
+					_coll.add( aOpts )
+					@loading = false
+					@$el.parent().removeClass( "loading" )
+					@select()
+					return
+					
+			, 0 )
+			return _coll
 
 		_opts = []
 		for opt in options

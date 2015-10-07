@@ -160,12 +160,31 @@
 	.subselect.open 
 		.typelist
 			display block
-	.subselect.closed 
+	.subselect.closed
 		.selector-inp
 		.number-inp
 		.daterange-inp
 		.operator
 			display none
+	
+	.sub
+		.loader
+			display none
+			float right
+			width 20px
+			padding-top 4px
+	.sub.loading
+		.loader
+			display block
+		.rm-facet-btn
+			display none
+		.subselect
+			.selector-inp
+				width 0
+				padding 0
+				border none
+			.rm-facet-btn
+				display none
 
 	.select-check
 		margin-right 5px
