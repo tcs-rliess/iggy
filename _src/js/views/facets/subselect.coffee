@@ -21,10 +21,11 @@ class FacetSubsSelect extends require( "./base" )
 		
 	render: =>
 		super
-		@_initSelect2()
+		#@_initSelect2()
 		return
 
 	focus: ()=>
+		# prevent from async listening on manual access
 		@model.set( "waitForAsync", false )
 		@_initSelect2()
 		@select2.$container.show()
@@ -44,11 +45,18 @@ class FacetSubsSelect extends require( "./base" )
 			if not @model.get( "multiple" )
 				@$inp.on "select2:select", @select
 			
+			# after loading try to set the cursor focus
+			@select2.on "results:all", =>
+				@select2.selection.$search.focus()
+				return
+			
+			# listen to async result changes and set the selection
 			@select2.dataAdapter.current ( results )=>
 				if @model.get( "waitForAsync" )
 					_data = []
 					for result in results
 						_data.push @_convertValue( result )
+					# select the active/predefined results
 					@_select( _data )
 					@close()
 				return
