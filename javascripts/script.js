@@ -1,5 +1,96 @@
 jQuery( function( $ ){
+	
+	var TestAdapter, BaseAdapter,
+		bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+		extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+		hasProp = {}.hasOwnProperty;
 
+	BaseAdapter = $.fn.select2.amd.require("select2/data/ajax");
+
+	TestAdapter = (function(superClass) {
+		extend(TestAdapter, superClass);
+
+		function TestAdapter($element, options) {
+			this.query = bind(this.query, this);
+			this.current = bind(this.current, this);
+			TestAdapter.__super__.constructor.apply(this, arguments);
+			this.fetch = $.Deferred();
+			setTimeout((function(_this) {
+				return function() {
+					
+					_this.fetch.resolve([
+						{
+							id: 27,
+							text: "opt 27"
+						}, {
+							id: 28,
+							text: "opt 28"
+						}, {
+							id: 29,
+							text: "opt 29"
+						}, {
+							id: 30,
+							text: "opt 30"
+						}, {
+							id: 31,
+							text: "opt 31"
+						}, {
+							id: 32,
+							text: "opt 32"
+						}, {
+							id: 33,
+							text: "opt 33"
+						}
+					]);
+				};
+			})(this), 1000);
+			return;
+		}
+
+		TestAdapter.prototype.current = function(callback) {
+			var id, selected;
+			id = this.$element.val();
+			selected = [];
+			
+			this.fetch.then((function(_this) {
+				return function(items) {
+					var models;
+					if( id == undefined || id.length <= 0 ){
+						callback(selected);
+						return
+					}
+					models = _.filter(items, function( el ){
+						return id.indexOf( el.id.toString() ) >= 0
+					});
+					callback(models);
+				};
+			})(this));
+		};
+
+		TestAdapter.prototype.query = function(params, callback) {
+			this.fetch.then((function(_this) {
+				return function(items) {
+					var matcher, results;
+					matcher = _this.options.get("matcher");
+					results = [];
+					_.each(items, function(model) {
+						var match;
+						match = matcher(params, model);
+						if (match != null) {
+							results.push(match);
+						}
+					});
+					callback({
+						results: results
+					});
+				};
+			})(this));
+		};
+
+		return TestAdapter;
+
+	})(BaseAdapter);
+	
 	var _printQuery = function( data, target ){
 		$( target || "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
 	}
@@ -18,12 +109,14 @@ jQuery( function( $ ){
 		type: "event",
 		name: "run",
 		label: "Suchen",
+		labeltemplate: "<i class='fa fa-search'></i> {{label}}",
 		event: "run",
 		cssclass: "runsearch"
 	},{
 		type: "string",
 		name: "simple",
 		label: "Simple",
+		labeltemplate: "<i class='fa fa-quote-left'></i> <strong>{{label}}</strong> <i class='fa fa-quote-right'></i> ",
 		options: [ "frist", "second", "last" ]
 	},{
 		type: "array",
@@ -60,6 +153,23 @@ jQuery( function( $ ){
 			{ value: "k", label: "Köln" },
 			{ value: "s", label: "Stuttgart" }
 		]
+	},{
+		type: "array",
+		name: "arrayasyncopt",
+		label: "Array Async Options",
+		options: function( currentSelection, facet, cb ){
+			//console.log(currentSelection, facet, cb);
+			setTimeout( function(){
+				cb( [ 
+					{ value: "m", label: "München" },
+					{ value: "hh", label: "Hamburg" },
+					{ value: "b", label: "Berlin" },
+					{ value: "k", label: "Köln" },
+					{ value: "s", label: "Stuttgart" }
+				])
+			}, 1000 )
+			
+		}
 	},{
 		type: "number",
 		name: "number",
@@ -133,6 +243,15 @@ jQuery( function( $ ){
 			}
 		}
 	},{
+		type: "select",
+		name: "selectapapter",
+		label: "Select Adapter",
+		multiple: true,
+		//value: [ "custom", "values", "predefined" ],
+		opts: {
+			dataAdapter: TestAdapter
+		}
+	},{
 		type: "number",
 		name: "numberop",
 		label: "Nummer-OP",
@@ -185,6 +304,24 @@ jQuery( function( $ ){
 		value: "custom",
 		options: [ "pizza", "pasta", "carne" ]
 	},{
+		type: "array",
+		name: "arrayasyncopt",
+		label: "Array Async Options",
+		value: [ "m", "hh" ],
+		options: function( currentSelection, facet, cb ){
+			//console.log(currentSelection, facet, cb);
+			setTimeout( function(){
+				cb( [ 
+					{ value: "m", label: "München" },
+					{ value: "hh", label: "Hamburg" },
+					{ value: "b", label: "Berlin" },
+					{ value: "k", label: "Köln" },
+					{ value: "s", label: "Stuttgart" }
+				])
+			}, 1000 )
+			
+		}
+	},{
 		type: "number",
 		name: "numberop",
 		label: "Nummer-OP",
@@ -201,6 +338,15 @@ jQuery( function( $ ){
 		multiple: true,
 		value: "pizza",
 		options: [ "pizza", "pasta", "carne" ]
+	},{
+		type: "select",
+		name: "selectapapter",
+		label: "Select Adapter",
+		multiple: true,
+		value: [ "28", "31" ],
+		opts: {
+			dataAdapter: TestAdapter
+		}
 	},{
 		type: "range",
 		name: "range",

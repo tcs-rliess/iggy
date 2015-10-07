@@ -64,7 +64,8 @@ blockquote {
 code, pre {
   font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
   color:#333;
-  font-size:12px;
+  font-size:10px;
+  
 }
 
 pre {
@@ -73,6 +74,9 @@ pre {
   border-radius:5px;
   border:1px solid #e5e5e5;
   overflow-x: auto;
+}
+pre code{
+    white-space: unset;
 }
 
 table {
