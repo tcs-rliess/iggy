@@ -50,6 +50,10 @@ class SelectorView extends require( "./facets/base" )
 		_list = []
 		for model, idx in @searchcoll.models
 			_lbl = model.getLabel()
+			_tmpl = model.get( "labeltemplate" )
+			if _tmpl?
+				_lbl = _tmpl.replace( "{{label}}", _lbl )
+				
 			_id = model.id
 			_cssclass = model.get( "cssclass" )
 			if @currQuery?.length > 1
