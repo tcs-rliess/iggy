@@ -1330,10 +1330,10 @@
                     return this.selectCount <= 0 ? !1 : (this.result || []).length >= this.selectCount;
                 }, c.prototype.reopen = function(a) {
                     var b;
-                    if (!this._isFull()) return a.$results.empty(), this.select2.$container.off(), this.select2.destroy(), 
-                    this.result.reset(), this.select2 = null, b = this.result.pluck("value"), this.model.set({
+                    if (!this._isFull()) return b = this.result.pluck("value"), this.model.set({
                         value: b
-                    }), c.__super__.reopen.apply(this, arguments);
+                    }), a.$results.empty(), this.select2.$container.off(), this.select2.destroy(), this.result.reset(), 
+                    this.select2 = null, c.__super__.reopen.apply(this, arguments);
                 }, c.prototype._initSelect2 = function() {
                     var a;
                     return null == this.select2 && (a = _.extend({}, this.defaultModuleOpts, this.model.get("opts"), {

@@ -42,16 +42,16 @@ class FacetSubsSelect extends require( "./base" )
 	reopen: ( pView )=>
 		if @_isFull()
 			return
+		# set the current values
+		_oldVals = @result.pluck( "value" )
+		@model.set( value: _oldVals )
+		
 		# reset results and select2
 		pView.$results.empty()
 		@select2.$container.off()
 		@select2.destroy()
 		@result.reset()
 		@select2 = null
-		
-		# set the current values
-		_oldVals = @result.pluck( "value" )
-		@model.set( value: _oldVals )
 		
 		return super
 

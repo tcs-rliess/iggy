@@ -2254,15 +2254,15 @@ FacetSubsSelect = (function(superClass) {
     if (this._isFull()) {
       return;
     }
+    _oldVals = this.result.pluck("value");
+    this.model.set({
+      value: _oldVals
+    });
     pView.$results.empty();
     this.select2.$container.off();
     this.select2.destroy();
     this.result.reset();
     this.select2 = null;
-    _oldVals = this.result.pluck("value");
-    this.model.set({
-      value: _oldVals
-    });
     return FacetSubsSelect.__super__.reopen.apply(this, arguments);
   };
 
