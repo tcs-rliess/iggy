@@ -111,13 +111,15 @@ jQuery( function( $ ){
 		label: "Suchen",
 		labeltemplate: "<i class='fa fa-search'></i> {{label}}",
 		event: "run",
-		cssclass: "runsearch"
+		cssclass: "runsearch",
+		sort: 99
 	},{
 		type: "string",
 		name: "simple",
 		label: "Simple",
 		labeltemplate: "<i class='fa fa-quote-left'></i> <strong>{{label}}</strong> <i class='fa fa-quote-right'></i> ",
-		options: [ "frist", "second", "last" ]
+		options: [ "frist", "second", "last" ],
+		sort: 5
 	},{
 		type: "array",
 		name: "multi",
@@ -179,7 +181,8 @@ jQuery( function( $ ){
 		step: 5,
 		modify: function( value ){
 			return { "mod": value }
-		}
+		},
+		sort: 10
 	},{
 		type: "range",
 		name: "range",
