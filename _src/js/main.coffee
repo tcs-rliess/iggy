@@ -21,7 +21,7 @@ class IGGY extends Backbone.Events
 		@$el.data( "iggy", @ )
 
 		# init facets
-		@facets = @_prepareFacets( facets )
+		@facets = @_prepareFacets( facets, options )
 		@results = new Results( null, options )
 
 		@results.on "add", @triggerChange
@@ -63,12 +63,12 @@ class IGGY extends Backbone.Events
 
 		return
 
-	_prepareFacets: ( facets )=>
+	_prepareFacets: ( facets, options={} )=>
 		_ret = []
 		for facet in facets when ( _fct = @_createFacet( facet ) )?
 			_ret.push _fct
-
-		return new Facets( _ret )
+		
+		return new Facets( _ret, options )
 
 	_createFacet: ( facet )->
 		switch facet.type.toLowerCase()

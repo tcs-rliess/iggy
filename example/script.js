@@ -111,7 +111,8 @@ jQuery( function( $ ){
 		label: "Suchen",
 		labeltemplate: "<i class='fa fa-search'></i> {{label}}",
 		event: "run",
-		cssclass: "runsearch"
+		cssclass: "runsearch",
+		sort: 99
 		//value: "first"
 	},{
 		type: "string",
@@ -258,7 +259,8 @@ jQuery( function( $ ){
 		//value: 42,
 		modify: function( value ){
 			return { "mod": value }
-		}
+		},
+		sort: 1
 	},{
 		type: "number",
 		name: "numberop",
@@ -266,6 +268,7 @@ jQuery( function( $ ){
 		min: 0,
 		max: 100,
 		step: 1,
+		sort: 10,
 		//value: 42,
 		operator: "!=",
 		operators: [ "!=", "==" ],
@@ -311,9 +314,17 @@ jQuery( function( $ ){
 		options.push( "opt" + i )
 	}
 	for (i = j = 0; j <= 100; i = ++j) {
+		var _name = "simple";
+		if( i < 10 ){
+			_name += "0";
+		}
+		if( i < 100 ){
+			_name += "0";
+		}
+		_name += i;
 		facets2.push( {
 			type: j % 2 === 0 ? "array" : "select",
-			name: "simple" + i,
+			name: _name,
 			label: "Simple " + i,
 			multiple: true,
 			options: options
