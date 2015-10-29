@@ -34,12 +34,30 @@ class FacetSubsSelect extends require( "./base" )
 			#@$inp.select2( "open" )
 		return super
 	
+	_isFull: =>
+		if @selectCount <= 0
+			return false
+		return ( @result or []).length >= @selectCount
+	
 	reopen: ( pView )=>
-		return
+		if @_isFull()
+			return
+		# reset results and select2
+		pView.$results.empty()
+		@select2.$container.off()
+		@select2.destroy()
+		@result.reset()
+		@select2 = null
+		
+		# set the current values
+		_oldVals = @result.pluck( "value" )
+		@model.set( value: _oldVals )
+		
+		return super
 
 	_initSelect2: =>
 		if not @select2?
-			_opts = _.extend( {}, @defaultModuleOpts, @model.get( "opts" ), { multiple: @model.get( "multiple" ) }, @forcedModuleOpts )
+			_opts = _.extend( {}, @defaultModuleOpts, @model.get( "opts" ), { multiple: @model.get( "multiple" ) or false }, @forcedModuleOpts )
 			@$inp.select2( _opts )
 			@select2 = @$inp.data( "select2" )
 			if not @model.get( "multiple" )
@@ -47,7 +65,7 @@ class FacetSubsSelect extends require( "./base" )
 			
 			# after loading try to set the cursor focus
 			@select2.on "results:all", =>
-				@select2.selection.$search.focus()
+				@select2.selection?.$search?.focus?()
 				return
 			
 			# listen to async result changes and set the selection
