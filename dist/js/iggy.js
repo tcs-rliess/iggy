@@ -1,5 +1,5 @@
 /*
- * IGGY 0.1.1 ( 2015-10-07 )
+ * IGGY 0.1.2 ( 2015-10-29 )
  * http://mpneuried.github.io/iggy/
  *
  * Released under the MIT license
@@ -59,7 +59,7 @@
                     this._error = o(this._error, this), this.addFacet = o(this.addFacet, this), this._prepareFacets = o(this._prepareFacets, this), 
                     this._prepareEl = o(this._prepareEl, this), _.extend(this, Backbone.Events), this._initErrors(), 
                     this.$el = this._prepareEl(a), this.el = this.$el[0], this.$el.data("iggy", this), 
-                    this.facets = this._prepareFacets(b), this.results = new n(null, c), this.results.on("add", this.triggerChange), 
+                    this.facets = this._prepareFacets(b, c), this.results = new n(null, c), this.results.on("add", this.triggerChange), 
                     this.results.on("remove", this.triggerChange), this.results.on("change", this.triggerChange), 
                     this.view = new m({
                         el: this.$el,
@@ -82,10 +82,10 @@
                     }
                     if (a instanceof Element) return this.$(a);
                     throw this._error("EINVALIDELTYPE");
-                }, b.prototype._prepareFacets = function(a) {
-                    var b, c, e, f, g;
-                    for (c = [], f = 0, g = a.length; g > f; f++) e = a[f], null != (b = this._createFacet(e)) && c.push(b);
-                    return new d(c);
+                }, b.prototype._prepareFacets = function(a, b) {
+                    var c, e, f, g, h;
+                    for (null == b && (b = {}), e = [], g = 0, h = a.length; h > g; g++) f = a[g], null != (c = this._createFacet(f)) && e.push(c);
+                    return new d(e, b);
                 }, b.prototype._createFacet = function(a) {
                     switch (a.type.toLowerCase()) {
                       case "string":
@@ -180,13 +180,14 @@
             };
             d = function(a) {
                 function b() {
-                    return this.updateSubFilter = e(this.updateSubFilter, this), this.sub = e(this.sub, this), 
-                    b.__super__.constructor.apply(this, arguments);
+                    return this.updateSubFilter = e(this.updateSubFilter, this), this._subCollecctionOptions = e(this._subCollecctionOptions, this), 
+                    this.sub = e(this.sub, this), b.__super__.constructor.apply(this, arguments);
                 }
                 return f(b, a), b.prototype.sub = function(a) {
                     var b, c, d;
                     return this.subColls || (this.subColls = []), d = this._generateSubFilter(a), b = this.filter(d), 
-                    c = new this.constructor(b), c._parentCol = this, c._fnFilter = d, this.on("change", _.bind(function(a) {
+                    c = new this.constructor(b, this._subCollecctionOptions()), c._parentCol = this, 
+                    c._fnFilter = d, this.on("change", _.bind(function(a) {
                         var b, c;
                         c = this._fnFilter(a), b = null != this.get(a), b && !c ? this.remove(a) : !b && c && this.add(a);
                     }, c)), c.on("add", _.bind(function(a) {
@@ -198,6 +199,8 @@
                     }, c)), this.on("reset", _.bind(function(a) {
                         this.updateSubFilter();
                     }, c)), this.subColls.push(c), c;
+                }, b.prototype._subCollecctionOptions = function() {
+                    return {};
                 }, b.prototype.updateSubFilter = function(a, b) {
                     var c, d, e, f, g, i, j, k, l, m, n, o;
                     if (null == b && (b = !0), null != this._parentCol) {
@@ -454,19 +457,50 @@
         } ],
         11: [ function(a, b, c) {
             var d, e = function(a, b) {
+                return function() {
+                    return a.apply(b, arguments);
+                };
+            }, f = function(a, b) {
                 function c() {
                     this.constructor = a;
                 }
-                for (var d in b) f.call(b, d) && (a[d] = b[d]);
+                for (var d in b) g.call(b, d) && (a[d] = b[d]);
                 return c.prototype = b.prototype, a.prototype = new c(), a.__super__ = b.prototype, 
                 a;
-            }, f = {}.hasOwnProperty;
+            }, g = {}.hasOwnProperty;
             d = function(a) {
                 function b() {
-                    return b.__super__.constructor.apply(this, arguments);
+                    return this.comparator = e(this.comparator, this), this._subCollecctionOptions = e(this._subCollecctionOptions, this), 
+                    b.__super__.constructor.apply(this, arguments);
                 }
-                return e(b, a), b.prototype.modelId = function(a) {
+                return f(b, a), b.prototype.initialize = function(a, c) {
+                    return null == c && (c = {}), this.forward = function() {
+                        switch (c.dir) {
+                          case "asc":
+                            return !0;
+
+                          case "desc":
+                            return !1;
+
+                          default:
+                            return !0;
+                        }
+                    }(), b.__super__.initialize.apply(this, arguments);
+                }, b.prototype._subCollecctionOptions = function() {
+                    var a;
+                    return a = b.__super__._subCollecctionOptions.apply(this, arguments), a.dir = this.forward ? "asc" : "desc", 
+                    a;
+                }, b.prototype.modelId = function(a) {
                     return a.name;
+                }, b.prototype.comparator = function(a, b) {
+                    var c, d, e, f;
+                    if (e = a.get("sort") || 0, f = b.get("sort") || 0, e > f) return this.forward ? -1 : 1;
+                    if (f > e) return this.forward ? 1 : -1;
+                    if (c = a.get("name"), d = b.get("name"), null != c && null != d) {
+                        if (c > d) return this.forward ? 1 : -1;
+                        if (d > c) return this.forward ? -1 : 1;
+                    }
+                    return 0;
                 }, b;
             }(a("./backbone_sub")), b.exports = d;
         }, {
@@ -1273,8 +1307,9 @@
                     this.getValue = f(this.getValue, this), this._hasTabListener = f(this._hasTabListener, this), 
                     this.getTemplateData = f(this.getTemplateData, this), this.remove = f(this.remove, this), 
                     this._initSelect2 = f(this._initSelect2, this), this.reopen = f(this.reopen, this), 
-                    this.focus = f(this.focus, this), this.render = f(this.render, this), this._getInpSelector = f(this._getInpSelector, this), 
-                    this.events = f(this.events, this), c.__super__.constructor.apply(this, arguments);
+                    this._isFull = f(this._isFull, this), this.focus = f(this.focus, this), this.render = f(this.render, this), 
+                    this._getInpSelector = f(this._getInpSelector, this), this.events = f(this.events, this), 
+                    c.__super__.constructor.apply(this, arguments);
                 }
                 return g(c, b), c.prototype.template = a("../../tmpls/select.jade"), c.prototype.forcedModuleOpts = {}, 
                 c.prototype.defaultModuleOpts = {
@@ -1291,14 +1326,23 @@
                 }, c.prototype.focus = function() {
                     return this.model.set("waitForAsync", !1), this._initSelect2(), this.select2.$container.show(), 
                     this.select2.open(), c.__super__.focus.apply(this, arguments);
-                }, c.prototype.reopen = function(a) {}, c.prototype._initSelect2 = function() {
+                }, c.prototype._isFull = function() {
+                    return this.selectCount <= 0 ? !1 : (this.result || []).length >= this.selectCount;
+                }, c.prototype.reopen = function(a) {
+                    var b;
+                    if (!this._isFull()) return a.$results.empty(), this.select2.$container.off(), this.select2.destroy(), 
+                    this.result.reset(), this.select2 = null, b = this.result.pluck("value"), this.model.set({
+                        value: b
+                    }), c.__super__.reopen.apply(this, arguments);
+                }, c.prototype._initSelect2 = function() {
                     var a;
                     return null == this.select2 && (a = _.extend({}, this.defaultModuleOpts, this.model.get("opts"), {
-                        multiple: this.model.get("multiple")
+                        multiple: this.model.get("multiple") || !1
                     }, this.forcedModuleOpts), this.$inp.select2(a), this.select2 = this.$inp.data("select2"), 
                     this.model.get("multiple") || this.$inp.on("select2:select", this.select), this.select2.on("results:all", function(a) {
                         return function() {
-                            a.select2.selection.$search.focus();
+                            var b, c;
+                            null != (b = a.select2.selection) && null != (c = b.$search) && "function" == typeof c.focus && c.focus();
                         };
                     }(this)), this.select2.dataAdapter.current(function(a) {
                         return function(b) {

@@ -48,7 +48,7 @@ IGGY = (function(superClass) {
     this.$el = this._prepareEl(el);
     this.el = this.$el[0];
     this.$el.data("iggy", this);
-    this.facets = this._prepareFacets(facets);
+    this.facets = this._prepareFacets(facets, options);
     this.results = new Results(null, options);
     this.results.on("add", this.triggerChange);
     this.results.on("remove", this.triggerChange);
@@ -91,8 +91,11 @@ IGGY = (function(superClass) {
     throw this._error("EINVALIDELTYPE");
   };
 
-  IGGY.prototype._prepareFacets = function(facets) {
+  IGGY.prototype._prepareFacets = function(facets, options) {
     var _fct, _ret, facet, i, len;
+    if (options == null) {
+      options = {};
+    }
     _ret = [];
     for (i = 0, len = facets.length; i < len; i++) {
       facet = facets[i];
@@ -100,7 +103,7 @@ IGGY = (function(superClass) {
         _ret.push(_fct);
       }
     }
-    return new Facets(_ret);
+    return new Facets(_ret, options);
   };
 
   IGGY.prototype._createFacet = function(facet) {
@@ -235,6 +238,7 @@ BackboneSub = (function(superClass) {
 
   function BackboneSub() {
     this.updateSubFilter = bind(this.updateSubFilter, this);
+    this._subCollecctionOptions = bind(this._subCollecctionOptions, this);
     this.sub = bind(this.sub, this);
     return BackboneSub.__super__.constructor.apply(this, arguments);
   }
@@ -260,7 +264,7 @@ BackboneSub = (function(superClass) {
     this.subColls || (this.subColls = []);
     fnFilter = this._generateSubFilter(filter);
     _models = this.filter(fnFilter);
-    _sub = new this.constructor(_models);
+    _sub = new this.constructor(_models, this._subCollecctionOptions());
     _sub._parentCol = this;
     _sub._fnFilter = fnFilter;
     this.on("change", _.bind(function(_m) {
@@ -290,6 +294,23 @@ BackboneSub = (function(superClass) {
     }, _sub));
     this.subColls.push(_sub);
     return _sub;
+  };
+
+
+  /*
+  	## _subCollecctionOptions
+  	
+  	`collection._subCollecctionOptions()`
+  	
+  	Overwritable method to set the constructor options for sub collections
+  	
+  	@return { Object } The options object
+  	
+  	@api private
+   */
+
+  BackboneSub.prototype._subCollecctionOptions = function() {
+    return {};
   };
 
 
@@ -652,6 +673,7 @@ module.exports = FctString;
 
 },{"../views/facets/substring":32,"./facet_base":4}],11:[function(require,module,exports){
 var IggyFacets,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -659,11 +681,75 @@ IggyFacets = (function(superClass) {
   extend(IggyFacets, superClass);
 
   function IggyFacets() {
+    this.comparator = bind(this.comparator, this);
+    this._subCollecctionOptions = bind(this._subCollecctionOptions, this);
     return IggyFacets.__super__.constructor.apply(this, arguments);
   }
 
+  IggyFacets.prototype.initialize = function(models, options) {
+    if (options == null) {
+      options = {};
+    }
+    this.forward = (function() {
+      switch (options.dir) {
+        case "asc":
+          return true;
+        case "desc":
+          return false;
+        default:
+          return true;
+      }
+    })();
+    return IggyFacets.__super__.initialize.apply(this, arguments);
+  };
+
+  IggyFacets.prototype._subCollecctionOptions = function() {
+    var opt;
+    opt = IggyFacets.__super__._subCollecctionOptions.apply(this, arguments);
+    opt.dir = this.forward ? "asc" : "desc";
+    return opt;
+  };
+
   IggyFacets.prototype.modelId = function(attrs) {
     return attrs.name;
+  };
+
+  IggyFacets.prototype.comparator = function(facetA, facetB) {
+    var _nA, _nB, _sA, _sB;
+    _sA = facetA.get("sort") || 0;
+    _sB = facetB.get("sort") || 0;
+    if (_sA > _sB) {
+      if (this.forward) {
+        return -1;
+      } else {
+        return 1;
+      }
+    } else if (_sA < _sB) {
+      if (this.forward) {
+        return 1;
+      } else {
+        return -1;
+      }
+    } else {
+      _nA = facetA.get("name");
+      _nB = facetB.get("name");
+      if ((_nA != null) && (_nB != null)) {
+        if (_nA > _nB) {
+          if (this.forward) {
+            return 1;
+          } else {
+            return -1;
+          }
+        } else if (_nA < _nB) {
+          if (this.forward) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
+      }
+    }
+    return 0;
   };
 
   return IggyFacets;
@@ -2114,6 +2200,7 @@ FacetSubsSelect = (function(superClass) {
     this.remove = bind(this.remove, this);
     this._initSelect2 = bind(this._initSelect2, this);
     this.reopen = bind(this.reopen, this);
+    this._isFull = bind(this._isFull, this);
     this.focus = bind(this.focus, this);
     this.render = bind(this.render, this);
     this._getInpSelector = bind(this._getInpSelector, this);
@@ -2155,13 +2242,35 @@ FacetSubsSelect = (function(superClass) {
     return FacetSubsSelect.__super__.focus.apply(this, arguments);
   };
 
-  FacetSubsSelect.prototype.reopen = function(pView) {};
+  FacetSubsSelect.prototype._isFull = function() {
+    if (this.selectCount <= 0) {
+      return false;
+    }
+    return (this.result || []).length >= this.selectCount;
+  };
+
+  FacetSubsSelect.prototype.reopen = function(pView) {
+    var _oldVals;
+    if (this._isFull()) {
+      return;
+    }
+    pView.$results.empty();
+    this.select2.$container.off();
+    this.select2.destroy();
+    this.result.reset();
+    this.select2 = null;
+    _oldVals = this.result.pluck("value");
+    this.model.set({
+      value: _oldVals
+    });
+    return FacetSubsSelect.__super__.reopen.apply(this, arguments);
+  };
 
   FacetSubsSelect.prototype._initSelect2 = function() {
     var _opts;
     if (this.select2 == null) {
       _opts = _.extend({}, this.defaultModuleOpts, this.model.get("opts"), {
-        multiple: this.model.get("multiple")
+        multiple: this.model.get("multiple") || false
       }, this.forcedModuleOpts);
       this.$inp.select2(_opts);
       this.select2 = this.$inp.data("select2");
@@ -2170,7 +2279,14 @@ FacetSubsSelect = (function(superClass) {
       }
       this.select2.on("results:all", (function(_this) {
         return function() {
-          _this.select2.selection.$search.focus();
+          var ref, ref1;
+          if ((ref = _this.select2.selection) != null) {
+            if ((ref1 = ref.$search) != null) {
+              if (typeof ref1.focus === "function") {
+                ref1.focus();
+              }
+            }
+          }
         };
       })(this));
       this.select2.dataAdapter.current((function(_this) {
