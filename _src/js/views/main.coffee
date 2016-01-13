@@ -53,6 +53,7 @@ class MainView extends Backbone.View
 			@subview.close()
 			@subview = null
 			@addFacet() if nextAdd
+			return
 		
 		if @selectview
 			#console.log "MAIN REMOVE SELECT"
