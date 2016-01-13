@@ -1,39 +1,39 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>IGGY by mpneuried</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<title>IGGY by mpneuried</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdn.rawgit.com/dangrossman/bootstrap-daterangepicker/master/daterangepicker-bs3.css">
-    <link rel="stylesheet" href="https://cdn.rawgit.com/select2/select2/master/dist/css/select2.css">
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <link rel="stylesheet" href="https://raw.githack.com/mpneuried/iggy/master/dist/css/iggy.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.rawgit.com/dangrossman/bootstrap-daterangepicker/master/daterangepicker-bs3.css">
+	<link rel="stylesheet" href="https://cdn.rawgit.com/select2/select2/master/dist/css/select2.css">
+	<link rel="stylesheet" href="stylesheets/styles.css">
+	<link rel="stylesheet" href="stylesheets/pygment_trac.css">
+	<link rel="stylesheet" href="https://raw.githack.com/mpneuried/iggy/master/dist/css/iggy.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>IGGY</h1>
-        <p>Browser search module to use with Backbone.js</p>
+	<div class="wrapper">
+	  <header>
+		<h1>IGGY</h1>
+		<p>Browser search module to use with Backbone.js</p>
 
-        <p class="view"><a href="https://github.com/mpneuried/iggy">View the Project on GitHub <small>mpneuried/iggy</small></a></p>
+		<p class="view"><a href="https://github.com/mpneuried/iggy">View the Project on GitHub <small>mpneuried/iggy</small></a></p>
 
 
-        <ul>
-          <li><a href="https://github.com/mpneuried/iggy/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/mpneuried/iggy/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/mpneuried/iggy">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
+		<ul>
+		  <li><a href="https://github.com/mpneuried/iggy/zipball/master">Download <strong>ZIP File</strong></a></li>
+		  <li><a href="https://github.com/mpneuried/iggy/tarball/master">Download <strong>TAR Ball</strong></a></li>
+		  <li><a href="https://github.com/mpneuried/iggy">View On <strong>GitHub</strong></a></li>
+		</ul>
+	  </header>
+	  <section>
+		<h1>
 <a id="iggy" class="anchor" href="#iggy" aria-hidden="true"><span class="octicon octicon-link"></span></a>IGGY</h1>
 <!--
 <p><a href="http://travis-ci.org/mpneuried/iggy"><img src="https://secure.travis-ci.org/mpneuried/iggy.png?branch=master" alt="Build Status"></a>
@@ -256,86 +256,126 @@
 			_ret[ name + "_end" ] = value[ 1 ];
 		return _ret
 	}
+},{
+	type: "daterange",
+	label: "Date custom",
+	name: "datecustom",
+	opts: {
+		format: "DD.MM.YYYY",
+		showWeekNumbers : true,
+		showDropdowns : true,
+		timePicker: false,
+		parentEl: this.$el,
+		ranges: {
+			'Today': [moment(), moment()],
+			'Yesterday': [moment().subtract(1, 'day'), moment().subtract(1, 'day')],
+			'This Month': [moment().startOf('month'), moment().endOf('month')],
+			'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+			'Last 7 Days': [moment().subtract(6, 'day'), moment()],
+			'Last 30 Days': [moment().subtract(29, 'day'), moment()],
+			'Last 90 Days': [moment().subtract(89, 'day'), moment()]
+		}
+	}
 }]
-   </code></pre>
+	</code></pre>
 
 
-   <h4>IGGY-Predefined</h4>
+	<h4>IGGY-Predefined</h4>
   <div id="iggytest_predef"></div>
   <h4>IGGY-Predefined-Collection</h4>
   <pre><code id="iggytest_predef_result"></code></pre>
   <h4>Example Config</h4>
-   <pre><code id="iggytest_predef_config">
+	<pre><code id="iggytest_predef_config">
 [{
-   type: "string",
-   name: "simple",
-   label: "Simple",
-   options: [ "frist", "second", "last" ],
-   value: "first"
+	type: "string",
+	name: "simple",
+	label: "Simple",
+	options: [ "frist", "second", "last" ],
+	value: "first"
 },{
-   type: "select",
-   name: "selsingle",
-   label: "Select Single",
-   options: [ "pizza", "pasta", "carne" ],
-   value: [ "pasta", "soup" ]
+	type: "select",
+	name: "selsingle",
+	label: "Select Single",
+	options: [ "pizza", "pasta", "carne" ],
+	value: [ "pasta", "soup" ]
 },{
-   type: "array",
-   name: "arraysel",
-   label: "Select Array",
-   value: "custom",
-   options: [ "pizza", "pasta", "carne" ]
+	type: "array",
+	name: "arraysel",
+	label: "Select Array",
+	value: "custom",
+	options: [ "pizza", "pasta", "carne" ]
 },{
-   type: "array",
-   name: "arrayasyncopt",
-   label: "Array Async Options",
-   value: [ "m", "hh" ],
-   options: function( currentSelection, facet, cb ){
-       //console.log(currentSelection, facet, cb);
-       setTimeout( function(){
-           cb( [ 
-               { value: "m", label: "München" },
-               { value: "hh", label: "Hamburg" },
-               { value: "b", label: "Berlin" },
-               { value: "k", label: "Köln" },
-               { value: "s", label: "Stuttgart" }
-           ])
-       }, 1000 )
-       
-   }
+	type: "array",
+	name: "arrayasyncopt",
+	label: "Array Async Options",
+	value: [ "m", "hh" ],
+	options: function( currentSelection, facet, cb ){
+		//console.log(currentSelection, facet, cb);
+		setTimeout( function(){
+			cb( [ 
+				{ value: "m", label: "München" },
+				{ value: "hh", label: "Hamburg" },
+				{ value: "b", label: "Berlin" },
+				{ value: "k", label: "Köln" },
+				{ value: "s", label: "Stuttgart" }
+			])
+		}, 1000 )
+		
+	}
 },{
-   type: "number",
-   name: "numberop",
-   label: "Nummer-OP",
-   min: 0,
-   max: 100,
-   step: 1,
-   operators: [ "!=", "==" ],
-   operator: "==",
-   value: 42
+	type: "number",
+	name: "numberop",
+	label: "Nummer-OP",
+	min: 0,
+	max: 100,
+	step: 1,
+	operators: [ "!=", "==" ],
+	operator: "==",
+	value: 42
 },{
-   type: "select",
-   name: "multi",
-   label: "Select Multi",
-   multiple: true,
-   value: "pizza",
-   options: [ "pizza", "pasta", "carne" ]
+	type: "select",
+	name: "multi",
+	label: "Select Multi",
+	multiple: true,
+	value: "pizza",
+	options: [ "pizza", "pasta", "carne" ]
 },{
-   type: "select",
-   name: "selectapapter",
-   label: "Select Adapter",
-   multiple: true,
-   value: [ "28", "31" ],
-   opts: {
-       dataAdapter: TestAdapter
-   }
+	type: "select",
+	name: "selectapapter",
+	label: "Select Adapter",
+	multiple: true,
+	value: [ "28", "31" ],
+	opts: {
+		dataAdapter: TestAdapter
+	}
 },{
-   type: "range",
-   name: "range",
-   label: "Number Range",
-   value: [ 23, 42 ]
+	type: "range",
+	name: "range",
+	label: "Number Range",
+	value: [ 23, 42 ]
+},{
+	type: "daterange",
+	label: "Date custom",
+	name: "datecustom",
+	value: [moment().startOf('week'), moment().add(2,"month").endOf('month')],
+	opts: {
+		format: "DD.MM.YYYY",
+		showWeekNumbers : true,
+		showDropdowns : true,
+		timePicker: false,
+		ranges: {
+			'Today': [moment(), moment()],
+			'Yesterday': [moment().subtract(1, 'day'), moment().subtract(1, 'day')],
+			'This Month': [moment().startOf('month'), moment().endOf('month')],
+			'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+			'Last 7 Days': [moment().subtract(6, 'day'), moment()],
+			'Last 30 Days': [moment().subtract(29, 'day'), moment()],
+			'Last 90 Days': [moment().subtract(89, 'day'), moment()]					
+		}
+	}
 }]
 
-   </code></pre>
+	</code></pre>
 </div>
 
 <h2>
@@ -357,6 +397,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td align="center">0.1.3</td>
+<td align="center">2016-1-13</td>
+<td align="left">fixed daterange facet <a href="https://github.com/mpneuried/iggy/issues/41">#41</a><a href="https://github.com/mpneuried/iggy/issues/43">#43</a>; Added two step exit on <code>ESC</code> <a href="https://github.com/mpneuried/iggy/issues/42">#42</a></td>
+</tr>
 <tr>
 <td align="center">0.1.2</td>
 <td align="center">2015-10-29</td>
@@ -486,21 +531,21 @@
 			</section>
 			<footer>
 			  <p>This project is maintained by <a href="https://github.com/mpneuried">mpneuried</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
+		<p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+	  </footer>
+	</div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/dangrossman/bootstrap-daterangepicker/master/daterangepicker.js"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/select2/select2/master/dist/js/select2.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdn.rawgit.com/dangrossman/bootstrap-daterangepicker/master/daterangepicker.js"></script>
+	<script type="text/javascript" src="https://cdn.rawgit.com/select2/select2/master/dist/js/select2.js"></script>
 
-    <script src="javascripts/scale.fix.js"></script>
-    <script src="https://raw.githack.com/mpneuried/iggy/master/dist/js/iggy.js"></script>
-    <script src="javascripts/script.js"></script>
-    
+	<script src="javascripts/scale.fix.js"></script>
+	<script src="https://raw.githack.com/mpneuried/iggy/master/dist/js/iggy.js"></script>
+	<script src="javascripts/script.js"></script>
+	
   </body>
 </html>
