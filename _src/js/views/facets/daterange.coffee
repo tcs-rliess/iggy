@@ -3,11 +3,7 @@ KEYCODES = require( "../../utils/keycodes" )
 class FacetSubsDateRange extends require( "./base" )
 	template: require( "../../tmpls/daterange.jade" )
 
-	render: =>
-		super
-		return
-
-	forcedDateRangeOpts:
+	forcedDateRangeOpts: =>
 		opens: "right"
 
 	events: =>
@@ -15,20 +11,28 @@ class FacetSubsDateRange extends require( "./base" )
 
 	focus: ()=>
 		if not @daterangepicker?
-			_opts = _.extend( {}, @model.get( "opts" ), @forcedDateRangeOpts )
+			_opts = _.extend( {}, @model.get( "opts" ), @forcedDateRangeOpts() )
 			@$inp.daterangepicker( _opts, @_dateReturn )
 			@daterangepicker = @$inp.data( "daterangepicker" )
-			@$inp.on( "cancel.daterangepicker", @close )
-			@$inp.on( "hide.daterangepicker", @close )
-
 			@daterangepicker.container?.addClass( "daterange-iggy" )
 
 		else
+			@daterangepicker.element = @$inp
 			@daterangepicker.show()
+			
+		@$inp.on( "cancel.daterangepicker", @close )
+		@$inp.on( "hide.daterangepicker", @close )
 		return super
+		
+	close: =>
+		super
+		@$inp.off( "cancel.daterangepicker", @close )
+		@$inp.off( "hide.daterangepicker", @close )
+		return
 
 	remove: =>
 		@daterangepicker?.remove()
+		@daterangepicker = null
 		return super
 
 	renderResult: =>
@@ -52,21 +56,23 @@ class FacetSubsDateRange extends require( "./base" )
 	
 	_hasTabListener: ->
 		return false
-		
+	
 	_dateReturn: ( @startDate, @endDate )=>
+		@model.set( "value", @getValue( false ) )
 		@select()
 		return
 
 	getTemplateData: =>
 		return super
 
-	getValue: =>
-		_predefVal = @model.get( "value" )
-		if _predefVal?
-			if not _.isArray( _predefVal )
-				_predefVal =  [ _predefVal ]
-			[ @startDate, @endDate ] = _predefVal
-			return _predefVal
+	getValue: ( predef = true )=>
+		if predef
+			_predefVal = @model.get( "value" )
+			if _predefVal?
+				if not _.isArray( _predefVal )
+					_predefVal =  [ _predefVal ]
+				[ @startDate, @endDate ] = _predefVal
+				return _predefVal
 		_out = [ @startDate.valueOf() ]
 		_out.push @endDate.valueOf() if @endDate?
 		return _out

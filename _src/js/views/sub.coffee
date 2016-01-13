@@ -2,10 +2,11 @@ class ViewSub extends Backbone.View
 	template: require( "../tmpls/sub.jade" )
 	className: "sub"
 
-	initialize: =>
+	initialize: ( options )=>
 		@_isOpen = false
 		@result = new Backbone.Collection()
 		@$el.on "click", @reopen
+		@parent = options.parent
 		return
 
 	events:
@@ -49,6 +50,7 @@ class ViewSub extends Backbone.View
 	remove: =>
 		@_isOpen = false
 		@selectview?.remove()
+		@parent = null
 		return super
 
 	selected: ( optMdl )=>

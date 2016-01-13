@@ -75,7 +75,7 @@ class MainView extends Backbone.View
 		return
 
 	genSub: ( facetM, addAfter = true )=>
-		subview = new SubView( model: facetM, collection: @collection )
+		subview = new SubView( model: facetM, collection: @collection, parent: @ )
 		
 		subview.on "closed", ( results )=>
 			#console.log "SUB VIEW CLOSED", results?.length

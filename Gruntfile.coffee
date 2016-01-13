@@ -82,7 +82,6 @@ module.exports = (grunt) ->
 		uglify:
 			options:
 				compress: true
-				beautify: true
 				banner: "<%= banner %>"
 
 			release:

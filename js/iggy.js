@@ -1381,10 +1381,12 @@ FacetSubsDateRange = (function(superClass) {
     this.getValue = bind(this.getValue, this);
     this.getTemplateData = bind(this.getTemplateData, this);
     this._dateReturn = bind(this._dateReturn, this);
+    this._onDRApply = bind(this._onDRApply, this);
     this.renderResult = bind(this.renderResult, this);
     this.remove = bind(this.remove, this);
     this.focus = bind(this.focus, this);
     this.events = bind(this.events, this);
+    this.forcedDateRangeOpts = bind(this.forcedDateRangeOpts, this);
     this.render = bind(this.render, this);
     return FacetSubsDateRange.__super__.constructor.apply(this, arguments);
   }
@@ -1395,8 +1397,10 @@ FacetSubsDateRange = (function(superClass) {
     FacetSubsDateRange.__super__.render.apply(this, arguments);
   };
 
-  FacetSubsDateRange.prototype.forcedDateRangeOpts = {
-    opens: "right"
+  FacetSubsDateRange.prototype.forcedDateRangeOpts = function() {
+    return {
+      opens: "right"
+    };
   };
 
   FacetSubsDateRange.prototype.events = function() {};
@@ -1404,11 +1408,12 @@ FacetSubsDateRange = (function(superClass) {
   FacetSubsDateRange.prototype.focus = function() {
     var _opts, ref;
     if (this.daterangepicker == null) {
-      _opts = _.extend({}, this.model.get("opts"), this.forcedDateRangeOpts);
+      _opts = _.extend({}, this.model.get("opts"), this.forcedDateRangeOpts());
       this.$inp.daterangepicker(_opts, this._dateReturn);
       this.daterangepicker = this.$inp.data("daterangepicker");
       this.$inp.on("cancel.daterangepicker", this.close);
       this.$inp.on("hide.daterangepicker", this.close);
+      this.$inp.on("apply.daterangepicker", this._onDRApply);
       if ((ref = this.daterangepicker.container) != null) {
         ref.addClass("daterange-iggy");
       }
@@ -1420,6 +1425,7 @@ FacetSubsDateRange = (function(superClass) {
 
   FacetSubsDateRange.prototype.remove = function() {
     var ref;
+    console.log("remove");
     if ((ref = this.daterangepicker) != null) {
       ref.remove();
     }
@@ -1448,9 +1454,17 @@ FacetSubsDateRange = (function(superClass) {
     return false;
   };
 
+  FacetSubsDateRange.prototype._onDRApply = function(evnt, picker) {
+    this.startDate = picker.startDate;
+    this.endDate = picker.endDate;
+    console.log("_onDRApply", this.startDate, this.endDate, picker);
+    this.select();
+  };
+
   FacetSubsDateRange.prototype._dateReturn = function(startDate, endDate) {
     this.startDate = startDate;
     this.endDate = endDate;
+    console.log("_dateReturn", this.startDate, this.endDate);
     this.select();
   };
 

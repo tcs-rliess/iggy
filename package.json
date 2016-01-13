@@ -39,7 +39,7 @@
     "bootstrap": "3.3.x",
     "moment": "2.10.x",
     "font-awesome": "4.4.x",
-    "bootstrap-daterangepicker": "dangrossman/bootstrap-daterangepicker",
+    "bootstrap-daterangepicker": "2.1.x",
     "select2": "4.0.x"
   }
 }

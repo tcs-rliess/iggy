@@ -294,6 +294,26 @@ jQuery( function( $ ){
 			return _ret
 		}
 	},{
+		type: "daterange",
+		label: "Date custom",
+		name: "datecustom",
+		opts: {
+			format: "DD.MM.YYYY",
+			showWeekNumbers : true,
+			showDropdowns : true,
+			timePicker: false,
+			parentEl: this.$el,
+			ranges: {
+				'Today': [moment(), moment()],
+				'Yesterday': [moment().subtract(1, 'day'), moment().subtract(1, 'day')],
+				'This Month': [moment().startOf('month'), moment().endOf('month')],
+				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+				'Last 7 Days': [moment().subtract(6, 'day'), moment()],
+				'Last 30 Days': [moment().subtract(29, 'day'), moment()],
+				'Last 90 Days': [moment().subtract(89, 'day'), moment()]                    
+			}
+		}
+	},{
 		type: "range",
 		name: "range",
 		label: "Range",
@@ -456,6 +476,26 @@ jQuery( function( $ ){
 			{ value: "cn", label: "China", group: "Asia" },
 			{ value: "ger", label: "Germany", group: "Europe" }
 		]
+	},{
+		type: "daterange",
+		label: "Date custom",
+		name: "datecustom",
+		value: [moment().startOf('week'), moment().add(2,"month").endOf('month')],
+		opts: {
+			format: "DD.MM.YYYY",
+			showWeekNumbers : true,
+			showDropdowns : true,
+			timePicker: false,
+			ranges: {
+				'Today': [moment(), moment()],
+				'Yesterday': [moment().subtract(1, 'day'), moment().subtract(1, 'day')],
+				'This Month': [moment().startOf('month'), moment().endOf('month')],
+				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+				'Last 7 Days': [moment().subtract(6, 'day'), moment()],
+				'Last 30 Days': [moment().subtract(29, 'day'), moment()],
+				'Last 90 Days': [moment().subtract(89, 'day'), moment()]                    
+			}
+		}
 	}]
 
 	newIggy( facetsPredef, "#iggytest3" )
