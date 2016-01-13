@@ -1381,21 +1381,16 @@ FacetSubsDateRange = (function(superClass) {
     this.getValue = bind(this.getValue, this);
     this.getTemplateData = bind(this.getTemplateData, this);
     this._dateReturn = bind(this._dateReturn, this);
-    this._onDRApply = bind(this._onDRApply, this);
     this.renderResult = bind(this.renderResult, this);
     this.remove = bind(this.remove, this);
+    this.close = bind(this.close, this);
     this.focus = bind(this.focus, this);
     this.events = bind(this.events, this);
     this.forcedDateRangeOpts = bind(this.forcedDateRangeOpts, this);
-    this.render = bind(this.render, this);
     return FacetSubsDateRange.__super__.constructor.apply(this, arguments);
   }
 
   FacetSubsDateRange.prototype.template = require("../../tmpls/daterange.jade");
-
-  FacetSubsDateRange.prototype.render = function() {
-    FacetSubsDateRange.__super__.render.apply(this, arguments);
-  };
 
   FacetSubsDateRange.prototype.forcedDateRangeOpts = function() {
     return {
@@ -1411,24 +1406,30 @@ FacetSubsDateRange = (function(superClass) {
       _opts = _.extend({}, this.model.get("opts"), this.forcedDateRangeOpts());
       this.$inp.daterangepicker(_opts, this._dateReturn);
       this.daterangepicker = this.$inp.data("daterangepicker");
-      this.$inp.on("cancel.daterangepicker", this.close);
-      this.$inp.on("hide.daterangepicker", this.close);
-      this.$inp.on("apply.daterangepicker", this._onDRApply);
       if ((ref = this.daterangepicker.container) != null) {
         ref.addClass("daterange-iggy");
       }
     } else {
+      this.daterangepicker.element = this.$inp;
       this.daterangepicker.show();
     }
+    this.$inp.on("cancel.daterangepicker", this.close);
+    this.$inp.on("hide.daterangepicker", this.close);
     return FacetSubsDateRange.__super__.focus.apply(this, arguments);
+  };
+
+  FacetSubsDateRange.prototype.close = function() {
+    FacetSubsDateRange.__super__.close.apply(this, arguments);
+    this.$inp.off("cancel.daterangepicker", this.close);
+    this.$inp.off("hide.daterangepicker", this.close);
   };
 
   FacetSubsDateRange.prototype.remove = function() {
     var ref;
-    console.log("remove");
     if ((ref = this.daterangepicker) != null) {
       ref.remove();
     }
+    this.daterangepicker = null;
     return FacetSubsDateRange.__super__.remove.apply(this, arguments);
   };
 
@@ -1454,17 +1455,10 @@ FacetSubsDateRange = (function(superClass) {
     return false;
   };
 
-  FacetSubsDateRange.prototype._onDRApply = function(evnt, picker) {
-    this.startDate = picker.startDate;
-    this.endDate = picker.endDate;
-    console.log("_onDRApply", this.startDate, this.endDate, picker);
-    this.select();
-  };
-
   FacetSubsDateRange.prototype._dateReturn = function(startDate, endDate) {
     this.startDate = startDate;
     this.endDate = endDate;
-    console.log("_dateReturn", this.startDate, this.endDate);
+    this.model.set("value", this.getValue(false));
     this.select();
   };
 
@@ -1472,15 +1466,20 @@ FacetSubsDateRange = (function(superClass) {
     return FacetSubsDateRange.__super__.getTemplateData.apply(this, arguments);
   };
 
-  FacetSubsDateRange.prototype.getValue = function() {
+  FacetSubsDateRange.prototype.getValue = function(predef) {
     var _out, _predefVal;
-    _predefVal = this.model.get("value");
-    if (_predefVal != null) {
-      if (!_.isArray(_predefVal)) {
-        _predefVal = [_predefVal];
+    if (predef == null) {
+      predef = true;
+    }
+    if (predef) {
+      _predefVal = this.model.get("value");
+      if (_predefVal != null) {
+        if (!_.isArray(_predefVal)) {
+          _predefVal = [_predefVal];
+        }
+        this.startDate = _predefVal[0], this.endDate = _predefVal[1];
+        return _predefVal;
       }
-      this.startDate = _predefVal[0], this.endDate = _predefVal[1];
-      return _predefVal;
     }
     _out = [this.startDate.valueOf()];
     if (this.endDate != null) {
@@ -2622,6 +2621,7 @@ MainView = (function(superClass) {
       if (nextAdd) {
         this.addFacet();
       }
+      return;
     }
     if (this.selectview) {
       this.selectview.close();
@@ -2655,7 +2655,8 @@ MainView = (function(superClass) {
     }
     subview = new SubView({
       model: facetM,
-      collection: this.collection
+      collection: this.collection,
+      parent: this
     });
     subview.on("closed", (function(_this) {
       return function(results) {
@@ -3079,10 +3080,11 @@ ViewSub = (function(superClass) {
 
   ViewSub.prototype.className = "sub";
 
-  ViewSub.prototype.initialize = function() {
+  ViewSub.prototype.initialize = function(options) {
     this._isOpen = false;
     this.result = new Backbone.Collection();
     this.$el.on("click", this.reopen);
+    this.parent = options.parent;
   };
 
   ViewSub.prototype.events = {
@@ -3142,6 +3144,7 @@ ViewSub = (function(superClass) {
     if ((ref = this.selectview) != null) {
       ref.remove();
     }
+    this.parent = null;
     return ViewSub.__super__.remove.apply(this, arguments);
   };
 
