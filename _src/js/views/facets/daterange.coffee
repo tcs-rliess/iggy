@@ -15,7 +15,11 @@ class FacetSubsDateRange extends require( "./base" )
 			@$inp.daterangepicker( _opts, @_dateReturn )
 			@daterangepicker = @$inp.data( "daterangepicker" )
 			@daterangepicker.container?.addClass( "daterange-iggy" )
-
+			
+			# prevent from handlich the outerclick exit from MainView
+			@daterangepicker.container.on "click", ( evnt )->
+				evnt.stopPropagation()
+				return false
 		else
 			@daterangepicker.element = @$inp
 			@daterangepicker.show()

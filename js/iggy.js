@@ -1409,6 +1409,10 @@ FacetSubsDateRange = (function(superClass) {
       if ((ref = this.daterangepicker.container) != null) {
         ref.addClass("daterange-iggy");
       }
+      this.daterangepicker.container.on("click", function(evnt) {
+        evnt.stopPropagation();
+        return false;
+      });
     } else {
       this.daterangepicker.element = this.$inp;
       this.daterangepicker.show();
