@@ -3224,7 +3224,7 @@ ViewSub = (function(superClass) {
 
   ViewSub.prototype.reopen = function(evnt) {
     var ref;
-    if ($(event.target).is(".rm-result-btn") && (((ref = this.selectview) != null ? ref.rmRes : void 0) != null)) {
+    if ($(evnt.target).is(".rm-result-btn") && (((ref = this.selectview) != null ? ref.rmRes : void 0) != null)) {
       this.selectview.rmRes(evnt);
       evnt.preventDefault();
       evnt.stopPropagation();

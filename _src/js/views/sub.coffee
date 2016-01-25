@@ -40,7 +40,7 @@ class ViewSub extends Backbone.View
 		return @el
 	
 	reopen: ( evnt )=>
-		if $( event.target ).is( ".rm-result-btn" ) and @selectview?.rmRes?
+		if $( evnt.target ).is( ".rm-result-btn" ) and @selectview?.rmRes?
 			@selectview.rmRes( evnt )
 			evnt.preventDefault()
 			evnt.stopPropagation()
