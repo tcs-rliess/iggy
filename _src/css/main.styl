@@ -23,15 +23,17 @@
 		margin 0 5px 5px 0
 		
 	.rm-facet-btn
+	.rm-result-btn
 		margin-right 5px
 		top 7px
-		float left
 		cursor pointer
 		position relative
 		color #aaa
 		text-shadow 0 1px 0 rgba( white, .8 ), 0 -1px 0 rgba( black, .2 )
 		&:hover
 			color #666
+	.rm-facet-btn
+		float left
 			
 	.sublabel
 		float left
@@ -78,6 +80,7 @@
 		border-radius 2px
 		border 1px solid #ddd
 		padding 0px 3px 0px 8px
+	
 		
 	.rangeinp
 		position relative
@@ -140,17 +143,41 @@
 		padding 0
 		margin 0 0 0 5px
 		li
+			position relative
 			display inline-block
 			margin 1px 0
-			padding 3px 8px
+			padding 3px 12px
 			border-right 1px solid #ddd
 			border-left 1px solid #fff
+		.rm-result-btn
+			position absolute
+			top 2px
+			right 5px
+			left 5px
+			background rgba( black, .3 )
+			padding 0 5px
+			text-align left
+			color white
+			border-radius 50px
+			line-height 21px
+			margin 0
+			display:none
 		li:last-child
 			border-right 0 solid
 			padding-right 4px
+			.rm-result-btn
+				right -3px
 		li:first-child
 			border-left 0 solid
 			padding-left 4px
+			.rm-result-btn
+				left -3px
+	
+		li:hover
+			.rm-result-btn
+				display block
+		
+				
 	
 	.custom
 		.typelist

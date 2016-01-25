@@ -109,8 +109,6 @@ class SelectorView extends require( "./facets/base" )
 		return true
 	
 	selected: ( mdl )=>
-		if @_isFull()
-			@close()
 		try
 			if mdl.onlyExec?
 				mdl?.exec?()
@@ -125,6 +123,9 @@ class SelectorView extends require( "./facets/base" )
 			@searchcoll.remove( mdl )
 			@result.add( mdl )
 			@trigger "selected", mdl
+		
+		if @_isFull()
+			@close()
 		return
 
 	focus: =>

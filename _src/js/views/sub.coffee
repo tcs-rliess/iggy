@@ -1,6 +1,15 @@
 class ViewSub extends Backbone.View
 	template: require( "../tmpls/sub.jade" )
-	className: "sub"
+	className: =>
+		_std = "sub"
+		_type = @model.get( "type" )
+		if _type?
+			_std += " sub-type-" + _type
+		
+		_name = @model.get( "name" )
+		if _name?
+			_std += " sub-name-" + _name
+		return _std
 
 	initialize: ( options )=>
 		@_isOpen = false
@@ -23,7 +32,7 @@ class ViewSub extends Backbone.View
 				catch _errerr
 					console.error "Issue #24: CATCH"
 		
-		@$el.html @template( label: @model.getLabel(), selected: _list )
+		@$el.html @template( label: @model.getLabel(), selected: _list, type: @model.get( "type" ), name: @model.get( "name" ) )
 		@$sub = @$( ".subselect" )
 		@$results = @$( ".subresults" )
 
@@ -31,6 +40,11 @@ class ViewSub extends Backbone.View
 		return @el
 	
 	reopen: ( evnt )=>
+		if $( event.target ).is( ".rm-result-btn" ) and @selectview?.rmRes?
+			@selectview.rmRes( evnt )
+			evnt.preventDefault()
+			evnt.stopPropagation()
+			return
 		if not @_isOpen and @selectview?
 			@selectview.reopen( @ )
 		evnt.preventDefault()
@@ -39,8 +53,8 @@ class ViewSub extends Backbone.View
 		return
 		
 	del: ( evnt )=>
-		evnt.stopPropagation()
-		evnt.preventDefault()
+		evnt?.stopPropagation()
+		evnt?.preventDefault()
 		@collection.trigger( "iggy:rem", @model )
 		@collection.add( @model )
 		@remove()
@@ -55,8 +69,20 @@ class ViewSub extends Backbone.View
 
 	selected: ( optMdl )=>
 		@result.add( optMdl, { merge: true } )
-		@$results.html( @selectview.renderResult() )
+		@renderResult()
 		@trigger( "selected", @model, @selectview.getResults() )
+		return
+	
+	removed: ( optMdl )=>
+		@result.remove( optMdl )
+		@renderResult()
+		@trigger( "selected", @model, @selectview.getResults() )
+		if @result.length <= 0
+			@del()
+		return
+
+	renderResult: =>
+		@$results.html( @selectview.renderResult() )
 		return
 
 	isOpen: =>
@@ -72,6 +98,7 @@ class ViewSub extends Backbone.View
 	close: =>
 		@_isOpen = false
 		if @selectview?
+			@selectview?.off()
 			@selectview?.close()
 			return
 		return
@@ -92,7 +119,7 @@ class ViewSub extends Backbone.View
 	attachSubEvents: =>
 		@selectview.on "closed", ( result )=>
 			@_isOpen = false
-			@selectview.off()
+			#@selectview.off()
 			@selectview.remove() if not result.length
 			#@selectview = null
 			@trigger( "closed", result )
@@ -102,6 +129,11 @@ class ViewSub extends Backbone.View
 		@selectview.on "selected", ( mdl )=>
 			if mdl
 				@selected( mdl )
+			return
+		
+		@selectview.on "removed", ( mdl )=>
+			if mdl
+				@removed( mdl )
 			return
 		return
 		

@@ -202,7 +202,7 @@ IGGY = (function(superClass) {
 module.exports = IGGY;
 
 
-},{"./models/facet_array":3,"./models/facet_daterange":5,"./models/facet_event":6,"./models/facet_number":7,"./models/facet_range":8,"./models/facet_select":9,"./models/facet_string":10,"./models/facets":11,"./models/results":12,"./views/main":33}],2:[function(require,module,exports){
+},{"./models/facet_array":3,"./models/facet_daterange":5,"./models/facet_event":6,"./models/facet_number":7,"./models/facet_range":8,"./models/facet_select":9,"./models/facet_string":10,"./models/facets":11,"./models/results":12,"./views/main":34}],2:[function(require,module,exports){
 
 /*
 EXAMPLE USAGE
@@ -431,7 +431,7 @@ FctArray = (function(superClass) {
 module.exports = FctArray;
 
 
-},{"../views/facets/subarray":28,"./facet_string":10}],4:[function(require,module,exports){
+},{"../views/facets/subarray":29,"./facet_string":10}],4:[function(require,module,exports){
 var FacetBase,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -482,7 +482,7 @@ FacetBase = (function(superClass) {
 module.exports = FacetBase;
 
 
-},{"../views/facets/base":25}],5:[function(require,module,exports){
+},{"../views/facets/base":26}],5:[function(require,module,exports){
 var FctDateRange,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -512,7 +512,7 @@ FctDateRange = (function(superClass) {
 module.exports = FctDateRange;
 
 
-},{"../views/facets/daterange":26,"./facet_base":4}],6:[function(require,module,exports){
+},{"../views/facets/daterange":27,"./facet_base":4}],6:[function(require,module,exports){
 var FctEvent,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -580,7 +580,7 @@ FctNumber = (function(superClass) {
 module.exports = FctNumber;
 
 
-},{"../views/facets/subnumber":29,"./facet_base":4}],8:[function(require,module,exports){
+},{"../views/facets/subnumber":30,"./facet_base":4}],8:[function(require,module,exports){
 var FctRange,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -612,7 +612,7 @@ FctRange = (function(superClass) {
 module.exports = FctRange;
 
 
-},{"../views/facets/subrange":30,"./facet_base":4}],9:[function(require,module,exports){
+},{"../views/facets/subrange":31,"./facet_base":4}],9:[function(require,module,exports){
 var FctSelect,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -642,7 +642,7 @@ FctSelect = (function(superClass) {
 module.exports = FctSelect;
 
 
-},{"../views/facets/subselect":31,"./facet_base":4}],10:[function(require,module,exports){
+},{"../views/facets/subselect":32,"./facet_base":4}],10:[function(require,module,exports){
 var FctString,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -671,7 +671,7 @@ FctString = (function(superClass) {
 module.exports = FctString;
 
 
-},{"../views/facets/substring":32,"./facet_base":4}],11:[function(require,module,exports){
+},{"../views/facets/substring":33,"./facet_base":4}],11:[function(require,module,exports){
 var IggyFacets,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -866,10 +866,20 @@ module.exports = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
+;var locals_for_with = (locals || {});(function (id, txt) {
+buf.push("<span class=\"txt\">" + (jade.escape(null == (jade_interp = txt) ? "" : jade_interp)) + "</span><i" + (jade.attr("data-id", id, true, false)) + " class=\"rm-result-btn fa fa-remove\"></i>");}.call(this,"id" in locals_for_with?locals_for_with.id:typeof id!=="undefined"?id:undefined,"txt" in locals_for_with?locals_for_with.txt:typeof txt!=="undefined"?txt:undefined));;return buf.join("");
+};
+},{"jade/runtime":38}],15:[function(require,module,exports){
+var jade = require("jade/runtime");
+
+module.exports = function template(locals) {
+var buf = [];
+var jade_mixins = {};
+var jade_interp;
 ;var locals_for_with = (locals || {});(function (cid) {
 buf.push("<input" + (jade.attr("id", cid, true, false)) + " class=\"daterange-inp\"/>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined));;return buf.join("");
 };
-},{"jade/runtime":37}],15:[function(require,module,exports){
+},{"jade/runtime":38}],16:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -906,7 +916,7 @@ buf.push("</select></div>");
 }
 buf.push("<input" + (jade.attr("id", cid, true, false)) + (jade.attr("value", value, true, false)) + " class=\"number-inp\"/>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"operator" in locals_for_with?locals_for_with.operator:typeof operator!=="undefined"?operator:undefined,"operators" in locals_for_with?locals_for_with.operators:typeof operators!=="undefined"?operators:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
-},{"jade/runtime":37}],16:[function(require,module,exports){
+},{"jade/runtime":38}],17:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -918,7 +928,7 @@ buf.push("<div class=\"rangeinp\">");
 var _vals = value ? value : []
 buf.push("<input" + (jade.attr("id", "" + (cid) + "_from", true, false)) + (jade.attr("value", _vals[0], true, false)) + " class=\"number-inp range-from\"/><span class=\"separator\">-</span><input" + (jade.attr("id", "" + (cid) + "_to", true, false)) + (jade.attr("value", _vals[1], true, false)) + " class=\"number-inp range-to\"/></div>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
-},{"jade/runtime":37}],17:[function(require,module,exports){
+},{"jade/runtime":38}],18:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -928,7 +938,7 @@ var jade_interp;
 
 ;return buf.join("");
 };
-},{"jade/runtime":37}],18:[function(require,module,exports){
+},{"jade/runtime":38}],19:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -1037,7 +1047,7 @@ if ( multiple)
 buf.push("<span class=\"btn btn-xs btn-success select-check fa fa-check\"></span>");
 }}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"multiple" in locals_for_with?locals_for_with.multiple:typeof multiple!=="undefined"?multiple:undefined,"optionGroups" in locals_for_with?locals_for_with.optionGroups:typeof optionGroups!=="undefined"?optionGroups:undefined,"options" in locals_for_with?locals_for_with.options:typeof options!=="undefined"?options:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
-},{"jade/runtime":37}],19:[function(require,module,exports){
+},{"jade/runtime":38}],20:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -1047,7 +1057,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (cid) {
 buf.push("<input" + (jade.attr("id", cid, true, false)) + " class=\"selector-inp\"/><ul" + (jade.attr("id", "" + (cid) + "typelist", true, false)) + " class=\"typelist\"></ul>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined));;return buf.join("");
 };
-},{"jade/runtime":37}],20:[function(require,module,exports){
+},{"jade/runtime":38}],21:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -1091,7 +1101,7 @@ else if ( !custom)
 buf.push("<li><a class=\"emptyres\">no result for \"" + (jade.escape((jade_interp = query) == null ? '' : jade_interp)) + "\"</a></li>");
 }}.call(this,"activeIdx" in locals_for_with?locals_for_with.activeIdx:typeof activeIdx!=="undefined"?activeIdx:undefined,"custom" in locals_for_with?locals_for_with.custom:typeof custom!=="undefined"?custom:undefined,"list" in locals_for_with?locals_for_with.list:typeof list!=="undefined"?list:undefined,"query" in locals_for_with?locals_for_with.query:typeof query!=="undefined"?query:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
 };
-},{"jade/runtime":37}],21:[function(require,module,exports){
+},{"jade/runtime":38}],22:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -1101,7 +1111,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (cid, value) {
 buf.push("<input" + (jade.attr("id", cid, true, false)) + (jade.attr("value", value, true, false)) + " class=\"string-inp\"/>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"value" in locals_for_with?locals_for_with.value:typeof value!=="undefined"?value:undefined));;return buf.join("");
 };
-},{"jade/runtime":37}],22:[function(require,module,exports){
+},{"jade/runtime":38}],23:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -1120,7 +1130,7 @@ if ( selected && selected.length)
     for (var idx = 0, $$l = $$obj.length; idx < $$l; idx++) {
       var el = $$obj[idx];
 
-buf.push("<li>" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) + "</li>");
+buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) + "</span><i class=\"rm-facet-btn fa fa-remove\"></i></li>");
     }
 
   } else {
@@ -1128,7 +1138,7 @@ buf.push("<li>" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) +
     for (var idx in $$obj) {
       $$l++;      var el = $$obj[idx];
 
-buf.push("<li>" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) + "</li>");
+buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) + "</span><i class=\"rm-facet-btn fa fa-remove\"></i></li>");
     }
 
   }
@@ -1137,7 +1147,7 @@ buf.push("<li>" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) +
 }
 buf.push("</ul><div class=\"subselect\"></div><div class=\"loader\"><i class=\"fa fa-cog fa-spin\"></i></div>");}.call(this,"label" in locals_for_with?locals_for_with.label:typeof label!=="undefined"?label:undefined,"selected" in locals_for_with?locals_for_with.selected:typeof selected!=="undefined"?selected:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
 };
-},{"jade/runtime":37}],23:[function(require,module,exports){
+},{"jade/runtime":38}],24:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -1147,7 +1157,7 @@ var jade_interp;
 
 buf.push("<div class=\"add-facet-btn fa fa-plus\"></div>");;return buf.join("");
 };
-},{"jade/runtime":37}],24:[function(require,module,exports){
+},{"jade/runtime":38}],25:[function(require,module,exports){
 module.exports = {
   "LEFT": 37,
   "RIGHT": 39,
@@ -1159,7 +1169,7 @@ module.exports = {
 };
 
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var FacetSubsBase, KEYCODES, SubResults,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1365,7 +1375,7 @@ FacetSubsBase = (function(superClass) {
 module.exports = FacetSubsBase;
 
 
-},{"../../models/subresults":13,"../../tmpls/result_base.jade":17,"../../utils/keycodes":24}],26:[function(require,module,exports){
+},{"../../models/subresults":13,"../../tmpls/result_base.jade":18,"../../utils/keycodes":25}],27:[function(require,module,exports){
 var FacetSubsDateRange, KEYCODES,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1510,7 +1520,7 @@ FacetSubsDateRange = (function(superClass) {
 module.exports = FacetSubsDateRange;
 
 
-},{"../../tmpls/daterange.jade":14,"../../utils/keycodes":24,"./base":25}],27:[function(require,module,exports){
+},{"../../tmpls/daterange.jade":15,"../../utils/keycodes":25,"./base":26}],28:[function(require,module,exports){
 var FacetNumberBase, KEYCODES, nearest, precision,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1655,7 +1665,7 @@ FacetNumberBase = (function(superClass) {
 module.exports = FacetNumberBase;
 
 
-},{"../../utils/keycodes":24,"./base":25}],28:[function(require,module,exports){
+},{"../../utils/keycodes":25,"./base":26}],29:[function(require,module,exports){
 var ArrayOption, ArrayOptions, FacetSubArray, KEYCODES, StringOption, StringOptions, SubResults,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1739,6 +1749,8 @@ ArrayOptions = (function(superClass) {
 FacetSubArray = (function(superClass) {
   extend(FacetSubArray, superClass);
 
+  FacetSubArray.prototype.templateResLi = require("../../tmpls/array_resultli.jade");
+
   FacetSubArray.prototype.optDefault = {
     label: "-",
     value: "-"
@@ -1769,6 +1781,32 @@ FacetSubArray = (function(superClass) {
     return FacetSubArray.__super__.close.apply(this, arguments);
   };
 
+  FacetSubArray.prototype.rmRes = function(evnt) {
+    var _id, ref;
+    _id = (ref = $(evnt.target)) != null ? ref.data("id") : void 0;
+    this.result.remove(_id);
+  };
+
+  FacetSubArray.prototype.renderResult = function(renderEmpty) {
+    var _list, i, idx, len, model, ref;
+    if (renderEmpty == null) {
+      renderEmpty = false;
+    }
+    if (renderEmpty) {
+      return "<li></li>";
+    }
+    _list = [];
+    ref = this.result.models;
+    for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
+      model = ref[idx];
+      _list.push(this.templateResLi({
+        txt: model.getLabel(),
+        id: model.id
+      }));
+    }
+    return "<li>" + _list.join("</li><li>") + "</li>";
+  };
+
   function FacetSubArray(options) {
     this._createOptionCollection = bind(this._createOptionCollection, this);
     this._onTabAction = bind(this._onTabAction, this);
@@ -1776,6 +1814,8 @@ FacetSubArray = (function(superClass) {
     this.reopen = bind(this.reopen, this);
     this.select = bind(this.select, this);
     this._isFull = bind(this._isFull, this);
+    this.renderResult = bind(this.renderResult, this);
+    this.rmRes = bind(this.rmRes, this);
     this.close = bind(this.close, this);
     this.events = bind(this.events, this);
     this.loading = false;
@@ -1791,6 +1831,15 @@ FacetSubArray = (function(superClass) {
       this.selectCount = this.collection.length;
     }
     FacetSubArray.__super__.constructor.call(this, options);
+    this.result.on("remove", (function(_this) {
+      return function(mdl, coll) {
+        if (coll.length) {
+          options.sub.renderResult();
+        }
+        _this.searchcoll.add(mdl);
+        _this.trigger("removed", mdl);
+      };
+    })(this));
     return;
   }
 
@@ -1900,7 +1949,7 @@ FacetSubArray = (function(superClass) {
 module.exports = FacetSubArray;
 
 
-},{"../../models/backbone_sub":2,"../../models/subresults":13,"../../utils/keycodes":24,"../selector":34}],29:[function(require,module,exports){
+},{"../../models/backbone_sub":2,"../../models/subresults":13,"../../tmpls/array_resultli.jade":14,"../../utils/keycodes":25,"../selector":35}],30:[function(require,module,exports){
 var FacetSubsNumber,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2059,7 +2108,7 @@ FacetSubsNumber = (function(superClass) {
 module.exports = FacetSubsNumber;
 
 
-},{"../../tmpls/number.jade":15,"./number_base":27}],30:[function(require,module,exports){
+},{"../../tmpls/number.jade":16,"./number_base":28}],31:[function(require,module,exports){
 var FacetSubsRange,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2191,7 +2240,7 @@ FacetSubsRange = (function(superClass) {
 module.exports = FacetSubsRange;
 
 
-},{"../../tmpls/range.jade":16,"./number_base":27}],31:[function(require,module,exports){
+},{"../../tmpls/range.jade":17,"./number_base":28}],32:[function(require,module,exports){
 var FacetSubsSelect, KEYCODES,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2216,6 +2265,7 @@ FacetSubsSelect = (function(superClass) {
     this.getTemplateData = bind(this.getTemplateData, this);
     this.remove = bind(this.remove, this);
     this._initSelect2 = bind(this._initSelect2, this);
+    this._checkIntValue = bind(this._checkIntValue, this);
     this.reopen = bind(this.reopen, this);
     this._isFull = bind(this._isFull, this);
     this.focus = bind(this.focus, this);
@@ -2232,6 +2282,11 @@ FacetSubsSelect = (function(superClass) {
   FacetSubsSelect.prototype.defaultModuleOpts = {
     width: "auto",
     multiple: false
+  };
+
+  FacetSubsSelect.prototype.initialize = function() {
+    this.convertValueToInt = this._checkIntValue(this.model.get("options"));
+    FacetSubsSelect.__super__.initialize.apply(this, arguments);
   };
 
   FacetSubsSelect.prototype.events = function() {
@@ -2283,6 +2338,26 @@ FacetSubsSelect = (function(superClass) {
     return FacetSubsSelect.__super__.reopen.apply(this, arguments);
   };
 
+  FacetSubsSelect.prototype._checkIntValue = function(_opts) {
+    var _v, i, len;
+    if (_opts == null) {
+      _opts = [];
+    }
+    if (!_opts || !_opts.length) {
+      return false;
+    }
+    for (i = 0, len = _opts.length; i < len; i++) {
+      _v = _opts[i];
+      if ((_v.value != null) && _.isString(_v.value)) {
+        return false;
+      }
+      if ((_v != null) && _.isString(_v)) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   FacetSubsSelect.prototype._initSelect2 = function() {
     var _opts;
     if (this.select2 == null) {
@@ -2295,12 +2370,13 @@ FacetSubsSelect = (function(superClass) {
         this.$inp.on("select2:select", this.select);
       }
       this.select2.on("results:all", (function(_this) {
-        return function() {
-          var ref, ref1;
-          if ((ref = _this.select2.selection) != null) {
-            if ((ref1 = ref.$search) != null) {
-              if (typeof ref1.focus === "function") {
-                ref1.focus();
+        return function(results) {
+          var ref, ref1, ref2;
+          _this.convertValueToInt = _this._checkIntValue(results != null ? (ref = results.data) != null ? ref.results : void 0 : void 0);
+          if ((ref1 = _this.select2.selection) != null) {
+            if ((ref2 = ref1.$search) != null) {
+              if (typeof ref2.focus === "function") {
+                ref2.focus();
               }
             }
           }
@@ -2339,23 +2415,24 @@ FacetSubsSelect = (function(superClass) {
   };
 
   FacetSubsSelect.prototype.getTemplateData = function() {
-    var _data, _groups, _v, i, len, ref;
+    var _data, _groups, _v, _vlist, i, len, ref;
     _data = _.extend({}, FacetSubsSelect.__super__.getTemplateData.apply(this, arguments), {
       multiple: this.model.get("multiple"),
       options: this._createOptionCollection(this.model.get("options"))
     });
     if ((_data.value != null) && !_.isArray(_data.value)) {
-      _data.value = [_data.value];
+      _data.value = [this.convertValueToInt ? _data.value : _data.value.toString()];
     }
     if (_data.value != null) {
+      _vlist = _.pluck(_data.options, "value");
       ref = _data.value;
       for (i = 0, len = ref.length; i < len; i++) {
         _v = ref[i];
-        if (indexOf.call(_.pluck(_data.options, "value"), _v) < 0) {
+        if (indexOf.call(_vlist, _v) < 0) {
           _data.options.push({
-            value: _v,
+            value: (this.convertValueToInt ? _v : _v.toString()),
             label: _v,
-            group: null
+            group: void 0
           });
         }
       }
@@ -2392,7 +2469,11 @@ FacetSubsSelect = (function(superClass) {
   FacetSubsSelect.prototype._convertValue = function(data) {
     var _data;
     _data = {};
-    _data.value = data.id;
+    if (this.convertValueToInt) {
+      _data.value = parseFloat(data.id);
+    } else {
+      _data.value = data.id;
+    }
     if (data.text != null) {
       _data.label = data.text;
     }
@@ -2415,11 +2496,12 @@ FacetSubsSelect = (function(superClass) {
       opt = options[i];
       if (_.isString(opt) || _.isNumber(opt)) {
         _opts.push({
-          value: opt,
+          value: (this.convertValueToInt ? opt : opt.toString()),
           label: opt,
           group: null
         });
       } else if (_.isObject(opt)) {
+        opt.value = this.convertValueToInt ? opt.value : opt.value.toString();
         _opts.push(_.extend({}, this.optDefault, opt));
       }
     }
@@ -2478,7 +2560,7 @@ FacetSubsSelect = (function(superClass) {
 module.exports = FacetSubsSelect;
 
 
-},{"../../tmpls/select.jade":18,"../../utils/keycodes":24,"./base":25}],32:[function(require,module,exports){
+},{"../../tmpls/select.jade":19,"../../utils/keycodes":25,"./base":26}],33:[function(require,module,exports){
 var FacetSubString,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2534,7 +2616,7 @@ FacetSubString = (function(superClass) {
 module.exports = FacetSubString;
 
 
-},{"../../tmpls/string.jade":21,"./base":25}],33:[function(require,module,exports){
+},{"../../tmpls/string.jade":22,"./base":26}],34:[function(require,module,exports){
 var KEYCODES, MainView, SelectorView, SubView,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2743,7 +2825,7 @@ MainView = (function(superClass) {
 module.exports = MainView;
 
 
-},{"../tmpls/wrapper.jade":23,"../utils/keycodes":24,"./selector":34,"./sub":35}],34:[function(require,module,exports){
+},{"../tmpls/wrapper.jade":24,"../utils/keycodes":25,"./selector":35,"./sub":36}],35:[function(require,module,exports){
 var KEYCODES, SelectorView,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2913,9 +2995,6 @@ SelectorView = (function(superClass) {
 
   SelectorView.prototype.selected = function(mdl) {
     var _err, _errerr, error, error1;
-    if (this._isFull()) {
-      this.close();
-    }
     try {
       if (mdl.onlyExec != null) {
         if (mdl != null) {
@@ -2938,6 +3017,9 @@ SelectorView = (function(superClass) {
       this.searchcoll.remove(mdl);
       this.result.add(mdl);
       this.trigger("selected", mdl);
+    }
+    if (this._isFull()) {
+      this.close();
     }
   };
 
@@ -3055,7 +3137,7 @@ SelectorView = (function(superClass) {
 module.exports = SelectorView;
 
 
-},{"../tmpls/selector.jade":19,"../tmpls/selectorli.jade":20,"../utils/keycodes":24,"./facets/base":25}],35:[function(require,module,exports){
+},{"../tmpls/selector.jade":20,"../tmpls/selectorli.jade":21,"../utils/keycodes":25,"./facets/base":26}],36:[function(require,module,exports){
 var ViewSub,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -3071,18 +3153,33 @@ ViewSub = (function(superClass) {
     this.close = bind(this.close, this);
     this.focus = bind(this.focus, this);
     this.isOpen = bind(this.isOpen, this);
+    this.renderResult = bind(this.renderResult, this);
+    this.removed = bind(this.removed, this);
     this.selected = bind(this.selected, this);
     this.remove = bind(this.remove, this);
     this.del = bind(this.del, this);
     this.reopen = bind(this.reopen, this);
     this.render = bind(this.render, this);
     this.initialize = bind(this.initialize, this);
+    this.className = bind(this.className, this);
     return ViewSub.__super__.constructor.apply(this, arguments);
   }
 
   ViewSub.prototype.template = require("../tmpls/sub.jade");
 
-  ViewSub.prototype.className = "sub";
+  ViewSub.prototype.className = function() {
+    var _name, _std, _type;
+    _std = "sub";
+    _type = this.model.get("type");
+    if (_type != null) {
+      _std += " sub-type-" + _type;
+    }
+    _name = this.model.get("name");
+    if (_name != null) {
+      _std += " sub-name-" + _name;
+    }
+    return _std;
+  };
 
   ViewSub.prototype.initialize = function(options) {
     this._isOpen = false;
@@ -3115,7 +3212,9 @@ ViewSub = (function(superClass) {
     }
     this.$el.html(this.template({
       label: this.model.getLabel(),
-      selected: _list
+      selected: _list,
+      type: this.model.get("type"),
+      name: this.model.get("name")
     }));
     this.$sub = this.$(".subselect");
     this.$results = this.$(".subresults");
@@ -3124,6 +3223,13 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.reopen = function(evnt) {
+    var ref;
+    if ($(event.target).is(".rm-result-btn") && (((ref = this.selectview) != null ? ref.rmRes : void 0) != null)) {
+      this.selectview.rmRes(evnt);
+      evnt.preventDefault();
+      evnt.stopPropagation();
+      return;
+    }
     if (!this._isOpen && (this.selectview != null)) {
       this.selectview.reopen(this);
     }
@@ -3133,8 +3239,12 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.del = function(evnt) {
-    evnt.stopPropagation();
-    evnt.preventDefault();
+    if (evnt != null) {
+      evnt.stopPropagation();
+    }
+    if (evnt != null) {
+      evnt.preventDefault();
+    }
     this.collection.trigger("iggy:rem", this.model);
     this.collection.add(this.model);
     this.remove();
@@ -3156,8 +3266,21 @@ ViewSub = (function(superClass) {
     this.result.add(optMdl, {
       merge: true
     });
-    this.$results.html(this.selectview.renderResult());
+    this.renderResult();
     this.trigger("selected", this.model, this.selectview.getResults());
+  };
+
+  ViewSub.prototype.removed = function(optMdl) {
+    this.result.remove(optMdl);
+    this.renderResult();
+    this.trigger("selected", this.model, this.selectview.getResults());
+    if (this.result.length <= 0) {
+      this.del();
+    }
+  };
+
+  ViewSub.prototype.renderResult = function() {
+    this.$results.html(this.selectview.renderResult());
   };
 
   ViewSub.prototype.isOpen = function() {
@@ -3176,11 +3299,14 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.close = function() {
-    var ref;
+    var ref, ref1;
     this._isOpen = false;
     if (this.selectview != null) {
       if ((ref = this.selectview) != null) {
-        ref.close();
+        ref.off();
+      }
+      if ((ref1 = this.selectview) != null) {
+        ref1.close();
       }
       return;
     }
@@ -3208,7 +3334,6 @@ ViewSub = (function(superClass) {
     this.selectview.on("closed", (function(_this) {
       return function(result) {
         _this._isOpen = false;
-        _this.selectview.off();
         if (!result.length) {
           _this.selectview.remove();
         }
@@ -3222,6 +3347,13 @@ ViewSub = (function(superClass) {
       return function(mdl) {
         if (mdl) {
           _this.selected(mdl);
+        }
+      };
+    })(this));
+    this.selectview.on("removed", (function(_this) {
+      return function(mdl) {
+        if (mdl) {
+          _this.removed(mdl);
         }
       };
     })(this));
@@ -3243,9 +3375,9 @@ ViewSub = (function(superClass) {
 module.exports = ViewSub;
 
 
-},{"../tmpls/sub.jade":22}],36:[function(require,module,exports){
+},{"../tmpls/sub.jade":23}],37:[function(require,module,exports){
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jade = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
@@ -3500,5 +3632,5 @@ exports.DebugItem = function DebugItem(lineno, filename) {
 },{}]},{},[1])(1)
 });
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"fs":36}]},{},[1])(1)
+},{"fs":37}]},{},[1])(1)
 });

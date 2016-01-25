@@ -25,6 +25,9 @@ class ArrayOptions extends require( "../../models/backbone_sub" )
 	model: ArrayOption
 
 class FacetSubArray extends require( "../selector" )
+	
+	templateResLi: require( "../../tmpls/array_resultli.jade" )
+	
 	optDefault:
 		label: "-"
 		value: "-"
@@ -47,6 +50,20 @@ class FacetSubArray extends require( "../selector" )
 			return
 		return super
 	
+	rmRes: ( evnt )=>
+		_id = $( evnt.target )?.data( "id" )
+		@result.remove( _id )
+		return
+	
+	renderResult: ( renderEmpty = false )=>
+		if renderEmpty
+			return "<li></li>"
+		_list = []
+		for model, idx in @result.models
+			_list.push @templateResLi( txt: model.getLabel(), id: model.id )
+
+		return "<li>" + _list.join( "</li><li>" ) + "</li>"
+	
 	constructor: ( options )->
 		@loading = false
 		if options.model.get( "count" )?
@@ -61,6 +78,13 @@ class FacetSubArray extends require( "../selector" )
 			@selectCount = @collection.length
 			
 		super( options )
+		
+		@result.on "remove", ( mdl, coll )=>
+			if coll.length
+				options.sub.renderResult()
+			@searchcoll.add( mdl )
+			@trigger( "removed", mdl )
+			return
 		return
 	
 	_isFull: =>

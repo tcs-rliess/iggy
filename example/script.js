@@ -198,6 +198,32 @@ jQuery( function( $ ){
 		]
 	},{
 		type: "select",
+		name: "issue45",
+		label: "Issue 45",
+		multiple: false,
+		sort: 1,
+		options: [ 
+			{ value: 1, label: "München" },
+			{ value: 2, label: "Hamburg" },
+			{ value: 3, label: "Berlin" },
+			{ value: 4, label: "Köln" },
+			{ value: 5, label: "Stuttgart" }
+		]
+	},{
+		type: "select",
+		name: "issue45b",
+		label: "Issue 45 B",
+		multiple: false,
+		sort: 2,
+		options: [ 
+			{ value: "m", label: "München" },
+			{ value: "hh", label: "Hamburg" },
+			{ value: "b", label: "Berlin" },
+			{ value: 1, label: "Köln" },
+			{ value: "s", label: "Stuttgart" }
+		]
+	},{
+		type: "select",
 		name: "multigroup",
 		label: "Select Multi Group",
 		multiple: true,

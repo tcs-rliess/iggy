@@ -15,6 +15,7 @@ deploy.json
 *.DS_Store
 *.zip
 *.rdb
+*.log
 
 .project
 .settings

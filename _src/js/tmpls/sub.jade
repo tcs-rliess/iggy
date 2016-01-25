@@ -4,7 +4,10 @@ span.sublabel #{label}:
 ul.subresults
 	if selected && selected.length
 		each el, idx in selected
-			li= el
+			li
+				span.txt= el
+				i.rm-facet-btn.fa.fa-remove
+				
 .subselect
 .loader
 	i.fa.fa-cog.fa-spin
