@@ -10,7 +10,12 @@ class FacetSubsSelect extends require( "./base" )
 		#maximumSelectionLength: 1
 		width: "auto"
 		multiple: false
-
+	
+	initialize: ->
+		@convertValueToInt = @_checkIntValue( @model.get( "options" ) )
+		super
+		return
+	
 	events: =>
 		_evnts = {}
 		_evnts[ "click .select-check" ] = "select" if @model.get( "multiple" )
@@ -54,8 +59,20 @@ class FacetSubsSelect extends require( "./base" )
 		@select2 = null
 		
 		return super
+		
+	_checkIntValue: ( _opts = [] )=>
+		if not _opts or not _opts.length
+			return false
+		for _v in _opts
+			if _v.value? and _.isString( _v.value )
+				return false
+			if _v? and _.isString( _v )
+				return false
+			
+		return true
 
 	_initSelect2: =>
+		
 		if not @select2?
 			_opts = _.extend( {}, @defaultModuleOpts, @model.get( "opts" ), { multiple: @model.get( "multiple" ) or false }, @forcedModuleOpts )
 			@$inp.select2( _opts )
@@ -64,7 +81,8 @@ class FacetSubsSelect extends require( "./base" )
 				@$inp.on "select2:select", @select
 			
 			# after loading try to set the cursor focus
-			@select2.on "results:all", =>
+			@select2.on "results:all", ( results )=>
+				@convertValueToInt = @_checkIntValue( results?.data?.results )
 				@select2.selection?.$search?.focus?()
 				return
 			
@@ -72,8 +90,10 @@ class FacetSubsSelect extends require( "./base" )
 			@select2.dataAdapter.current ( results )=>
 				if @model.get( "waitForAsync" )
 					_data = []
+					
 					for result in results
 						_data.push @_convertValue( result )
+						
 					# select the active/predefined results
 					@_select( _data )
 					@close()
@@ -95,11 +115,12 @@ class FacetSubsSelect extends require( "./base" )
 	getTemplateData: =>
 		_data = _.extend( {}, super, { multiple: @model.get( "multiple" ), options: @_createOptionCollection( @model.get( "options" ) ) } )
 		if _data.value? and not _.isArray( _data.value )
-			_data.value = [ _data.value ]
-
+			_data.value = [ if @convertValueToInt then _data.value else _data.value.toString() ]
+			
 		if _data.value?
-			for _v in _data.value when _v not in _.pluck( _data.options, "value" )
-				_data.options.push { value: _v, label: _v, group: null }
+			_vlist = _.pluck( _data.options, "value" )
+			for _v in _data.value when _v not in _vlist
+				_data.options.push { value: ( if @convertValueToInt then _v else _v.toString() ), label: _v, group: undefined }
 		
 		_groups = _.groupBy( _data.options, "group" )
 		if _.compact( _.keys( _groups or {} ) ).length > 1
@@ -123,7 +144,10 @@ class FacetSubsSelect extends require( "./base" )
 	
 	_convertValue: ( data )=>
 		_data = {}
-		_data.value = data.id
+		if @convertValueToInt
+			_data.value = parseFloat( data.id )
+		else
+			_data.value = data.id
 		_data.label = data.text if data.text?
 		return _data
 
@@ -137,10 +161,10 @@ class FacetSubsSelect extends require( "./base" )
 		_opts = []
 		for opt in options
 			if _.isString( opt ) or _.isNumber( opt )
-				_opts.push { value: opt, label: opt, group: null }
+				_opts.push { value: ( if @convertValueToInt then opt else opt.toString() ), label: opt, group: null }
 			else if _.isObject( opt )
+				opt.value = if @convertValueToInt then opt.value else opt.value.toString()
 				_opts.push _.extend( {}, @optDefault, opt )
-
 		return _opts
 
 	unselect: ( evnt )=>
