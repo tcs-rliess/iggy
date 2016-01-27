@@ -66,6 +66,8 @@ class FacetSubsSelect extends require( "./base" )
 		for _v in _opts
 			if _v.value? and _.isString( _v.value )
 				return false
+			if _v.id? and _.isString( _v.id )
+				return false
 			if _v? and _.isString( _v )
 				return false
 			
@@ -144,7 +146,7 @@ class FacetSubsSelect extends require( "./base" )
 	
 	_convertValue: ( data )=>
 		_data = {}
-		if @convertValueToInt
+		if @convertValueToInt 
 			_data.value = parseFloat( data.id )
 		else
 			_data.value = data.id

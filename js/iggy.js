@@ -2351,6 +2351,9 @@ FacetSubsSelect = (function(superClass) {
       if ((_v.value != null) && _.isString(_v.value)) {
         return false;
       }
+      if ((_v.id != null) && _.isString(_v.id)) {
+        return false;
+      }
       if ((_v != null) && _.isString(_v)) {
         return false;
       }

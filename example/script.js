@@ -224,6 +224,15 @@ jQuery( function( $ ){
 		]
 	},{
 		type: "select",
+		name: "issue45c",
+		label: "Issue 45 C",
+		multiple: true,
+		sort: 3,
+		opts: {
+			dataAdapter: TestAdapter
+		}
+	},{
+		type: "select",
 		name: "multigroup",
 		label: "Select Multi Group",
 		multiple: true,
