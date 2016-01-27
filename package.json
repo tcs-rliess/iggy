@@ -24,22 +24,22 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "backbone": "1.2.x",
+    "bootstrap": "3.3.x",
+    "bootstrap-daterangepicker": "2.1.x",
+    "coffeeify": "1.x",
+    "font-awesome": "4.4.x",
     "grunt": "0.4.x",
-    "grunt-regarde": "0.x",
+    "grunt-browserify": "4.x",
     "grunt-contrib-clean": "0.x",
+    "grunt-contrib-compress": "^0.14.0",
     "grunt-contrib-copy": "0.x",
     "grunt-contrib-stylus": "0.x",
     "grunt-contrib-uglify": "0.x",
-    "grunt-browserify": "4.x",
+    "grunt-regarde": "0.x",
     "jadeify": "4.x",
-    "coffeeify": "1.x",
-
-    "backbone": "1.2.x",
     "jquery": "2.1.x",
-    "bootstrap": "3.3.x",
     "moment": "2.10.x",
-    "font-awesome": "4.4.x",
-    "bootstrap-daterangepicker": "2.1.x",
     "select2": "4.0.x"
   }
 }

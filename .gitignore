@@ -16,3 +16,4 @@ config.json
 config*.json
 deploy.json
 /node_modules
+/_release

@@ -69,7 +69,15 @@ module.exports = (grunt) ->
 				files:
 					'js/iggy.debug.js': "_src/js/main.coffee"
 
-			
+		compress:
+			options:
+				mode: "tgz"
+				archive: '_release/release_<%= pkg.version %>.tar.gz'
+				pretty: true
+			release:
+				src: [ "package.json", "README.md", "LICENSE", "dist/**" ]
+				dest: "milonst/"
+				
 		copy:
 			release:
 				src: ['css/iggy.css']
@@ -95,6 +103,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-contrib-stylus"
 	grunt.loadNpmTasks "grunt-contrib-clean"
 	grunt.loadNpmTasks "grunt-contrib-uglify"
+	grunt.loadNpmTasks "grunt-contrib-compress"
 	grunt.loadNpmTasks "grunt-browserify"
 	#grunt.loadNpmTasks "grunt-karma"
 
@@ -116,4 +125,4 @@ module.exports = (grunt) ->
 
 
 	grunt.registerTask "build", [ "clear", "build-core"]
-	grunt.registerTask "release", [ "build", "uglify:release", "copy:release" ]
+	grunt.registerTask "release", [ "build", "uglify:release", "copy:release", "compress:release" ]

@@ -1,6 +1,7 @@
 /_src
 /_docs
 /node_modules
+/_release
 Gruntfile.*
 *.sublime*
 config.json
