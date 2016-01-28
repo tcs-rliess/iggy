@@ -116,13 +116,16 @@ class FacetSubsSelect extends require( "./base" )
 
 	getTemplateData: =>
 		_data = _.extend( {}, super, { multiple: @model.get( "multiple" ), options: @_createOptionCollection( @model.get( "options" ) ) } )
-		if _data.value? and not _.isArray( _data.value )
-			_data.value = [ if @convertValueToInt then _data.value else _data.value.toString() ]
-			
+		if _data.value? and _.isArray( _data.value )
+			for _v, _idx in _data.value
+				_data.value[ _idx ] = if @convertValueToInt then parseFloat( _v ) else _v.toString()
+		else if _data.value?
+			_data.value = [ if @convertValueToInt then parseFloat( _data.value ) else _data.value.toString() ]
+		
 		if _data.value?
 			_vlist = _.pluck( _data.options, "value" )
 			for _v in _data.value when _v not in _vlist
-				_data.options.push { value: ( if @convertValueToInt then _v else _v.toString() ), label: _v, group: undefined }
+				_data.options.push { value: ( if @convertValueToInt then parseFloat( _v ) else _v.toString() ), label: _v, group: undefined }
 		
 		_groups = _.groupBy( _data.options, "group" )
 		if _.compact( _.keys( _groups or {} ) ).length > 1
@@ -163,9 +166,9 @@ class FacetSubsSelect extends require( "./base" )
 		_opts = []
 		for opt in options
 			if _.isString( opt ) or _.isNumber( opt )
-				_opts.push { value: ( if @convertValueToInt then opt else opt.toString() ), label: opt, group: null }
+				_opts.push { value: ( if @convertValueToInt then parseFloat( opt ) else opt.toString() ), label: opt, group: null }
 			else if _.isObject( opt )
-				opt.value = if @convertValueToInt then opt.value else opt.value.toString()
+				opt.value = if @convertValueToInt then parseFloat( opt.value ) else opt.value.toString()
 				_opts.push _.extend( {}, @optDefault, opt )
 		return _opts
 

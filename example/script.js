@@ -512,6 +512,34 @@ jQuery( function( $ ){
 			{ value: "ger", label: "Germany", group: "Europe" }
 		]
 	},{
+		type: "select",
+		name: "select_group_int",
+		label: "Select Multi Group Int",
+		multiple: true,
+		value: [66,13,1,"666"],
+		options: [ 
+			{ value: 1, label: "One", group: "Int" },
+			{ value: 2, label: "Two", group: "Int" },
+			{ value: 13, label: "Unlucky...", group: "Fun" },
+			{ value: 23, label: "Hack it!", group: "Fun" },
+			{ value: 42, label: "The answer", group: "Fun" },
+			{ value: 666, label: "Evil!", group: "Fun" }
+		]
+	},{
+		type: "select",
+		name: "select_int",
+		label: "Select Multi Int",
+		multiple: true,
+		value: [13,23],
+		options: [ 
+			{ value: 1, label: "One" },
+			{ value: 2, label: "Two" },
+			{ value: 13, label: "Unlucky..." },
+			{ value: 23, label: "Hack it!" },
+			{ value: 42, label: "The answer" },
+			{ value: 666, label: "Evil!" }
+		]
+	},{
 		type: "daterange",
 		label: "Date custom",
 		name: "datecustom",

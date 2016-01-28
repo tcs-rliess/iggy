@@ -14,6 +14,7 @@ Browser search module to use with Backbone.js
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.1.7|2016-1-28|another fix for #45 |
 |0.1.6|2016-1-27|fixed select2 options on edit #48 |
 |0.1.5|2016-1-25|added edit for type array #46,fixed select2 display bug #45 |
 |0.1.4|2016-1-14|fixed outerclick within daterange widget #44|

@@ -2418,22 +2418,28 @@ FacetSubsSelect = (function(superClass) {
   };
 
   FacetSubsSelect.prototype.getTemplateData = function() {
-    var _data, _groups, _v, _vlist, i, len, ref;
+    var _data, _groups, _idx, _v, _vlist, i, j, len, len1, ref, ref1;
     _data = _.extend({}, FacetSubsSelect.__super__.getTemplateData.apply(this, arguments), {
       multiple: this.model.get("multiple"),
       options: this._createOptionCollection(this.model.get("options"))
     });
-    if ((_data.value != null) && !_.isArray(_data.value)) {
-      _data.value = [this.convertValueToInt ? _data.value : _data.value.toString()];
+    if ((_data.value != null) && _.isArray(_data.value)) {
+      ref = _data.value;
+      for (_idx = i = 0, len = ref.length; i < len; _idx = ++i) {
+        _v = ref[_idx];
+        _data.value[_idx] = this.convertValueToInt ? parseFloat(_v) : _v.toString();
+      }
+    } else if (_data.value != null) {
+      _data.value = [this.convertValueToInt ? parseFloat(_data.value) : _data.value.toString()];
     }
     if (_data.value != null) {
       _vlist = _.pluck(_data.options, "value");
-      ref = _data.value;
-      for (i = 0, len = ref.length; i < len; i++) {
-        _v = ref[i];
+      ref1 = _data.value;
+      for (j = 0, len1 = ref1.length; j < len1; j++) {
+        _v = ref1[j];
         if (indexOf.call(_vlist, _v) < 0) {
           _data.options.push({
-            value: (this.convertValueToInt ? _v : _v.toString()),
+            value: (this.convertValueToInt ? parseFloat(_v) : _v.toString()),
             label: _v,
             group: void 0
           });
@@ -2499,12 +2505,12 @@ FacetSubsSelect = (function(superClass) {
       opt = options[i];
       if (_.isString(opt) || _.isNumber(opt)) {
         _opts.push({
-          value: (this.convertValueToInt ? opt : opt.toString()),
+          value: (this.convertValueToInt ? parseFloat(opt) : opt.toString()),
           label: opt,
           group: null
         });
       } else if (_.isObject(opt)) {
-        opt.value = this.convertValueToInt ? opt.value : opt.value.toString();
+        opt.value = this.convertValueToInt ? parseFloat(opt.value) : opt.value.toString();
         _opts.push(_.extend({}, this.optDefault, opt));
       }
     }
