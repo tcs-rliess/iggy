@@ -92,16 +92,18 @@ IGGY = (function(superClass) {
   };
 
   IGGY.prototype._prepareFacets = function(facets, options) {
-    var _fct, _ret, facet, i, len;
+    var _fct, _idx, _ret, facet, i, len;
     if (options == null) {
       options = {};
     }
     _ret = [];
-    for (i = 0, len = facets.length; i < len; i++) {
-      facet = facets[i];
-      if ((_fct = this._createFacet(facet)) != null) {
-        _ret.push(_fct);
+    for (_idx = i = 0, len = facets.length; i < len; _idx = ++i) {
+      facet = facets[_idx];
+      if (!((_fct = this._createFacet(facet)) != null)) {
+        continue;
       }
+      _fct._idx = _idx;
+      _ret.push(_fct);
     }
     return new Facets(_ret, options);
   };
@@ -2545,6 +2547,7 @@ FacetSubsSelect = (function(superClass) {
     _vals = this.getValue();
     if (!(_vals != null ? _vals.length : void 0)) {
       this.close();
+      this.sub.del();
       return;
     }
     this._select(_vals);
@@ -2664,7 +2667,7 @@ MainView = (function(superClass) {
   };
 
   MainView.prototype.initialize = function(options) {
-    var _cl, fct, i, len, ref, ref1, subview;
+    var _cl, _fnSort, _valueFacets, fct, i, len, ref, ref1, subview;
     this.results = options.results;
     this.collection.on("iggy:rem", this.remFacet);
     _cl = "iggy clearfix";
@@ -2675,9 +2678,21 @@ MainView = (function(superClass) {
     this.render();
     $(document).on("keyup", this._onKey);
     this._outerClickListen();
-    ref1 = this.collection.filter(function(fct) {
+    _valueFacets = this.collection.filter(function(fct) {
       return (fct != null ? fct.get("value") : void 0) != null;
     });
+    _fnSort = function(key) {
+      return function(v1, v2) {
+        if (v1[key] > v2[key]) {
+          return 1;
+        }
+        if (v1[key] < v2[key]) {
+          return -1;
+        }
+        return 0;
+      };
+    };
+    ref1 = _valueFacets.sort(_fnSort("_idx"));
     for (i = 0, len = ref1.length; i < len; i++) {
       fct = ref1[i];
       subview = this.genSub(fct, false);
