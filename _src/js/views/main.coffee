@@ -24,7 +24,17 @@ class MainView extends Backbone.View
 		$( document ).on "keyup", @_onKey
 		@_outerClickListen()
 		
-		for fct in @collection.filter( ( fct )->return fct?.get( "value" )? )
+		_valueFacets = @collection.filter( ( fct )->return fct?.get( "value" )? )
+		
+		_fnSort = ( key )->
+			return ( v1, v2 )->
+				if v1[ key ] > v2[ key ]
+					return 1
+				if v1[ key ] < v2[ key ]
+					return -1
+				return 0
+		
+		for fct in _valueFacets.sort( _fnSort( "_idx" ) )
 			subview = @genSub( fct, false )
 		
 		@collection.on "add", =>

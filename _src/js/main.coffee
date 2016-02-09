@@ -65,7 +65,8 @@ class IGGY extends Backbone.Events
 
 	_prepareFacets: ( facets, options={} )=>
 		_ret = []
-		for facet in facets when ( _fct = @_createFacet( facet ) )?
+		for facet, _idx in facets when ( _fct = @_createFacet( facet ) )?
+			_fct._idx = _idx
 			_ret.push _fct
 		
 		return new Facets( _ret, options )
