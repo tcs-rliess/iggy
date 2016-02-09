@@ -149,7 +149,7 @@ class FacetSubsSelect extends require( "./base" )
 	
 	_convertValue: ( data )=>
 		_data = {}
-		if @convertValueToInt 
+		if @convertValueToInt
 			_data.value = parseFloat( data.id )
 		else
 			_data.value = data.id
@@ -192,7 +192,9 @@ class FacetSubsSelect extends require( "./base" )
 		evnt.stopPropagation() if evnt?.stopPropagation
 		_vals = @getValue()
 		if not _vals?.length
+			# Issue#49 if nothing was selected close the select-view and remove the whole facet
 			@close()
+			@sub.del()
 			return
 		@_select( _vals )
 
