@@ -53,14 +53,32 @@ class FacetSubArray extends require( "../selector" )
 	rmRes: ( evnt )=>
 		_id = $( evnt.target )?.data( "id" )
 		@result.remove( _id )
+		@searchcoll.remove( _id )
 		return
+		
+	editRes: ( evnt )=>
+		_id = $( evnt.target )?.data( "id" )
+		_v = @_editval = @result.get( _id ).get( "value" )
+		@result.remove( _id )
+		@searchcoll.remove( _id )
+		@sub.reopen()
+		console.log @searchcoll
+		@search(_v)
+		return
+	
+	getTemplateData: =>
+		_data = super
+		if @_editval?.length
+			_data.inpval = @_editval
+			@_editval = null
+		return _data
 	
 	renderResult: ( renderEmpty = false )=>
 		if renderEmpty
 			return "<li></li>"
 		_list = []
 		for model, idx in @result.models
-			_list.push @templateResLi( txt: model.getLabel(), id: model.id )
+			_list.push @templateResLi( txt: model.getLabel(), id: model.id, custom: model.get( "custom" )  )
 
 		return "<li>" + _list.join( "</li><li>" ) + "</li>"
 	
@@ -107,6 +125,7 @@ class FacetSubArray extends require( "../selector" )
 			if not _mdl?
 				_mdl = new @collection.model( value: _val, custom: true )
 			@selected( _mdl )
+		
 		@close()
 		return
 	

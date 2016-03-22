@@ -40,15 +40,22 @@ class ViewSub extends Backbone.View
 		return @el
 	
 	reopen: ( evnt )=>
-		if $( evnt.target ).is( ".rm-result-btn" ) and @selectview?.rmRes?
+		if evnt? and $( evnt.target ).is( ".rm-result-btn" ) and @selectview?.rmRes?
 			@selectview.rmRes( evnt )
 			evnt.preventDefault()
 			evnt.stopPropagation()
 			return
+			
+		if evnt? and $( evnt.target ).is( ".edit-result-btn" ) and @selectview?.editRes?
+			@selectview.editRes( evnt )
+			evnt.preventDefault()
+			evnt.stopPropagation()
+			return
+			
 		if not @_isOpen and @selectview?
 			@selectview.reopen( @ )
-		evnt.preventDefault()
-		evnt.stopPropagation()
+		evnt?.preventDefault()
+		evnt?.stopPropagation()
 		@trigger( "reopen" )
 		return
 		

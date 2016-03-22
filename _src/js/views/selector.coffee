@@ -19,13 +19,14 @@ class SelectorView extends require( "./facets/base" )
 		"keyup input##{@cid}": "search"
 
 	constructor: ( options )->
-		@custom =  options.custom or false
+		@custom = options.custom or false
 		@activeIdx = 0
 		@currQuery = ""
-		super
+		super( options )
 		return
 		
 	initialize: ( options )=>
+		super
 		@searchcoll = @collection.sub( ->true )
 		@result = new @collection.constructor()
 		
@@ -130,10 +131,13 @@ class SelectorView extends require( "./facets/base" )
 
 	focus: =>
 		@$inp.focus()
+		_el = @$inp.get(0)
+		
+		_el.selectionStart = _el.selectionEnd = _el.value.length
 		return
 
 	search: ( evnt )=>
-		if evnt.type is "keydown"
+		if evnt?.type is "keydown"
 			switch evnt.keyCode
 				when KEYCODES.UP
 					@move( true )
@@ -145,8 +149,11 @@ class SelectorView extends require( "./facets/base" )
 					@selectActive( true )
 					return
 			return
-
-		_q = evnt.currentTarget.value.toLowerCase()
+		
+		if _.isString( evnt )
+			_q = evnt
+		else
+			_q = evnt.currentTarget.value.toLowerCase()
 		if _q is @currQuery
 			return
 

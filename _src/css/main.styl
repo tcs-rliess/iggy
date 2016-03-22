@@ -23,7 +23,7 @@
 		margin 0 5px 5px 0
 		
 	.rm-facet-btn
-	.rm-result-btn
+	.btn-wrp
 		margin-right 5px
 		top 7px
 		cursor pointer
@@ -32,6 +32,13 @@
 		text-shadow 0 1px 0 rgba( white, .8 ), 0 -1px 0 rgba( black, .2 )
 		&:hover
 			color #666
+			
+	.rm-result-btn
+		float right
+		
+	.edit-result-btn
+		float left
+		
 	.rm-facet-btn
 		float left
 			
@@ -149,13 +156,13 @@
 			padding 3px 12px
 			border-right 1px solid #ddd
 			border-left 1px solid #fff
-		.rm-result-btn
+		.btn-wrp
 			position absolute
 			top 2px
 			right 5px
 			left 5px
 			background rgba( black, .3 )
-			padding 0 5px
+			padding 4px 5px
 			text-align left
 			color white
 			border-radius 50px
@@ -165,16 +172,16 @@
 		li:last-child
 			border-right 0 solid
 			padding-right 4px
-			.rm-result-btn
+			.btn-wrp
 				right -3px
 		li:first-child
 			border-left 0 solid
 			padding-left 4px
-			.rm-result-btn
+			.btn-wrp
 				left -3px
 	
 		li:hover
-			.rm-result-btn
+			.btn-wrp
 				display block
 		
 				
