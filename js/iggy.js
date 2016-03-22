@@ -240,7 +240,7 @@ BackboneSub = (function(superClass) {
 
   function BackboneSub() {
     this.updateSubFilter = bind(this.updateSubFilter, this);
-    this._subCollecctionOptions = bind(this._subCollecctionOptions, this);
+    this._subCollectionOptions = bind(this._subCollectionOptions, this);
     this.sub = bind(this.sub, this);
     return BackboneSub.__super__.constructor.apply(this, arguments);
   }
@@ -266,7 +266,7 @@ BackboneSub = (function(superClass) {
     this.subColls || (this.subColls = []);
     fnFilter = this._generateSubFilter(filter);
     _models = this.filter(fnFilter);
-    _sub = new this.constructor(_models, this._subCollecctionOptions());
+    _sub = new this.constructor(_models, this._subCollectionOptions());
     _sub._parentCol = this;
     _sub._fnFilter = fnFilter;
     this.on("change", _.bind(function(_m) {
@@ -300,9 +300,9 @@ BackboneSub = (function(superClass) {
 
 
   /*
-  	## _subCollecctionOptions
+  	## _subCollectionOptions
   	
-  	`collection._subCollecctionOptions()`
+  	`collection._subCollectionOptions()`
   	
   	Overwritable method to set the constructor options for sub collections
   	
@@ -311,8 +311,12 @@ BackboneSub = (function(superClass) {
   	@api private
    */
 
-  BackboneSub.prototype._subCollecctionOptions = function() {
-    return {};
+  BackboneSub.prototype._subCollectionOptions = function() {
+    var _opts;
+    _opts = {
+      comparator: this.comparator
+    };
+    return _opts;
   };
 
 
@@ -458,7 +462,8 @@ FacetBase = (function(superClass) {
     return {
       type: "string",
       name: "name",
-      label: "Description"
+      label: "Description",
+      sort: 0
     };
   };
 
@@ -674,36 +679,44 @@ module.exports = FctString;
 
 
 },{"../views/facets/substring":33,"./facet_base":4}],11:[function(require,module,exports){
-var IggyFacets,
+var IggyFacets, fnGet, sortColl,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
+sortColl = require("sortcoll");
+
+fnGet = function(el, key) {
+  return el.get(key);
+};
+
 IggyFacets = (function(superClass) {
   extend(IggyFacets, superClass);
 
-  function IggyFacets() {
-    this.comparator = bind(this.comparator, this);
-    this._subCollecctionOptions = bind(this._subCollecctionOptions, this);
-    return IggyFacets.__super__.constructor.apply(this, arguments);
-  }
-
-  IggyFacets.prototype.initialize = function(models, options) {
+  function IggyFacets(models, options) {
+    var _forward;
     if (options == null) {
       options = {};
     }
-    this.forward = (function() {
-      switch (options.dir) {
-        case "asc":
-          return true;
-        case "desc":
-          return false;
-        default:
-          return true;
-      }
-    })();
-    return IggyFacets.__super__.initialize.apply(this, arguments);
-  };
+    this._subCollecctionOptions = bind(this._subCollecctionOptions, this);
+    if (options.comparator == null) {
+      _forward = (function() {
+        switch (options.dir) {
+          case "asc":
+            return true;
+          case "desc":
+            return false;
+          default:
+            return true;
+        }
+      })();
+      options.comparator = sortColl(["sort"].concat(options.sortby || "name"), {
+        sort: false,
+        "?": _forward
+      }, fnGet);
+    }
+    return IggyFacets.__super__.constructor.call(this, models, options);
+  }
 
   IggyFacets.prototype._subCollecctionOptions = function() {
     var opt;
@@ -716,44 +729,6 @@ IggyFacets = (function(superClass) {
     return attrs.name;
   };
 
-  IggyFacets.prototype.comparator = function(facetA, facetB) {
-    var _nA, _nB, _sA, _sB;
-    _sA = facetA.get("sort") || 0;
-    _sB = facetB.get("sort") || 0;
-    if (_sA > _sB) {
-      if (this.forward) {
-        return -1;
-      } else {
-        return 1;
-      }
-    } else if (_sA < _sB) {
-      if (this.forward) {
-        return 1;
-      } else {
-        return -1;
-      }
-    } else {
-      _nA = facetA.get("name");
-      _nB = facetB.get("name");
-      if ((_nA != null) && (_nB != null)) {
-        if (_nA > _nB) {
-          if (this.forward) {
-            return 1;
-          } else {
-            return -1;
-          }
-        } else if (_nA < _nB) {
-          if (this.forward) {
-            return -1;
-          } else {
-            return 1;
-          }
-        }
-      }
-    }
-    return 0;
-  };
-
   return IggyFacets;
 
 })(require("./backbone_sub"));
@@ -761,7 +736,7 @@ IggyFacets = (function(superClass) {
 module.exports = IggyFacets;
 
 
-},{"./backbone_sub":2}],12:[function(require,module,exports){
+},{"./backbone_sub":2,"sortcoll":39}],12:[function(require,module,exports){
 var IggyResult, IggyResults,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty,
@@ -868,8 +843,13 @@ module.exports = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-;var locals_for_with = (locals || {});(function (id, txt) {
-buf.push("<span class=\"txt\">" + (jade.escape(null == (jade_interp = txt) ? "" : jade_interp)) + "</span><i" + (jade.attr("data-id", id, true, false)) + " class=\"rm-result-btn fa fa-remove\"></i>");}.call(this,"id" in locals_for_with?locals_for_with.id:typeof id!=="undefined"?id:undefined,"txt" in locals_for_with?locals_for_with.txt:typeof txt!=="undefined"?txt:undefined));;return buf.join("");
+;var locals_for_with = (locals || {});(function (custom, id, txt) {
+buf.push("<span class=\"txt\">" + (jade.escape(null == (jade_interp = txt) ? "" : jade_interp)) + "</span><span class=\"btn-wrp\"><i" + (jade.attr("data-id", id, true, false)) + " class=\"rm-result-btn fa fa-remove\"></i>");
+if ( custom)
+{
+buf.push("<i" + (jade.attr("data-id", id, true, false)) + " class=\"edit-result-btn fa fa-pencil\"></i>");
+}
+buf.push("</span>");}.call(this,"custom" in locals_for_with?locals_for_with.custom:typeof custom!=="undefined"?custom:undefined,"id" in locals_for_with?locals_for_with.id:typeof id!=="undefined"?id:undefined,"txt" in locals_for_with?locals_for_with.txt:typeof txt!=="undefined"?txt:undefined));;return buf.join("");
 };
 },{"jade/runtime":38}],15:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -1056,8 +1036,8 @@ module.exports = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-;var locals_for_with = (locals || {});(function (cid) {
-buf.push("<input" + (jade.attr("id", cid, true, false)) + " class=\"selector-inp\"/><ul" + (jade.attr("id", "" + (cid) + "typelist", true, false)) + " class=\"typelist\"></ul>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined));;return buf.join("");
+;var locals_for_with = (locals || {});(function (cid, inpval) {
+buf.push("<input" + (jade.attr("id", cid, true, false)) + (jade.attr("value", inpval, true, false)) + " class=\"selector-inp\"/><ul" + (jade.attr("id", "" + (cid) + "typelist", true, false)) + " class=\"typelist\"></ul>");}.call(this,"cid" in locals_for_with?locals_for_with.cid:typeof cid!=="undefined"?cid:undefined,"inpval" in locals_for_with?locals_for_with.inpval:typeof inpval!=="undefined"?inpval:undefined));;return buf.join("");
 };
 },{"jade/runtime":38}],21:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -1787,6 +1767,28 @@ FacetSubArray = (function(superClass) {
     var _id, ref;
     _id = (ref = $(evnt.target)) != null ? ref.data("id") : void 0;
     this.result.remove(_id);
+    this.searchcoll.remove(_id);
+  };
+
+  FacetSubArray.prototype.editRes = function(evnt) {
+    var _id, _v, ref;
+    _id = (ref = $(evnt.target)) != null ? ref.data("id") : void 0;
+    _v = this._editval = this.result.get(_id).get("value");
+    this.result.remove(_id);
+    this.searchcoll.remove(_id);
+    this.sub.reopen();
+    console.log(this.searchcoll);
+    this.search(_v);
+  };
+
+  FacetSubArray.prototype.getTemplateData = function() {
+    var _data, ref;
+    _data = FacetSubArray.__super__.getTemplateData.apply(this, arguments);
+    if ((ref = this._editval) != null ? ref.length : void 0) {
+      _data.inpval = this._editval;
+      this._editval = null;
+    }
+    return _data;
   };
 
   FacetSubArray.prototype.renderResult = function(renderEmpty) {
@@ -1803,7 +1805,8 @@ FacetSubArray = (function(superClass) {
       model = ref[idx];
       _list.push(this.templateResLi({
         txt: model.getLabel(),
-        id: model.id
+        id: model.id,
+        custom: model.get("custom")
       }));
     }
     return "<li>" + _list.join("</li><li>") + "</li>";
@@ -1817,6 +1820,8 @@ FacetSubArray = (function(superClass) {
     this.select = bind(this.select, this);
     this._isFull = bind(this._isFull, this);
     this.renderResult = bind(this.renderResult, this);
+    this.getTemplateData = bind(this.getTemplateData, this);
+    this.editRes = bind(this.editRes, this);
     this.rmRes = bind(this.rmRes, this);
     this.close = bind(this.close, this);
     this.events = bind(this.events, this);
@@ -2372,7 +2377,7 @@ FacetSubsSelect = (function(superClass) {
       this.$inp.select2(_opts);
       this.select2 = this.$inp.data("select2");
       if (!this.model.get("multiple")) {
-        this.$inp.on("select2:select", this.select);
+        this.$inp.on("select2:select select2:close", this.select);
       }
       this.select2.on("results:all", (function(_this) {
         return function(results) {
@@ -2911,11 +2916,12 @@ SelectorView = (function(superClass) {
     this.custom = options.custom || false;
     this.activeIdx = 0;
     this.currQuery = "";
-    SelectorView.__super__.constructor.apply(this, arguments);
+    SelectorView.__super__.constructor.call(this, options);
     return;
   }
 
   SelectorView.prototype.initialize = function(options) {
+    SelectorView.__super__.initialize.apply(this, arguments);
     this.searchcoll = this.collection.sub(function() {
       return true;
     });
@@ -3050,12 +3056,15 @@ SelectorView = (function(superClass) {
   };
 
   SelectorView.prototype.focus = function() {
+    var _el;
     this.$inp.focus();
+    _el = this.$inp.get(0);
+    _el.selectionStart = _el.selectionEnd = _el.value.length;
   };
 
   SelectorView.prototype.search = function(evnt) {
     var _q;
-    if (evnt.type === "keydown") {
+    if ((evnt != null ? evnt.type : void 0) === "keydown") {
       switch (evnt.keyCode) {
         case KEYCODES.UP:
           this.move(true);
@@ -3069,7 +3078,11 @@ SelectorView = (function(superClass) {
       }
       return;
     }
-    _q = evnt.currentTarget.value.toLowerCase();
+    if (_.isString(evnt)) {
+      _q = evnt;
+    } else {
+      _q = evnt.currentTarget.value.toLowerCase();
+    }
     if (_q === this.currQuery) {
       return;
     }
@@ -3249,9 +3262,15 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.reopen = function(evnt) {
-    var ref;
-    if ($(evnt.target).is(".rm-result-btn") && (((ref = this.selectview) != null ? ref.rmRes : void 0) != null)) {
+    var ref, ref1;
+    if ((evnt != null) && $(evnt.target).is(".rm-result-btn") && (((ref = this.selectview) != null ? ref.rmRes : void 0) != null)) {
       this.selectview.rmRes(evnt);
+      evnt.preventDefault();
+      evnt.stopPropagation();
+      return;
+    }
+    if ((evnt != null) && $(evnt.target).is(".edit-result-btn") && (((ref1 = this.selectview) != null ? ref1.editRes : void 0) != null)) {
+      this.selectview.editRes(evnt);
       evnt.preventDefault();
       evnt.stopPropagation();
       return;
@@ -3259,8 +3278,12 @@ ViewSub = (function(superClass) {
     if (!this._isOpen && (this.selectview != null)) {
       this.selectview.reopen(this);
     }
-    evnt.preventDefault();
-    evnt.stopPropagation();
+    if (evnt != null) {
+      evnt.preventDefault();
+    }
+    if (evnt != null) {
+      evnt.stopPropagation();
+    }
     this.trigger("reopen");
   };
 
@@ -3658,5 +3681,69 @@ exports.DebugItem = function DebugItem(lineno, filename) {
 },{}]},{},[1])(1)
 });
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"fs":37}]},{},[1])(1)
+},{"fs":37}],39:[function(require,module,exports){
+(function() {
+  var _getKey, isArray, toString;
+
+  toString = {}.toString;
+
+  isArray = Array.isArray || function(arr) {
+    return toString.call(arr) === '[object Array]';
+  };
+
+  _getKey = function(el, key) {
+    return el[key];
+  };
+
+  module.exports = function(keys, forward, getKey) {
+    var fnsort, ref;
+    if (forward == null) {
+      forward = true;
+    }
+    if (getKey == null) {
+      getKey = _getKey;
+    }
+    if (!isArray(keys)) {
+      keys = [keys];
+    }
+    fnsort = function(forward, key, nextkeys) {
+      var _fwrd, _k, nextSort, ref;
+      if (nextkeys != null ? nextkeys.length : void 0) {
+        _k = (ref = nextkeys.splice(0, 1)) != null ? ref[0] : void 0;
+        if (_k != null) {
+          nextSort = fnsort(forward, _k, nextkeys);
+        }
+      }
+      _fwrd = (forward[key] != null ? forward[key] : (forward["?"] != null ? forward["?"] : forward));
+      return function(elA, elB) {
+        var _a, _b;
+        _a = getKey(elA, key);
+        _b = getKey(elB, key);
+        if (_a < _b) {
+          if (_fwrd) {
+            return -1;
+          } else {
+            return 1;
+          }
+        } else if (_a > _b) {
+          if (_fwrd) {
+            return 1;
+          } else {
+            return -1;
+          }
+        } else if (_a === _b) {
+          if (nextSort != null) {
+            return nextSort(elA, elB);
+          } else {
+            return 0;
+          }
+        }
+      };
+    };
+    return fnsort(forward, (ref = keys.splice(0, 1)) != null ? ref[0] : void 0, keys);
+  };
+
+}).call(this);
+
+},{}]},{},[1])(1)
 });
