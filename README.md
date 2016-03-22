@@ -11,6 +11,13 @@ Browser search module to use with Backbone.js
 
 *Docs are under constrcution* 
 
+## Options
+
+There are several options to customize the behavior of iggy.
+
+- **sortby** : *( `String` optional; default = `name` )* Sorting is always first done by `sort` (desc). But it's possible to change second sorting element with this option.
+- **dir** : *( `String` optional; default = `asc` )* The sort direction of the sort key configured with option `sortby`. allowed are "asc" and "desc".
+
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
