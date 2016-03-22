@@ -44,7 +44,7 @@ class BackboneSub extends Backbone.Collection
 		# filter the collection
 		_models = @filter fnFilter
 		# create the subcollection
-		_sub = new @constructor( _models, @_subCollecctionOptions() )
+		_sub = new @constructor( _models, @_subCollectionOptions() )
 
 		_sub._parentCol = @
 		_sub._fnFilter = fnFilter
@@ -99,9 +99,9 @@ class BackboneSub extends Backbone.Collection
 		return _sub
 	
 	###
-	## _subCollecctionOptions
+	## _subCollectionOptions
 	
-	`collection._subCollecctionOptions()`
+	`collection._subCollectionOptions()`
 	
 	Overwritable method to set the constructor options for sub collections
 	
@@ -109,8 +109,10 @@ class BackboneSub extends Backbone.Collection
 	
 	@api private
 	###
-	_subCollecctionOptions: =>
-		return {}
+	_subCollectionOptions: =>
+		_opts =
+			comparator: @comparator
+		return _opts
 
 	###
 	## updateSubFilter

@@ -41,5 +41,6 @@
     "jquery": "2.1.x",
     "moment": "2.10.x",
     "select2": "4.0.x"
+    "sortcoll": "0.2.x"
   }
 }

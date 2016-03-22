@@ -1,10 +1,20 @@
+sortColl = require( "sortcoll" )
+
+fnGet = ( el, key )->
+	return el.get( key )
+
 class IggyFacets extends require( "./backbone_sub" )
-	initialize: ( models, options={} )->
-		@forward = switch options.dir
-			when "asc" then true
-			when "desc" then false
-			else true
-		return super
+	
+	constructor: ( models, options={} )->
+		if not options.comparator?
+			_forward = switch options.dir
+				when "asc" then true
+				when "desc" then false
+				else true
+			
+			console.log _forward, options.dir
+			options.comparator = sortColl( [ "sort" ].concat( options.sortby or "name" ), { sort: false, "?": _forward }, fnGet )
+		return super( models, options )
 	
 	_subCollecctionOptions: =>
 		opt = super
@@ -14,21 +24,4 @@ class IggyFacets extends require( "./backbone_sub" )
 	modelId: (attrs)->
 		return attrs.name
 		
-	comparator: ( facetA, facetB )=>
-		_sA = facetA.get( "sort" ) or 0
-		_sB = facetB.get( "sort" ) or 0
-		if _sA > _sB
-			return if @forward then -1 else 1
-		else if _sA < _sB
-			return if @forward then 1 else -1
-		else
-			_nA = facetA.get( "name" )
-			_nB = facetB.get( "name" )
-			if _nA? and _nB?
-				if _nA > _nB
-					return if @forward then 1 else -1
-				else if _nA < _nB
-					return if @forward then -1 else 1
-		return 0
-
 module.exports = IggyFacets

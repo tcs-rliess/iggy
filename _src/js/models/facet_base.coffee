@@ -11,6 +11,7 @@ class FacetBase extends Backbone.Model
 		type: "string"
 		name: "name"
 		label: "Description"
+		sort: 0
 
 	getLabel: =>
 		return @get( "label" )
