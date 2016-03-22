@@ -12,7 +12,6 @@ class IggyFacets extends require( "./backbone_sub" )
 				when "desc" then false
 				else true
 			
-			console.log _forward, options.dir
 			options.comparator = sortColl( [ "sort" ].concat( options.sortby or "name" ), { sort: false, "?": _forward }, fnGet )
 		return super( models, options )
 	
