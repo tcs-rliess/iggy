@@ -80,7 +80,7 @@ class FacetSubsSelect extends require( "./base" )
 			@$inp.select2( _opts )
 			@select2 = @$inp.data( "select2" )
 			if not @model.get( "multiple" )
-				@$inp.on "select2:select", @select
+				@$inp.on "select2:select select2:close", @select
 			
 			# after loading try to set the cursor focus
 			@select2.on "results:all", ( results )=>
