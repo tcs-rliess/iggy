@@ -148,7 +148,7 @@ jQuery( function( $ ){
 	},{
 		type: "array",
 		name: "arraylabels",
-		label: "Array Labels",
+		label: "AA Array Labels",
 		custom: false,
 		options: [ 
 			{ value: "m", label: "München" },
@@ -358,7 +358,7 @@ jQuery( function( $ ){
 		//value: [ 10,20 ]
 	}]
 
-	iggy1 = newIggy( facets, "#iggytest1", { modifyKey: "orgValue" } )
+	iggy1 = newIggy( facets, "#iggytest1", { modifyKey: "orgValue", dir: "asc", sortby: "label" } )
 	iggy1.on( "run", function(){ alert( "Fired Event:\n" + JSON.stringify( arguments ) ) } )
 	
 	var facets2 = []
