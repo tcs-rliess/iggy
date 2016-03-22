@@ -194,7 +194,8 @@ class FacetSubsSelect extends require( "./base" )
 		if not _vals?.length
 			# Issue#49 if nothing was selected close the select-view and remove the whole facet
 			@close()
-			@sub.del()
+			if not @model.get( "waitForAsync" )
+				@sub.del()
 			return
 		@_select( _vals )
 

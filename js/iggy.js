@@ -2547,7 +2547,9 @@ FacetSubsSelect = (function(superClass) {
     _vals = this.getValue();
     if (!(_vals != null ? _vals.length : void 0)) {
       this.close();
-      this.sub.del();
+      if (!this.model.get("waitForAsync")) {
+        this.sub.del();
+      }
       return;
     }
     this._select(_vals);

@@ -21,12 +21,13 @@ There are several options to customize the behavior of iggy.
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
-|0.1.8|2016-2-09|fixed deleting facet on empty select2 selection #49; sort predefined results by facet definition #50 |
-|0.1.7|2016-1-28|another fix for #45 |
-|0.1.6|2016-1-27|fixed select2 options on edit #48 |
-|0.1.5|2016-1-25|added edit for type array #46,fixed select2 display bug #45 |
-|0.1.4|2016-1-14|fixed outerclick within daterange widget #44|
-|0.1.3|2016-1-13|fixed daterange facet #41, #42; Added two step exit on `ESC` #42|
+|0.1.9|2016-02-11|fixed predefined select2 with adapter #51 |
+|0.1.8|2016-02-09|fixed deleting facet on empty select2 selection #49; sort predefined results by facet definition #50 |
+|0.1.7|2016-01-28|another fix for #45 |
+|0.1.6|2016-01-27|fixed select2 options on edit #48 |
+|0.1.5|2016-01-25|added edit for type array #46,fixed select2 display bug #45 |
+|0.1.4|2016-01-14|fixed outerclick within daterange widget #44|
+|0.1.3|2016-01-13|fixed daterange facet #41, #42; Added two step exit on `ESC` #42|
 |0.1.2|2015-10-29|added facet sorting #38; facet type 'select' is now editable #40|
 |0.1.1|2015-10-07|Bugfix select2 and datepicker position #36; Optimized select2 to handle async DataAdapters #35; Added `labeltemplate` setting to design the labels #34;Type `array` can now used with async options #33|
 |0.1.0|2015-08-07|Abbiblity to change simple elements or add values to array types (cuurently not availible for select2 types); Added close on outerclick; added array features `count:12` and `custom:false|true`;bugfix facet remove render;|
