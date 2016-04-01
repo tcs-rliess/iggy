@@ -4,7 +4,16 @@ class FacetSubsDateRange extends require( "./base" )
 	template: require( "../../tmpls/daterange.jade" )
 
 	forcedDateRangeOpts: =>
-		opens: "right"
+		_opts =
+			opens: "right"
+
+		if @model.get("value")?[0]?
+			_opts.startDate = @model.get("value")[0]
+
+		if @model.get("value")?[1]?
+			_opts.endDate = @model.get("value")[1]
+
+		return _opts
 
 	events: =>
 		return
