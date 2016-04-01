@@ -1,6 +1,6 @@
 {
   "name": "iggy",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Browser search module to use with Backbone.js",
   "keywords": [],
   "homepage": "https://github.com/mpneuried/iggy",
@@ -41,6 +41,7 @@
     "jquery": "2.2.x",
     "moment": "2.12.x",
     "select2": "4.0.x",
-    "sortcoll": "0.2.x"
+    "sortcoll": "0.2.x",
+    "jade":"1.9.x"
   }
 }
