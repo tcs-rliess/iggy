@@ -21,6 +21,7 @@ There are several options to customize the behavior of iggy.
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.1.11|2016-04-01|fixed date range picker by setting `startDate` and `enDate` #55|
 |0.1.10|2016-03-22|FF bugfix for Select2 facet #54; Added a sorting option `sortby` #52; Made array results editable #53|
 |0.1.9|2016-02-11|fixed predefined select2 with adapter #51 |
 |0.1.8|2016-02-09|fixed deleting facet on empty select2 selection #49; sort predefined results by facet definition #50 |
