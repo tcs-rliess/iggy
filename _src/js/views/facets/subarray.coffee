@@ -52,8 +52,10 @@ class FacetSubArray extends require( "../selector" )
 	
 	rmRes: ( evnt )=>
 		_id = $( evnt.target )?.data( "id" )
+		_mdl = @result.get( _id )
 		@result.remove( _id )
-		@searchcoll.remove( _id )
+		if _mdl?.get( "custom" )
+			@searchcoll.remove( _id )
 		return
 		
 	editRes: ( evnt )=>
@@ -62,7 +64,7 @@ class FacetSubArray extends require( "../selector" )
 		@result.remove( _id )
 		@searchcoll.remove( _id )
 		@sub.reopen()
-		console.log @searchcoll
+		
 		@search(_v)
 		return
 	
