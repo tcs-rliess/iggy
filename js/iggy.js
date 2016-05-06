@@ -1750,6 +1750,11 @@ FacetSubArray = (function(superClass) {
 
   FacetSubArray.prototype.optColl = StringOptions;
 
+  FacetSubArray.prototype.initialize = function() {
+    this.editMode = false;
+    return FacetSubArray.__super__.initialize.apply(this, arguments);
+  };
+
   FacetSubArray.prototype.events = function() {
     var _evnts;
     _evnts = FacetSubArray.__super__.events.apply(this, arguments);
@@ -1758,6 +1763,12 @@ FacetSubArray = (function(superClass) {
   };
 
   FacetSubArray.prototype.close = function(evnt) {
+    var _delSub;
+    _delSub = false;
+    if (this.editMode) {
+      _delSub = true;
+    }
+    this.editMode = false;
     if (this.loading) {
       if (evnt != null) {
         evnt.preventDefault();
@@ -1768,24 +1779,30 @@ FacetSubArray = (function(superClass) {
       this.focus();
       return;
     }
+    if (_delSub && this.result.length <= 0) {
+      this.sub.del();
+    }
     return FacetSubArray.__super__.close.apply(this, arguments);
   };
 
   FacetSubArray.prototype.rmRes = function(evnt) {
-    var _id, ref;
+    var _id, _mdl, ref;
     _id = (ref = $(evnt.target)) != null ? ref.data("id") : void 0;
+    _mdl = this.result.get(_id);
     this.result.remove(_id);
-    this.searchcoll.remove(_id);
+    if (_mdl != null ? _mdl.get("custom") : void 0) {
+      this.searchcoll.remove(_id);
+    }
   };
 
   FacetSubArray.prototype.editRes = function(evnt) {
     var _id, _v, ref;
+    this.editMode = true;
     _id = (ref = $(evnt.target)) != null ? ref.data("id") : void 0;
     _v = this._editval = this.result.get(_id).get("value");
     this.result.remove(_id);
     this.searchcoll.remove(_id);
     this.sub.reopen();
-    console.log(this.searchcoll);
     this.search(_v);
   };
 
@@ -1833,6 +1850,7 @@ FacetSubArray = (function(superClass) {
     this.rmRes = bind(this.rmRes, this);
     this.close = bind(this.close, this);
     this.events = bind(this.events, this);
+    this.initialize = bind(this.initialize, this);
     this.loading = false;
     if (options.model.get("count") != null) {
       this.selectCount = options.model.get("count");
@@ -3331,7 +3349,7 @@ ViewSub = (function(superClass) {
     this.result.remove(optMdl);
     this.renderResult();
     this.trigger("selected", this.model, this.selectview.getResults());
-    if (this.result.length <= 0) {
+    if (this.result.length <= 0 && !this.selectview.editMode) {
       this.del();
     }
   };
