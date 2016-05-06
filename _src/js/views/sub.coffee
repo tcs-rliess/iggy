@@ -84,7 +84,9 @@ class ViewSub extends Backbone.View
 		@result.remove( optMdl )
 		@renderResult()
 		@trigger( "selected", @model, @selectview.getResults() )
-		if @result.length <= 0
+		
+		# remove facet if content length or the facet is in editMode
+		if @result.length <= 0 and not @selectview.editMode
 			@del()
 		return
 

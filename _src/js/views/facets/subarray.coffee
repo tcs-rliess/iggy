@@ -35,7 +35,11 @@ class FacetSubArray extends require( "../selector" )
 	selectCount: 0
 
 	optColl: StringOptions
-	
+		
+	initialize: =>
+		@editMode = false
+		return super
+		
 	events: =>
 		_evnts = super
 		#if not @model.get( "operators" )?.length
@@ -43,11 +47,20 @@ class FacetSubArray extends require( "../selector" )
 		return _evnts
 	
 	close: ( evnt )=>
+		# check if the close is initied from the edit mode
+		_delSub = false
+		if @editMode
+			_delSub = true
+			
+		@editMode = false
 		if @loading
 			evnt?.preventDefault()
 			evnt?.stopPropagation()
 			@focus()
 			return
+		
+		if _delSub and @result.length <= 0
+			@sub.del()
 		return super
 	
 	rmRes: ( evnt )=>
@@ -59,8 +72,10 @@ class FacetSubArray extends require( "../selector" )
 		return
 		
 	editRes: ( evnt )=>
+		@editMode = true
 		_id = $( evnt.target )?.data( "id" )
 		_v = @_editval = @result.get( _id ).get( "value" )
+		
 		@result.remove( _id )
 		@searchcoll.remove( _id )
 		@sub.reopen()
