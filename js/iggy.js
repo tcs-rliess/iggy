@@ -2517,7 +2517,11 @@ FacetSubsSelect = (function(superClass) {
       _data.value = data.id;
     }
     if (data.text != null) {
-      _data.label = data.text;
+      if (data.text instanceof jQuery) {
+        _data.label = data.text.html();
+      } else {
+        _data.label = data.text;
+      }
     }
     return _data;
   };
