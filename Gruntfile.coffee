@@ -126,3 +126,7 @@ module.exports = (grunt) ->
 
 	grunt.registerTask "build", [ "clear", "build-core"]
 	grunt.registerTask "release", [ "build", "uglify:release", "copy:release", "compress:release" ]
+	
+	# shortcuts
+	grunt.registerTask "w", "watcher"
+	grunt.registerTask "b", "build"
