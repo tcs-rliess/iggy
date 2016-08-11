@@ -153,7 +153,12 @@ class FacetSubsSelect extends require( "./base" )
 			_data.value = parseFloat( data.id )
 		else
 			_data.value = data.id
-		_data.label = data.text if data.text?
+		if data.text?
+			if data.text instanceof jQuery
+				_data.label = data.text.html()
+			else
+				_data.label = data.text
+			
 		return _data
 
 	getResults: =>
