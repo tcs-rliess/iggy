@@ -18,7 +18,7 @@ module.exports = (grunt) ->
 */
 
 """
-		regarde:
+		watch:
 			css:
 				files: ["_src/css/**/*.styl"]
 				tasks: [ "build-core-css"]
@@ -61,6 +61,8 @@ module.exports = (grunt) ->
 					watch: true
 					keepAlive: true
 					transform: ["jadeify", "coffeeify"]
+					watchifyOptions:
+						poll: 500
 					browserifyOptions:
 						debug: true
 						extensions: ".coffee"
@@ -98,7 +100,7 @@ module.exports = (grunt) ->
 		
 
 	# Load npm modules
-	grunt.loadNpmTasks "grunt-regarde"
+	grunt.loadNpmTasks "grunt-contrib-watch"
 	grunt.loadNpmTasks "grunt-contrib-copy"
 	grunt.loadNpmTasks "grunt-contrib-stylus"
 	grunt.loadNpmTasks "grunt-contrib-clean"
@@ -111,7 +113,6 @@ module.exports = (grunt) ->
 	grunt.option('force', not grunt.option('force'))
 	
 	# ALIAS TASKS
-	grunt.registerTask "watch", "regarde"
 	grunt.registerTask "watcher", ["browserify:dev"]
 	grunt.registerTask "default", "build"
 	grunt.registerTask "clear", [ "clean:base" ]

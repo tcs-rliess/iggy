@@ -28,21 +28,21 @@
     "bootstrap": "3.3.x",
     "bootstrap-daterangepicker": "2.1.x",
     "coffeeify": "2.x",
-    "font-awesome": "4.5.x",
-    "grunt": "0.4.x",
+    "font-awesome": "4.7.x",
+    "grunt": "1.0.x",
     "grunt-browserify": "5.x",
     "grunt-contrib-clean": "1.x",
-    "grunt-contrib-compress": "1.1.x",
+    "grunt-contrib-compress": "1.4.x",
     "grunt-contrib-copy": "1.x",
     "grunt-contrib-stylus": "1.x",
-    "grunt-contrib-uglify": "1.x",
-    "grunt-regarde": "0.x",
+    "grunt-contrib-uglify": "2.x",
+    "grunt-contrib-watch": "1.x",
     "jadeify": "4.x",
     "jquery": "2.2.x",
     "underscore": "1.8.x",
-    "moment": "2.12.x",
+    "moment": "2.17.x",
     "select2": "4.0.x",
     "sortcoll": "0.2.x",
-    "jade":"1.9.x"
+    "jade":"1.11.x"
   }
 }
