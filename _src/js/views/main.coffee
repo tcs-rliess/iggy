@@ -7,12 +7,16 @@ class MainView extends Backbone.View
 	template: require( "../tmpls/wrapper.jade" )
 
 	events:
+		"click .search-btn": "_onSearch"
+		"focus .search-btn": "_onFocusSearch"
 		"click .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
 
 	initialize: ( options )=>
 		
+		@main = options.main
 		@results = options.results
+		@searchButton = options.searchButton
 
 		@collection.on "iggy:rem", @remFacet
 		
@@ -42,10 +46,22 @@ class MainView extends Backbone.View
 			return
 		
 		return
-
+	
+	templateData: =>
+		_ret =
+			searchButton:
+				template: @searchButton.template or ""
+				event: @searchButton.event or "search"
+				pullright: @searchButton.pullright or false
+				cssclass: @searchButton.cssclass
+		
+		return _ret
+	
 	render: =>
-		@$el.html( @template() )
+		@$el.html( @template( @templateData() ) )
 		@$addBtn = @$( ".add-facet-btn" )
+		if @searchButton.template?.length
+			@$searchBtn = @$( ".search-btn" )
 		return
 
 	_addFacet: ( evnt )=>
@@ -120,11 +136,8 @@ class MainView extends Backbone.View
 			#console.log "STOP @ EMPTY COLL"
 			return
 
-		@selectview = new SelectorView( collection: @collection, custom: false )
+		@selectview = new SelectorView( collection: @collection, custom: false, main: @ )
 
-		@$addBtn.before( @selectview.render() )
-		@selectview.focus()
-		
 		@selectview.on "opened", =>
 			@_onOpened()
 			return
@@ -147,6 +160,10 @@ class MainView extends Backbone.View
 			@subview.open()
 			return
 	
+		@$addBtn.before( @selectview.render() )
+		@selectview.focus()
+		return
+	
 	_onOpened: =>
 		@$addBtn?.hide()
 		return
@@ -158,7 +175,23 @@ class MainView extends Backbone.View
 	_outerClickListen: =>
 		jQuery( document ).on "click", @_outerClick
 		return
-
+	
+	focusSearch: =>
+		if @$searchBtn?
+			@$searchBtn.focus()
+		return
+		
+	_onSearch: ( evnt )=>
+		evnt.stopPropagation()
+		@exit()
+		@trigger( "searchbutton", @searchButton.event )
+		return
+	
+	_onFocusSearch: ( evnt )=>
+		evnt.stopPropagation()
+		@selectview?.close?()
+		return
+		
 	_outerClick: ( evnt )=>
 		evnt.stopPropagation()
 		_posWrp = @el.compareDocumentPosition( evnt.target )

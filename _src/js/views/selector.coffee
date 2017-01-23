@@ -22,6 +22,10 @@ class SelectorView extends require( "./facets/base" )
 		@custom = options.custom or false
 		@activeIdx = 0
 		@currQuery = ""
+		
+		if options.main?
+			@main = options.main
+		
 		super( options )
 		return
 		
@@ -108,7 +112,16 @@ class SelectorView extends require( "./facets/base" )
 	
 	_isFull: =>
 		return true
-	
+		
+	_onTabAction: ( evnt )=>
+		if @main?
+			evnt.preventDefault()
+			evnt.stopPropagation()
+			@main.focusSearch()
+		else
+			super( event )
+		return
+		
 	selected: ( mdl )=>
 		try
 			if mdl.onlyExec?

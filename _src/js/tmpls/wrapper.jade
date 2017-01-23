@@ -1,1 +1,4 @@
 .add-facet-btn.fa.fa-plus
+if searchButton != undefined && searchButton.template != undefined && searchButton.template.length
+	button.search-btn( class=searchButton.cssclass class={"search-btn-pullright":searchButton.pullright})
+		!= searchButton.template

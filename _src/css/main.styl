@@ -1,7 +1,8 @@
 .iggy
 	border 1px solid #ddd
 	padding 5px 0 0 5px
-	
+
+	.search-btn
 	.add-facet-btn
 		border-radius 2px
 		border 1px solid #ccc
@@ -15,13 +16,20 @@
 			border-color #666
 			color #666
 
+	.search-btn
+		padding 7px 9px 4px
+
 	.add-facet-btn
 	.add-facet
+	.search-btn
 	.sub
 		position relative
 		float left
 		margin 0 5px 5px 0
-		
+
+	.search-btn-pullright
+		float right
+
 	.rm-facet-btn
 	.btn-wrp
 		margin-right 5px
@@ -32,21 +40,21 @@
 		text-shadow 0 1px 0 rgba( white, .8 ), 0 -1px 0 rgba( black, .2 )
 		&:hover
 			color #666
-			
+
 	.rm-result-btn
 		float right
-		
+
 	.edit-result-btn
 		float left
-		
+
 	.rm-facet-btn
 		float left
-			
+
 	.sublabel
 		float left
 		padding 4px 0
 		display inline-block
-		
+
 	.operator
 		float left
 		top -2px
@@ -63,13 +71,13 @@
 		display block
 		padding 1px 5px
 		margin 0
-		
+
 	input.number-inp
 	input.daterange-inp
 	input.selector-inp
 		bottom -5px
 		position relative
-	
+
 	input.number-inp
 		width 50px
 
@@ -87,8 +95,8 @@
 		border-radius 2px
 		border 1px solid #ddd
 		padding 0px 3px 0px 8px
-	
-		
+
+
 	.rangeinp
 		position relative
 		input
@@ -126,13 +134,13 @@
 				color black
 		a.active
 			background #eee
-		
+
 	.subselect
 	.subresults
 		margin-left 5px
 		display inline-block
 		position relative
-		
+
 	.subselect
 		//top -5px
 		float left
@@ -179,19 +187,19 @@
 			padding-left 4px
 			.btn-wrp
 				left -3px
-	
+
 		li:hover
 			.btn-wrp
 				display block
-		
-				
-	
+
+
+
 	.custom
 		.typelist
 			top 30px
-		
+
 	.add-facet.open
-	.subselect.open 
+	.subselect.open
 		.typelist
 			display block
 	.subselect.closed
@@ -200,7 +208,7 @@
 		.daterange-inp
 		.operator
 			display none
-	
+
 	.sub
 		.loader
 			display none
@@ -242,8 +250,8 @@
 	.operator
 		.select2
 			min-width 50px
-			
-			
+
+
 .daterange-iggy
 	margin-top -25px
 	border-radius 2px
