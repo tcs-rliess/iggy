@@ -28,7 +28,9 @@ class IGGY extends Backbone.Events
 		@results.on "remove", @triggerChange
 		@results.on "change", @triggerChange
 
-		@view = new MainView( el: @$el, collection: @facets, results: @results )
+		@view = new MainView( main: @, el: @$el, collection: @facets, results: @results, searchButton: options.searchButton or {} )
+		
+		@view.on "searchbutton", @triggerEvent
 		return
 
 	_prepareEl: ( el )=>
@@ -104,7 +106,11 @@ class IGGY extends Backbone.Events
 	triggerChange: =>
 		@trigger( "change", @results )
 		return
-
+	
+	triggerEvent: ( eventName )=>
+		@trigger( eventName, @results )
+		return
+		
 	_initErrors: =>
 		@errors = {}
 		for _k, _tmpl of @ERRORS()

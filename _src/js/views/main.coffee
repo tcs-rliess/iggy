@@ -125,8 +125,12 @@ class MainView extends Backbone.View
 		@$addBtn.before( @selectview.render() )
 		@selectview.focus()
 		
+		@selectview.on "opened", =>
+			@_onOpened()
+			return
 
 		@selectview.on "closed", ( results )=>
+			@_onClosed()
 			#console.log "SELECT VIEW CLOSED", results?.length
 			#@selectview.off()
 			@selectview.remove()
@@ -142,6 +146,13 @@ class MainView extends Backbone.View
 			@subview = @genSub( facetM )
 			@subview.open()
 			return
+	
+	_onOpened: =>
+		@$addBtn?.hide()
+		return
+	
+	_onClosed: =>
+		@$addBtn?.show()
 		return
 	
 	_outerClickListen: =>

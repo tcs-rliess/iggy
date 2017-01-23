@@ -135,6 +135,11 @@ class SelectorView extends require( "./facets/base" )
 		
 		_el.selectionStart = _el.selectionEnd = _el.value.length
 		return
+	
+	open: =>
+		#console.log "selector open"
+		@trigger( "opened" )
+		return super
 
 	search: ( evnt )=>
 		if evnt?.type is "keydown"
