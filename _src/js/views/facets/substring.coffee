@@ -13,7 +13,7 @@ class FacetSubString extends require( "./base" )
 		return
 	
 	reopen: ( pView )=>
-		_oldVal = @result.first().get( "value" )
+		_oldVal = @result?.first()?.get( "value" )
 		@model.set( value: _oldVal )
 		pView.$results.empty().html( @renderResult( true ) )
 		super

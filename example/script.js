@@ -122,6 +122,11 @@ jQuery( function( $ ){
 		options: [ "frist", "second", "last" ],
 		//value: "first"
 	},{
+		type: "string",
+		name: "simple_pinned",
+		label: "Simple Pinned",
+		pinned: true
+	},{
 		type: "array",
 		name: "arraysel",
 		label: "Array Select",
@@ -135,10 +140,18 @@ jQuery( function( $ ){
 		options: [ "pizza", "pasta", "carne" ]
 	},{
 		type: "array",
+		name: "arrayselsingle_pinned",
+		label: "Array Select Single",
+		count: 1,
+		options: [ "pizza", "pasta", "carne" ],
+		pinned: true
+	},{
+		type: "array",
 		name: "arrayseltwo",
 		label: "Array Select Two",
 		count: 2,
-		options: [ "a", "b", "c", "d" ]
+		options: [ "a", "b", "c", "d" ],
+		pinned: true
 	},{
 		type: "array",
 		name: "arrayempty",
@@ -182,6 +195,13 @@ jQuery( function( $ ){
 		//value: [ "pasta", "soup" ]
 	},{
 		type: "select",
+		name: "selsingle_pinned",
+		label: "Select Single",
+		options: [ "pizza", "pasta", "carne" ],
+		pinned: true
+		//value: [ "pasta", "soup" ]
+	},{
+		type: "select",
 		name: "multi",
 		label: "Select Multi",
 		multiple: true,
@@ -196,6 +216,23 @@ jQuery( function( $ ){
 			{ value: "k", label: "Köln" },
 			{ value: "s", label: "Stuttgart" }
 		]
+	},{
+		type: "select",
+		name: "multi_pinned",
+		label: "Select Multi",
+		multiple: true,
+		//value: "pizza",
+		opts: {
+			width: 200
+		},
+		options: [ 
+			{ value: "m", label: "München" },
+			{ value: "hh", label: "Hamburg" },
+			{ value: "b", label: "Berlin" },
+			{ value: "k", label: "Köln" },
+			{ value: "s", label: "Stuttgart" }
+		],
+		pinned: true
 	},{
 		type: "select",
 		name: "issue45",

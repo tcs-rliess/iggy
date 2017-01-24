@@ -22,9 +22,13 @@ class FacetSubsBase extends Backbone.View
 			return "<li></li>"
 		_list = []
 		for model, idx in @result.models
-			_list.push model.getLabel()
-
-		return "<li>" + _list.join( "</li><li>" ) + "</li>"
+			_lbl = model.getLabel()
+			if _lbl? and _lbl isnt ""
+				_list.push model.getLabel()
+		if _list.length
+			return "<li>" + _list.join( "</li><li>" ) + "</li>"
+		return ""
+		
 		
 	open: =>
 		@$el.addClass( "open" )
@@ -46,8 +50,10 @@ class FacetSubsBase extends Backbone.View
 		return
 		
 	getTemplateData: =>
-		cid: @cid
-		value: @model?.get( "value" )
+		ret = 
+			cid: @cid
+			value: @model?.get( "value" )
+		return ret
 
 	_getInpSelector: =>
 		return "input##{@cid}"
@@ -96,7 +102,7 @@ class FacetSubsBase extends Backbone.View
 		return SubResults.prototype.model
 
 	_checkSelectEmpty: ( _val )=>
-		if _.isEmpty( _val ) and not _.isNumber( _val ) and not _.isBoolean( _val )
+		if _.isEmpty( _val ) and not _.isNumber( _val ) and not _.isBoolean( _val ) and not @model.get( "pinned" )
 			@close()
 			return true
 		return false

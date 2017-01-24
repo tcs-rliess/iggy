@@ -26,7 +26,8 @@ class FacetSubsSelect extends require( "./base" )
 		
 	render: =>
 		super
-		#@_initSelect2()
+		if @model.get( "pinned" )
+			@_initSelect2()
 		return
 
 	focus: ()=>

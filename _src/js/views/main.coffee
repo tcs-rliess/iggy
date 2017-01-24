@@ -24,7 +24,7 @@ class MainView extends Backbone.View
 		$( document ).on "keyup", @_onKey
 		@_outerClickListen()
 		
-		_valueFacets = @collection.filter( ( fct )->return fct?.get( "value" )? )
+		_valueFacets = @collection.filter( ( fct )->return fct?.get( "value" )? or fct?.get( "pinned" ) )
 		
 		_fnSort = ( key )->
 			return ( v1, v2 )->
@@ -35,7 +35,7 @@ class MainView extends Backbone.View
 				return 0
 		
 		for fct in _valueFacets.sort( _fnSort( "_idx" ) )
-			subview = @genSub( fct, false )
+			@genSub( fct, false )
 		
 		@collection.on "add", =>
 			@$addBtn.show()
@@ -89,6 +89,8 @@ class MainView extends Backbone.View
 		subview = new SubView( model: facetM, collection: @collection, parent: @ )
 		
 		subview.on "closed", ( results )=>
+			if subview?.model?.get( "pinned" )
+				return
 			#console.log "SUB VIEW CLOSED", results?.length
 			#subview.off()
 			subview.remove() if not results?.length

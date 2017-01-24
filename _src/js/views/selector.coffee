@@ -60,7 +60,13 @@ class SelectorView extends require( "./facets/base" )
 			if @currQuery?.length > 1
 				_lbl = _lbl.replace( new RegExp( @currQuery, "gi" ), (( str )->return "<b>#{str}</b>" ) )
 			_list.push label: _lbl, id: _id, cssclass: _cssclass
-		@$list.append( @templateEl( list: _list, query: @currQuery, activeIdx: @activeIdx, custom: @custom ) )
+		#if _list.length
+		@$list.append( @templateEl(
+			list: _list,
+			query: @currQuery,
+			activeIdx: @activeIdx,
+			custom: @custom
+		) )
 
 		@_checkScroll()
 		
