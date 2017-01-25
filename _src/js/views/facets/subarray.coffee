@@ -58,17 +58,24 @@ class FacetSubArray extends require( "../selector" )
 			evnt?.stopPropagation()
 			@focus()
 			return
+
+		if @model?.get( "pinned" )
+			return super
 		
 		if _delSub and @result.length <= 0
 			@sub.del()
 		return super
 	
 	rmRes: ( evnt )=>
-		_id = $( evnt.target )?.data( "id" )
+		if evnt?.target?
+			_id = $( evnt.target )?.data( "id" )
+		else if evnt?
+			_id = evnt
 		_mdl = @result.get( _id )
-		@result.remove( _id )
-		if _mdl?.get( "custom" )
-			@searchcoll.remove( _id )
+		if _mdl?
+			@result.remove( _id )
+			if _mdl?.get( "custom" )
+				@searchcoll.remove( _id )
 		return
 		
 	editRes: ( evnt )=>
@@ -148,6 +155,10 @@ class FacetSubArray extends require( "../selector" )
 	
 	reopen: ( pView )=>
 		if @_isFull()
+			if @model.get( "pinned" )
+				_id = @result.last()?.id
+				@rmRes( _id )
+				super
 			return
 		super
 		return

@@ -32,7 +32,13 @@ class ViewSub extends Backbone.View
 				catch _errerr
 					console.error "Issue #24: CATCH"
 		
-		@$el.html @template( label: @model.getLabel(), selected: _list, type: @model.get( "type" ), name: @model.get( "name" ) )
+		@$el.html @template
+			label: @model.getLabel()
+			selected: _list
+			type: @model.get( "type" )
+			name: @model.get( "name" )
+			pinned: @model.get( "pinned" ) or false
+				
 		@$sub = @$( ".subselect" )
 		@$results = @$( ".subresults" )
 
@@ -60,6 +66,9 @@ class ViewSub extends Backbone.View
 		return
 		
 	del: ( evnt )=>
+		if @model.get( "pinned" )
+			return
+			
 		evnt?.stopPropagation()
 		evnt?.preventDefault()
 		@collection.trigger( "iggy:rem", @model )
@@ -128,6 +137,8 @@ class ViewSub extends Backbone.View
 	attachSubEvents: =>
 		@selectview.on "closed", ( result )=>
 			@_isOpen = false
+			if @model.get( "pinned" )
+				return
 			#@selectview.off()
 			@selectview.remove() if not result.length
 			#@selectview = null
