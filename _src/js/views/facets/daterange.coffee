@@ -6,13 +6,16 @@ class FacetSubsDateRange extends require( "./base" )
 	forcedDateRangeOpts: =>
 		_opts =
 			opens: "right"
-
+		
 		if @model.get("value")?[0]?
-			_opts.startDate = @model.get("value")[0]
+			_sd = moment( @model.get("value")[0], @model.get( "dateformat" ) )
+			if _sd.isValid()
+				_opts.startDate = _sd._d
 
 		if @model.get("value")?[1]?
-			_opts.endDate = @model.get("value")[1]
-
+			_ed = moment( @model.get("value")[1], @model.get( "dateformat" ) )
+			if _ed.isValid()
+				_opts.endDate = _ed._d
 		return _opts
 
 	events: =>
@@ -50,18 +53,32 @@ class FacetSubsDateRange extends require( "./base" )
 
 	renderResult: =>
 		_res = @getResults()
-
-		_startDate = moment( _res.value[ 0 ] )
-		_endDate = moment( _res.value[ 1 ] ) if _res.value[ 1 ]?
+		
+		if _.isNumber( _res.value[ 0 ] )
+			_startDate = moment( _res.value[ 0 ] )
+		else
+			_startDate = moment( _res.value[ 0 ], @model.get( "dateformat" ) )
+			
+		if _res.value[ 1 ]?
+			if _.isNumber( _res.value[ 1 ] )
+				_endDate = moment( _res.value[ 1 ] )
+			else
+				_endDate = moment( _res.value[ 1 ], @model.get( "dateformat" ) )
 
 		_time = @model.get( "opts" ).timePicker
 
 		_s = "<li>"
-		_s += _startDate.format( ( if _time then "LLLL" else "LL" ) )
+		if @model.get( "dateformat" )?
+			_frmt = @model.get( "dateformat" )
+		else if _time
+			_frmt = "LLLL"
+		else
+			_frmt = "LL"
+		_s += _startDate.format( _frmt )
 
 		if _endDate?
 			_s += " - "
-			_s += _endDate.format( ( if _time then "LLLL" else "LL" ) )
+			_s += _endDate.format( _frmt )
 
 		_s += "</li>"
 
