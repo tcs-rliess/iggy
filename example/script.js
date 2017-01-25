@@ -1,5 +1,5 @@
 jQuery( function( $ ){
-	
+
 	var TestAdapter, BaseAdapter,
 		bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 		extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -17,7 +17,7 @@ jQuery( function( $ ){
 			this.fetch = $.Deferred();
 			setTimeout((function(_this) {
 				return function() {
-					
+
 					_this.fetch.resolve([
 						{
 							id: 27,
@@ -51,7 +51,7 @@ jQuery( function( $ ){
 			var id, selected;
 			id = this.$element.val();
 			selected = [];
-			
+
 			this.fetch.then((function(_this) {
 				return function(items) {
 					var models;
@@ -90,7 +90,7 @@ jQuery( function( $ ){
 		return TestAdapter;
 
 	})(BaseAdapter);
-	
+
 	var _printQuery = function( data, target ){
 		$( target || "#iggytest1_result" ).html( JSON.stringify( data, null, "  " ) );
 	}
@@ -163,7 +163,7 @@ jQuery( function( $ ){
 		name: "arraylabels",
 		label: "AA Array Labels",
 		custom: false,
-		options: [ 
+		options: [
 			{ value: "m", label: "München" },
 			{ value: "hh", label: "Hamburg" },
 			{ value: "b", label: "Berlin" },
@@ -177,7 +177,7 @@ jQuery( function( $ ){
 		options: function( currentSelection, facet, cb ){
 			//console.log(currentSelection, facet, cb);
 			setTimeout( function(){
-				cb( [ 
+				cb( [
 					{ value: "m", label: "München" },
 					{ value: "hh", label: "Hamburg" },
 					{ value: "b", label: "Berlin" },
@@ -185,7 +185,7 @@ jQuery( function( $ ){
 					{ value: "s", label: "Stuttgart" }
 				])
 			}, 1000 )
-			
+
 		}
 	},{
 		type: "select",
@@ -209,7 +209,7 @@ jQuery( function( $ ){
 		opts: {
 			width: 200
 		},
-		options: [ 
+		options: [
 			{ value: "m", label: "München" },
 			{ value: "hh", label: "Hamburg" },
 			{ value: "b", label: "Berlin" },
@@ -225,7 +225,7 @@ jQuery( function( $ ){
 		opts: {
 			width: 200
 		},
-		options: [ 
+		options: [
 			{ value: "m", label: "München" },
 			{ value: "hh", label: "Hamburg" },
 			{ value: "b", label: "Berlin" },
@@ -239,7 +239,7 @@ jQuery( function( $ ){
 		label: "Issue 45",
 		multiple: false,
 		sort: 1,
-		options: [ 
+		options: [
 			{ value: 1, label: "München" },
 			{ value: 2, label: "Hamburg" },
 			{ value: 3, label: "Berlin" },
@@ -252,7 +252,7 @@ jQuery( function( $ ){
 		label: "Issue 45 B",
 		multiple: false,
 		sort: 2,
-		options: [ 
+		options: [
 			{ value: "m", label: "München" },
 			{ value: "hh", label: "Hamburg" },
 			{ value: "b", label: "Berlin" },
@@ -274,7 +274,7 @@ jQuery( function( $ ){
 		label: "Select Multi Group",
 		multiple: true,
 		//value: "pizza",
-		options: [ 
+		options: [
 			{ value: "usa", label: "United States", group: "America" },
 			{ value: "can", label: "Canada", group: "America" },
 			{ value: "jp", label: "Japan", group: "Asia" },
@@ -382,7 +382,7 @@ jQuery( function( $ ){
 				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
 				'Last 7 Days': [moment().subtract(6, 'day'), moment()],
 				'Last 30 Days': [moment().subtract(29, 'day'), moment()],
-				'Last 90 Days': [moment().subtract(89, 'day'), moment()]                    
+				'Last 90 Days': [moment().subtract(89, 'day'), moment()]
 			}
 		}
 	},{
@@ -393,11 +393,35 @@ jQuery( function( $ ){
 		max: 100,
 		step: 1,
 		//value: [ 10,20 ]
+	},{
+		type: "daterange",
+		name: "issue55",
+		label: "daterange55",
+		value: [moment().add( -4, "d" ).valueOf(), moment().add( 4, "d" ).valueOf() ],
+	},{
+		type: "daterange",
+		name: "issue55_frmt",
+		label: "daterange55_frmt",
+		dateformat: "DD [foo] MMM [bar] YY",
+		value: [moment().add( -4, "d" ).format( "DD [foo] MMM [bar] YY" ), moment().add( 4, "d" ).format( "DD [foo] MMM [bar] YY" ) ],
 	}]
 
-	iggy1 = newIggy( facets, "#iggytest1", { modifyKey: "orgValue", dir: "asc", sortby: "label" } )
+	var opts1 = {
+		modifyKey: "orgValue",
+		dir: "asc",
+		sortby: "label",
+		searchButton: {
+			template: "<i class='fa fa-search'></i> Search!",
+			event: "search",
+			pullright: false
+		}
+	}
+
+
+	iggy1 = newIggy( facets, "#iggytest1", opts1 )
 	iggy1.on( "run", function(){ alert( "Fired Event:\n" + JSON.stringify( arguments ) ) } )
-	
+	iggy1.on( "search", function(){ alert( "Fired Search Event:\n" + JSON.stringify( arguments ) ) } )
+
 	var facets2 = []
 	var options = []
 	var i, j;
@@ -466,7 +490,7 @@ jQuery( function( $ ){
 		options: function( currentSelection, facet, cb ){
 			//console.log(currentSelection, facet, cb);
 			setTimeout( function(){
-				cb( [ 
+				cb( [
 					{ value: "m", label: "München" },
 					{ value: "hh", label: "Hamburg" },
 					{ value: "b", label: "Berlin" },
@@ -474,7 +498,7 @@ jQuery( function( $ ){
 					{ value: "s", label: "Stuttgart" }
 				])
 			}, 1000 )
-			
+
 		}
 	},{
 		type: "number",
@@ -541,7 +565,7 @@ jQuery( function( $ ){
 		label: "Select Multi Group",
 		multiple: true,
 		value: "ger",
-		options: [ 
+		options: [
 			{ value: "usa", label: "United States", group: "America" },
 			{ value: "can", label: "Canada", group: "America" },
 			{ value: "jp", label: "Japan", group: "Asia" },
@@ -554,7 +578,7 @@ jQuery( function( $ ){
 		label: "Select Multi Group Int",
 		multiple: true,
 		value: [66,13,1,"666"],
-		options: [ 
+		options: [
 			{ value: 1, label: "One", group: "Int" },
 			{ value: 2, label: "Two", group: "Int" },
 			{ value: 13, label: "Unlucky...", group: "Fun" },
@@ -568,7 +592,7 @@ jQuery( function( $ ){
 		label: "Select Multi Int",
 		multiple: true,
 		value: [13,23],
-		options: [ 
+		options: [
 			{ value: 1, label: "One" },
 			{ value: 2, label: "Two" },
 			{ value: 13, label: "Unlucky..." },
@@ -593,10 +617,16 @@ jQuery( function( $ ){
 				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
 				'Last 7 Days': [moment().subtract(6, 'day'), moment()],
 				'Last 30 Days': [moment().subtract(29, 'day'), moment()],
-				'Last 90 Days': [moment().subtract(89, 'day'), moment()]                    
+				'Last 90 Days': [moment().subtract(89, 'day'), moment()]
 			}
 		}
 	}]
-
-	newIggy( facetsPredef, "#iggytest3" )
+	var opts3 = {
+		searchButton: {
+			template: "<i class='fa fa-search'></i>",
+			event: "search",
+			pullright: true
+		}
+	}
+	newIggy( facetsPredef, "#iggytest3", opts3 )
 })

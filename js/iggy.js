@@ -37,6 +37,7 @@ IGGY = (function(superClass) {
       options = {};
     }
     this._initErrors = bind(this._initErrors, this);
+    this.triggerEvent = bind(this.triggerEvent, this);
     this.triggerChange = bind(this.triggerChange, this);
     this.getQuery = bind(this.getQuery, this);
     this._error = bind(this._error, this);
@@ -54,10 +55,13 @@ IGGY = (function(superClass) {
     this.results.on("remove", this.triggerChange);
     this.results.on("change", this.triggerChange);
     this.view = new MainView({
+      main: this,
       el: this.$el,
       collection: this.facets,
-      results: this.results
+      results: this.results,
+      searchButton: options.searchButton || {}
     });
+    this.view.on("searchbutton", this.triggerEvent);
     return;
   }
 
@@ -174,6 +178,10 @@ IGGY = (function(superClass) {
 
   IGGY.prototype.triggerChange = function() {
     this.trigger("change", this.results);
+  };
+
+  IGGY.prototype.triggerEvent = function(eventName) {
+    this.trigger(eventName, this.results);
   };
 
   IGGY.prototype._initErrors = function() {
@@ -813,7 +821,7 @@ BaseResult = (function(superClass) {
   BaseResult.prototype.idAttribute = "value";
 
   BaseResult.prototype.getLabel = function() {
-    return this.get("label") || this.get(this.idAttribute) || "-";
+    return this.get("label") || this.get(this.idAttribute) || "";
   };
 
   return BaseResult;
@@ -1100,8 +1108,12 @@ module.exports = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-;var locals_for_with = (locals || {});(function (label, selected, undefined) {
-buf.push("<div class=\"rm-facet-btn fa fa-remove\"></div><span class=\"sublabel\">" + (jade.escape((jade_interp = label) == null ? '' : jade_interp)) + ":</span><ul class=\"subresults\">");
+;var locals_for_with = (locals || {});(function (label, pinned, selected, undefined) {
+if ( !pinned)
+{
+buf.push("<div class=\"rm-facet-btn fa fa-remove\"></div>");
+}
+buf.push("<span class=\"sublabel\">" + (jade.escape((jade_interp = label) == null ? '' : jade_interp)) + ":</span><ul class=\"subresults\">");
 if ( selected && selected.length)
 {
 // iterate selected
@@ -1127,7 +1139,7 @@ buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? 
 }).call(this);
 
 }
-buf.push("</ul><div class=\"subselect\"></div><div class=\"loader\"><i class=\"fa fa-cog fa-spin\"></i></div>");}.call(this,"label" in locals_for_with?locals_for_with.label:typeof label!=="undefined"?label:undefined,"selected" in locals_for_with?locals_for_with.selected:typeof selected!=="undefined"?selected:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
+buf.push("</ul><div class=\"subselect\"></div><div class=\"loader\"><i class=\"fa fa-cog fa-spin\"></i></div>");}.call(this,"label" in locals_for_with?locals_for_with.label:typeof label!=="undefined"?label:undefined,"pinned" in locals_for_with?locals_for_with.pinned:typeof pinned!=="undefined"?pinned:undefined,"selected" in locals_for_with?locals_for_with.selected:typeof selected!=="undefined"?selected:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
 };
 },{"jade/runtime":38}],24:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -1136,8 +1148,12 @@ module.exports = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-
-buf.push("<div class=\"add-facet-btn fa fa-plus\"></div>");;return buf.join("");
+;var locals_for_with = (locals || {});(function (searchButton) {
+buf.push("<div class=\"add-facet-btn fa fa-plus\"></div>");
+if ( searchButton != undefined && searchButton.template != undefined && searchButton.template.length)
+{
+buf.push("<button" + (jade.cls(['search-btn',searchButton.cssclass,{"search-btn-pullright":searchButton.pullright}], [null,true,true])) + ">" + (null == (jade_interp = searchButton.template) ? "" : jade_interp) + "</button>");
+}}.call(this,"searchButton" in locals_for_with?locals_for_with.searchButton:typeof searchButton!=="undefined"?searchButton:undefined));;return buf.join("");
 };
 },{"jade/runtime":38}],25:[function(require,module,exports){
 module.exports = {
@@ -1209,7 +1225,7 @@ FacetSubsBase = (function(superClass) {
   };
 
   FacetSubsBase.prototype.renderResult = function(renderEmpty) {
-    var _list, i, idx, len, model, ref;
+    var _lbl, _list, i, idx, len, model, ref;
     if (renderEmpty == null) {
       renderEmpty = false;
     }
@@ -1220,9 +1236,15 @@ FacetSubsBase = (function(superClass) {
     ref = this.result.models;
     for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
       model = ref[idx];
-      _list.push(model.getLabel());
+      _lbl = model.getLabel();
+      if ((_lbl != null) && _lbl !== "") {
+        _list.push(model.getLabel());
+      }
     }
-    return "<li>" + _list.join("</li><li>") + "</li>";
+    if (_list.length) {
+      return "<li>" + _list.join("</li><li>") + "</li>";
+    }
+    return "";
   };
 
   FacetSubsBase.prototype.open = function() {
@@ -1249,11 +1271,12 @@ FacetSubsBase = (function(superClass) {
   };
 
   FacetSubsBase.prototype.getTemplateData = function() {
-    var ref;
-    return {
+    var ref, ret;
+    ret = {
       cid: this.cid,
       value: (ref = this.model) != null ? ref.get("value") : void 0
     };
+    return ret;
   };
 
   FacetSubsBase.prototype._getInpSelector = function() {
@@ -1316,7 +1339,7 @@ FacetSubsBase = (function(superClass) {
   };
 
   FacetSubsBase.prototype._checkSelectEmpty = function(_val) {
-    if (_.isEmpty(_val) && !_.isNumber(_val) && !_.isBoolean(_val)) {
+    if (_.isEmpty(_val) && !_.isNumber(_val) && !_.isBoolean(_val) && !this.model.get("pinned")) {
       this.close();
       return true;
     }
@@ -1385,15 +1408,26 @@ FacetSubsDateRange = (function(superClass) {
   FacetSubsDateRange.prototype.template = require("../../tmpls/daterange.jade");
 
   FacetSubsDateRange.prototype.forcedDateRangeOpts = function() {
-    var _opts, ref, ref1;
+    var _ed, _opts, _sd, ref, ref1;
     _opts = {
       opens: "right"
     };
+    if (this.model.get("dateformat")) {
+      _opts.locale = {
+        format: this.model.get("dateformat")
+      };
+    }
     if (((ref = this.model.get("value")) != null ? ref[0] : void 0) != null) {
-      _opts.startDate = this.model.get("value")[0];
+      _sd = moment(this.model.get("value")[0], this.model.get("dateformat"));
+      if (_sd.isValid()) {
+        _opts.startDate = _sd._d;
+      }
     }
     if (((ref1 = this.model.get("value")) != null ? ref1[1] : void 0) != null) {
-      _opts.endDate = this.model.get("value")[1];
+      _ed = moment(this.model.get("value")[1], this.model.get("dateformat"));
+      if (_ed.isValid()) {
+        _opts.endDate = _ed._d;
+      }
     }
     return _opts;
   };
@@ -1438,18 +1472,33 @@ FacetSubsDateRange = (function(superClass) {
   };
 
   FacetSubsDateRange.prototype.renderResult = function() {
-    var _endDate, _res, _s, _startDate, _time;
+    var _endDate, _frmt, _res, _s, _startDate, _time;
     _res = this.getResults();
-    _startDate = moment(_res.value[0]);
+    if (_.isNumber(_res.value[0])) {
+      _startDate = moment(_res.value[0]);
+    } else {
+      _startDate = moment(_res.value[0], this.model.get("dateformat"));
+    }
     if (_res.value[1] != null) {
-      _endDate = moment(_res.value[1]);
+      if (_.isNumber(_res.value[1])) {
+        _endDate = moment(_res.value[1]);
+      } else {
+        _endDate = moment(_res.value[1], this.model.get("dateformat"));
+      }
     }
     _time = this.model.get("opts").timePicker;
     _s = "<li>";
-    _s += _startDate.format((_time ? "LLLL" : "LL"));
+    if (this.model.get("dateformat") != null) {
+      _frmt = this.model.get("dateformat");
+    } else if (_time) {
+      _frmt = "LLLL";
+    } else {
+      _frmt = "LL";
+    }
+    _s += _startDate.format(_frmt);
     if (_endDate != null) {
       _s += " - ";
-      _s += _endDate.format((_time ? "LLLL" : "LL"));
+      _s += _endDate.format(_frmt);
     }
     _s += "</li>";
     return _s;
@@ -1763,7 +1812,7 @@ FacetSubArray = (function(superClass) {
   };
 
   FacetSubArray.prototype.close = function(evnt) {
-    var _delSub;
+    var _delSub, ref;
     _delSub = false;
     if (this.editMode) {
       _delSub = true;
@@ -1779,6 +1828,9 @@ FacetSubArray = (function(superClass) {
       this.focus();
       return;
     }
+    if ((ref = this.model) != null ? ref.get("pinned") : void 0) {
+      return FacetSubArray.__super__.close.apply(this, arguments);
+    }
     if (_delSub && this.result.length <= 0) {
       this.sub.del();
     }
@@ -1787,11 +1839,17 @@ FacetSubArray = (function(superClass) {
 
   FacetSubArray.prototype.rmRes = function(evnt) {
     var _id, _mdl, ref;
-    _id = (ref = $(evnt.target)) != null ? ref.data("id") : void 0;
+    if ((evnt != null ? evnt.target : void 0) != null) {
+      _id = (ref = $(evnt.target)) != null ? ref.data("id") : void 0;
+    } else if (evnt != null) {
+      _id = evnt;
+    }
     _mdl = this.result.get(_id);
-    this.result.remove(_id);
-    if (_mdl != null ? _mdl.get("custom") : void 0) {
-      this.searchcoll.remove(_id);
+    if (_mdl != null) {
+      this.result.remove(_id);
+      if (_mdl != null ? _mdl.get("custom") : void 0) {
+        this.searchcoll.remove(_id);
+      }
     }
   };
 
@@ -1911,7 +1969,13 @@ FacetSubArray = (function(superClass) {
   };
 
   FacetSubArray.prototype.reopen = function(pView) {
+    var _id, ref;
     if (this._isFull()) {
+      if (this.model.get("pinned")) {
+        _id = (ref = this.result.last()) != null ? ref.id : void 0;
+        this.rmRes(_id);
+        FacetSubArray.__super__.reopen.apply(this, arguments);
+      }
       return;
     }
     FacetSubArray.__super__.reopen.apply(this, arguments);
@@ -2233,7 +2297,7 @@ FacetSubsRange = (function(superClass) {
   FacetSubsRange.prototype.close = function() {
     try {
       this.$(".rangeinp").remove();
-    } catch (undefined) {}
+    } catch (error) {}
     FacetSubsRange.__super__.close.apply(this, arguments);
   };
 
@@ -2337,6 +2401,9 @@ FacetSubsSelect = (function(superClass) {
 
   FacetSubsSelect.prototype.render = function() {
     FacetSubsSelect.__super__.render.apply(this, arguments);
+    if (this.model.get("pinned")) {
+      this._initSelect2();
+    }
   };
 
   FacetSubsSelect.prototype.focus = function() {
@@ -2645,12 +2712,12 @@ FacetSubString = (function(superClass) {
       if ((ref = this.$inp) != null) {
         ref.remove();
       }
-    } catch (undefined) {}
+    } catch (error) {}
   };
 
   FacetSubString.prototype.reopen = function(pView) {
-    var _oldVal;
-    _oldVal = this.result.first().get("value");
+    var _oldVal, ref, ref1;
+    _oldVal = (ref = this.result) != null ? (ref1 = ref.first()) != null ? ref1.get("value") : void 0 : void 0;
     this.model.set({
       value: _oldVal
     });
@@ -2683,7 +2750,12 @@ MainView = (function(superClass) {
 
   function MainView() {
     this._outerClick = bind(this._outerClick, this);
+    this._onFocusSearch = bind(this._onFocusSearch, this);
+    this._onSearch = bind(this._onSearch, this);
+    this.focusSearch = bind(this.focusSearch, this);
     this._outerClickListen = bind(this._outerClickListen, this);
+    this._onClosed = bind(this._onClosed, this);
+    this._onOpened = bind(this._onOpened, this);
     this.addFacet = bind(this.addFacet, this);
     this.genSub = bind(this.genSub, this);
     this.setFacet = bind(this.setFacet, this);
@@ -2692,6 +2764,7 @@ MainView = (function(superClass) {
     this._onKey = bind(this._onKey, this);
     this._addFacet = bind(this._addFacet, this);
     this.render = bind(this.render, this);
+    this.templateData = bind(this.templateData, this);
     this.initialize = bind(this.initialize, this);
     return MainView.__super__.constructor.apply(this, arguments);
   }
@@ -2699,13 +2772,17 @@ MainView = (function(superClass) {
   MainView.prototype.template = require("../tmpls/wrapper.jade");
 
   MainView.prototype.events = {
+    "click .search-btn": "_onSearch",
+    "focus .search-btn": "_onFocusSearch",
     "click .add-facet-btn": "_addFacet",
     "click": "_addFacet"
   };
 
   MainView.prototype.initialize = function(options) {
-    var _cl, _fnSort, _valueFacets, fct, i, len, ref, ref1, subview;
+    var _cl, _fnSort, _valueFacets, fct, i, len, ref, ref1;
+    this.main = options.main;
     this.results = options.results;
+    this.searchButton = options.searchButton;
     this.collection.on("iggy:rem", this.remFacet);
     _cl = "iggy clearfix";
     if ((ref = this.el.className) != null ? ref.length : void 0) {
@@ -2716,7 +2793,7 @@ MainView = (function(superClass) {
     $(document).on("keyup", this._onKey);
     this._outerClickListen();
     _valueFacets = this.collection.filter(function(fct) {
-      return (fct != null ? fct.get("value") : void 0) != null;
+      return ((fct != null ? fct.get("value") : void 0) != null) || (fct != null ? fct.get("pinned") : void 0);
     });
     _fnSort = function(key) {
       return function(v1, v2) {
@@ -2732,7 +2809,7 @@ MainView = (function(superClass) {
     ref1 = _valueFacets.sort(_fnSort("_idx"));
     for (i = 0, len = ref1.length; i < len; i++) {
       fct = ref1[i];
-      subview = this.genSub(fct, false);
+      this.genSub(fct, false);
     }
     this.collection.on("add", (function(_this) {
       return function() {
@@ -2741,9 +2818,26 @@ MainView = (function(superClass) {
     })(this));
   };
 
+  MainView.prototype.templateData = function() {
+    var _ret;
+    _ret = {
+      searchButton: {
+        template: this.searchButton.template || "",
+        event: this.searchButton.event || "search",
+        pullright: this.searchButton.pullright || false,
+        cssclass: this.searchButton.cssclass
+      }
+    };
+    return _ret;
+  };
+
   MainView.prototype.render = function() {
-    this.$el.html(this.template());
+    var ref;
+    this.$el.html(this.template(this.templateData()));
     this.$addBtn = this.$(".add-facet-btn");
+    if ((ref = this.searchButton.template) != null ? ref.length : void 0) {
+      this.$searchBtn = this.$(".search-btn");
+    }
   };
 
   MainView.prototype._addFacet = function(evnt) {
@@ -2807,6 +2901,10 @@ MainView = (function(superClass) {
     });
     subview.on("closed", (function(_this) {
       return function(results) {
+        var ref;
+        if (subview != null ? (ref = subview.model) != null ? ref.get("pinned") : void 0 : void 0) {
+          return;
+        }
         if (!(results != null ? results.length : void 0)) {
           subview.remove();
         }
@@ -2843,12 +2941,17 @@ MainView = (function(superClass) {
     }
     this.selectview = new SelectorView({
       collection: this.collection,
-      custom: false
+      custom: false,
+      main: this
     });
-    this.$addBtn.before(this.selectview.render());
-    this.selectview.focus();
+    this.selectview.on("opened", (function(_this) {
+      return function() {
+        _this._onOpened();
+      };
+    })(this));
     this.selectview.on("closed", (function(_this) {
       return function(results) {
+        _this._onClosed();
         _this.selectview.remove();
         _this.selectview = null;
         if (!(results != null ? results.length : void 0) && (_this.subview != null)) {
@@ -2864,10 +2967,48 @@ MainView = (function(superClass) {
         _this.subview.open();
       };
     })(this));
+    this.$addBtn.before(this.selectview.render());
+    this.selectview.focus();
+  };
+
+  MainView.prototype._onOpened = function() {
+    var ref;
+    if ((ref = this.$addBtn) != null) {
+      ref.hide();
+    }
+  };
+
+  MainView.prototype._onClosed = function() {
+    var ref;
+    if ((ref = this.$addBtn) != null) {
+      ref.show();
+    }
   };
 
   MainView.prototype._outerClickListen = function() {
     jQuery(document).on("click", this._outerClick);
+  };
+
+  MainView.prototype.focusSearch = function() {
+    if (this.$searchBtn != null) {
+      this.$searchBtn.focus();
+    }
+  };
+
+  MainView.prototype._onSearch = function(evnt) {
+    evnt.stopPropagation();
+    this.exit();
+    this.trigger("searchbutton", this.searchButton.event);
+  };
+
+  MainView.prototype._onFocusSearch = function(evnt) {
+    var ref;
+    evnt.stopPropagation();
+    if ((ref = this.selectview) != null) {
+      if (typeof ref.close === "function") {
+        ref.close();
+      }
+    }
   };
 
   MainView.prototype._outerClick = function(evnt) {
@@ -2930,8 +3071,10 @@ SelectorView = (function(superClass) {
     this.select = bind(this.select, this);
     this.move = bind(this.move, this);
     this.search = bind(this.search, this);
+    this.open = bind(this.open, this);
     this.focus = bind(this.focus, this);
     this.selected = bind(this.selected, this);
+    this._onTabAction = bind(this._onTabAction, this);
     this._isFull = bind(this._isFull, this);
     this._onClick = bind(this._onClick, this);
     this.checkOptionsEmpty = bind(this.checkOptionsEmpty, this);
@@ -2946,6 +3089,9 @@ SelectorView = (function(superClass) {
     this.custom = options.custom || false;
     this.activeIdx = 0;
     this.currQuery = "";
+    if (options.main != null) {
+      this.main = options.main;
+    }
     SelectorView.__super__.constructor.call(this, options);
     return;
   }
@@ -3055,8 +3201,18 @@ SelectorView = (function(superClass) {
     return true;
   };
 
+  SelectorView.prototype._onTabAction = function(evnt) {
+    if (this.main != null) {
+      evnt.preventDefault();
+      evnt.stopPropagation();
+      this.main.focusSearch();
+    } else {
+      SelectorView.__super__._onTabAction.call(this, event);
+    }
+  };
+
   SelectorView.prototype.selected = function(mdl) {
-    var _err, _errerr, error, error1;
+    var _err, _errerr;
     try {
       if (mdl.onlyExec != null) {
         if (mdl != null) {
@@ -3070,8 +3226,8 @@ SelectorView = (function(superClass) {
       _err = error;
       try {
         console.error("Issue #23: CATCH - Class:" + this.constructor.name + " - activeIdx:" + this.activeIdx + " - collection:" + (JSON.stringify(this.collection.toJSON())));
-      } catch (error1) {
-        _errerr = error1;
+      } catch (error) {
+        _errerr = error;
         console.error("Issue #23: CATCH");
       }
     }
@@ -3090,6 +3246,11 @@ SelectorView = (function(superClass) {
     this.$inp.focus();
     _el = this.$inp.get(0);
     _el.selectionStart = _el.selectionEnd = _el.value.length;
+  };
+
+  SelectorView.prototype.open = function() {
+    this.trigger("opened");
+    return SelectorView.__super__.open.apply(this, arguments);
   };
 
   SelectorView.prototype.search = function(evnt) {
@@ -3262,7 +3423,7 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.render = function(optMdl) {
-    var _err, _errerr, _list, error, error1, i, idx, len, model, ref;
+    var _err, _errerr, _list, i, idx, len, model, ref;
     _list = [];
     ref = this.result.models;
     for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
@@ -3273,8 +3434,8 @@ ViewSub = (function(superClass) {
         _err = error;
         try {
           console.error("Issue #24: CATCH - Class:" + this.constructor.name + " - model:" + (JSON.stringify(this.model.toJSON())) + " - result:" + (JSON.stringify(this.result.toJSON())));
-        } catch (error1) {
-          _errerr = error1;
+        } catch (error) {
+          _errerr = error;
           console.error("Issue #24: CATCH");
         }
       }
@@ -3283,7 +3444,8 @@ ViewSub = (function(superClass) {
       label: this.model.getLabel(),
       selected: _list,
       type: this.model.get("type"),
-      name: this.model.get("name")
+      name: this.model.get("name"),
+      pinned: this.model.get("pinned") || false
     }));
     this.$sub = this.$(".subselect");
     this.$results = this.$(".subresults");
@@ -3318,6 +3480,9 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.del = function(evnt) {
+    if (this.model.get("pinned")) {
+      return;
+    }
     if (evnt != null) {
       evnt.stopPropagation();
     }
@@ -3413,6 +3578,9 @@ ViewSub = (function(superClass) {
     this.selectview.on("closed", (function(_this) {
       return function(result) {
         _this._isOpen = false;
+        if (_this.model.get("pinned")) {
+          return;
+        }
         if (!result.length) {
           _this.selectview.remove();
         }
@@ -3458,7 +3626,7 @@ module.exports = ViewSub;
 
 },{}],38:[function(require,module,exports){
 (function (global){
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jade = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3640,12 +3808,21 @@ exports.attrs = function attrs(obj, terse){
  * @api private
  */
 
-exports.escape = function escape(html){
-  var result = String(html)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+var jade_encode_html_rules = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;'
+};
+var jade_match_html = /[&<>"]/g;
+
+function jade_encode_char(c) {
+  return jade_encode_html_rules[c] || c;
+}
+
+exports.escape = jade_escape;
+function jade_escape(html){
+  var result = String(html).replace(jade_match_html, jade_encode_char);
   if (result === '' + html) return html;
   else return result;
 };
@@ -3691,6 +3868,11 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
     + '\n' + context + '\n\n' + err.message;
   throw err;
 };
+
+exports.DebugItem = function DebugItem(lineno, filename) {
+  this.lineno = lineno;
+  this.filename = filename;
+}
 
 },{"fs":2}],2:[function(require,module,exports){
 

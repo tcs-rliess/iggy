@@ -15,12 +15,18 @@ Browser search module to use with Backbone.js
 
 There are several options to customize the behavior of iggy.
 
-- **sortby** : *( `String` optional; default = `name` )* Sorting is always first done by `sort` (desc). But it's possible to change second sorting element with this option.
-- **dir** : *( `String` optional; default = `asc` )* The sort direction of the sort key configured with option `sortby`. allowed are "asc" and "desc".
+- **sortby** *( `String` optional; default = `name` )*: Sorting is always first done by `sort` (desc). But it's possible to change second sorting element with this option.
+- **dir** *( `String` optional; default = `asc` )*: The sort direction of the sort key configured with option `sortby`. allowed are "asc" and "desc".
+- **searchButton** *( `Object` )*: Optional search button configuration. It will only displayed if `searchButton.template` is defined.
+	- **searchButton.template** *( `String` )*: A html string to display the search button
+	- **searchButton.event** *( `String`; default = `search` )*: A event name to fire when the button was clicked.
+	- **searchButton.pullright** *( `Boolean`; default = `false` )*: Display the search button on the right istead of adding it after the "+" button.
+
 
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.2.0|2017-01-25|#55 fixed date range picker and added option `dateformat`; #58 added search button; #59 The "+" is hidden if the facet select is open; Facets can be `pinned:true` to be always displayed and be undeletable. |
 |0.1.13|2016-08-11|handle select2 jQuery text option texts #57|
 |0.1.12|2016-05-06|fixed array results editable #53; fixed remove of option for non custom options #56|
 |0.1.11|2016-04-01|fixed date range picker by setting `startDate` and `enDate` #55|
