@@ -6,6 +6,10 @@ class FacetSubsDateRange extends require( "./base" )
 	forcedDateRangeOpts: =>
 		_opts =
 			opens: "right"
+			
+		if @model.get( "dateformat" )
+			_opts.locale =
+				format: @model.get( "dateformat" )
 		
 		if @model.get("value")?[0]?
 			_sd = moment( @model.get("value")[0], @model.get( "dateformat" ) )
