@@ -413,7 +413,8 @@ jQuery( function( $ ){
 		searchButton: {
 			template: "<i class='fa fa-search'></i> Search!",
 			event: "search",
-			pullright: false
+			pullright: false,
+			cssclass: "red-search"
 		}
 	}
 

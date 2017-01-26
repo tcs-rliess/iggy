@@ -8,8 +8,17 @@ body {
 .iggy .typelist li.runsearch{
   font-weight: bold;
   text-align: center;
-  
+
 }
 .iggy .typelist li.runsearch a{
   color: #dd0000;
+}
+
+.iggy .red-search{
+	background-color: #aa5555;
+}
+.iggy .red-search:focus,
+.iggy .red-search:active,
+.iggy .red-search:hover{
+	background-color: #ff0000;
 }

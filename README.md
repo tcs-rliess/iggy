@@ -21,6 +21,7 @@ There are several options to customize the behavior of iggy.
 	- **searchButton.template** *( `String` )*: A html string to display the search button
 	- **searchButton.event** *( `String`; default = `search` )*: A event name to fire when the button was clicked.
 	- **searchButton.pullright** *( `Boolean`; default = `false` )*: Display the search button on the right istead of adding it after the "+" button.
+	- **searchButton.cssclass** *( `String` )*: You can define a custom class to add to the search button
 
 
 ## Release History
