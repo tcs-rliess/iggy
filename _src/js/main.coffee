@@ -9,6 +9,8 @@ FctDateRange = require( "./models/facet_daterange" )
 FctEvent = require( "./models/facet_event" )
 Results = require( "./models/results" )
 
+IGGY_IDX = 1
+
 class IGGY extends Backbone.Events
 	$: jQuery
 	constructor: ( el, facets = [], options = {} )->
@@ -28,7 +30,7 @@ class IGGY extends Backbone.Events
 		@results.on "remove", @triggerChange
 		@results.on "change", @triggerChange
 
-		@view = new MainView( main: @, el: @$el, collection: @facets, results: @results, searchButton: options.searchButton or {} )
+		@view = new MainView( main: @, el: @$el, collection: @facets, results: @results, searchButton: options.searchButton, idx: IGGY_IDX++ )
 		
 		@view.on "searchbutton", @triggerEvent
 		return

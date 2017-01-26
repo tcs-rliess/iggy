@@ -15,6 +15,7 @@ class MainView extends Backbone.View
 	initialize: ( options )=>
 		
 		@main = options.main
+		@idx = options.idx
 		@results = options.results
 		@searchButton = options.searchButton
 
@@ -49,18 +50,21 @@ class MainView extends Backbone.View
 	
 	templateData: =>
 		_ret =
-			searchButton:
+			tab_index: ( ( ( @idx or 1 ) + 1 ) * 1000 ) - 10
+		if  @searchButton?
+			_ret.searchButton =
 				template: @searchButton.template or ""
 				event: @searchButton.event or "search"
 				pullright: @searchButton.pullright or false
-				cssclass: @searchButton.cssclass
+				cssclass: @searchButton.cssclass or "btn btn-primary fa fa-search"
 		
 		return _ret
 	
 	render: =>
-		@$el.html( @template( @templateData() ) )
+		_tplData = @templateData()
+		@$el.html( @template( _tplData ) )
 		@$addBtn = @$( ".add-facet-btn" )
-		if @searchButton.template?.length
+		if _tplData.searchButton?
 			@$searchBtn = @$( ".search-btn" )
 		return
 
