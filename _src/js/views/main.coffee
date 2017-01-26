@@ -18,7 +18,9 @@ class MainView extends Backbone.View
 		@idx = options.idx
 		@results = options.results
 		@searchButton = options.searchButton
-
+		
+		@facets = {}
+		
 		@collection.on "iggy:rem", @remFacet
 		
 		_cl = "iggy clearfix"
@@ -26,8 +28,8 @@ class MainView extends Backbone.View
 			_cl = " " + _cl
 		@el.className += _cl
 		@render()
-		$( document ).on "keyup", @_onKey
 		@_outerClickListen()
+		@_keyListen()
 		
 		_valueFacets = @collection.filter( ( fct )->return fct?.get( "value" )? or fct?.get( "pinned" ) )
 		
@@ -40,11 +42,21 @@ class MainView extends Backbone.View
 				return 0
 		
 		for fct in _valueFacets.sort( _fnSort( "_idx" ) )
-			@genSub( fct, false )
+			@genSub( fct, false, true )
 		
 		@collection.on "add", =>
 			@$addBtn.show()
 			return
+		
+		setTimeout( =>
+			_active = @collection.filter( ( fct )->return fct?.get( "active" ) and fct?.get( "pinned" ) )
+			if _active.length
+				view = @facets[ _active[ 0 ].id ]
+				#@subview = view
+				view?.reopen()
+				view?.focus()
+			return
+		, 0 )
 		
 		return
 	
@@ -72,12 +84,6 @@ class MainView extends Backbone.View
 		@addFacet()
 		return
 
-	_onKey: ( evnt )=>
-		if evnt.keyCode is KEYCODES.ESC or evnt.keyCode in KEYCODES.ESC
-			@exit()
-			return
-		return
-	
 	exit: ( nextAdd = true )=>
 		if @subview
 			@subview.close()
@@ -105,11 +111,13 @@ class MainView extends Backbone.View
 			@$addBtn.hide()
 		return
 
-	genSub: ( facetM, addAfter = true )=>
+	genSub: ( facetM, addAfter = true, initialAdd=false )=>
 		subview = new SubView( model: facetM, collection: @collection, parent: @ )
 		
 		subview.on "closed", ( results )=>
+			#console.log "genSub - closed", results, subview.model.id
 			if subview?.model?.get( "pinned" )
+				@subview = null
 				return
 			#console.log "SUB VIEW CLOSED", results?.length
 			#subview.off()
@@ -122,9 +130,16 @@ class MainView extends Backbone.View
 			@selectview?.close()
 			return
 			
-		subview.on( "selected", @setFacet )
+		_self = @
+		subview.on "selected", ( facetM, data )->
+			#console.log "subview - selected", @
+			_self.setFacet( facetM, data )
+			if not @selectview._isFull? or @selectview._isFull()
+				_self._nextFacet( null, @ )
+			return
 		
-		@$addBtn.before( subview.render() )
+		@$addBtn.before( subview.render( initialAdd ) )
+		@facets[ facetM.id ] = subview
 		return subview
 
 	addFacet: =>
@@ -182,6 +197,57 @@ class MainView extends Backbone.View
 		jQuery( document ).on "click", @_outerClick
 		return
 	
+	_keyListen: =>
+		jQuery( document ).on "keydown", ( evnt )=>
+			if evnt.keyCode is KEYCODES.TAB or evnt.keyCode in KEYCODES.TAB
+				evnt.preventDefault()
+				
+				if $( evnt.target ).is( ".search-btn" )
+					setTimeout( =>
+						@addFacet()
+					, 0 )
+					return
+					
+				# case only the facet selector is open
+				if @selectview?.isOpen
+					if evnt?.shiftKey
+						_prevId = @$addBtn?.prevAll( ".sub" )?.first()?.data( "fctid" )
+						if _prevId?
+							setTimeout( =>
+								@facets[ _prevId ]?.reopen()
+							, 0 )
+					else
+						@selectview.close()
+						@focusSearch()
+					return
+				
+				
+				# otherwise trigger escape event and listen for the response of the open facet
+				@trigger "escape", evnt, @_nextFacet
+				return
+			if evnt.keyCode is KEYCODES.ESC or evnt.keyCode in KEYCODES.ESC
+				@exit()
+				@trigger( "escape", evnt )
+				return
+			return
+		return
+	
+	_nextFacet: ( evnt, subView )=>
+		_nextFn = if evnt?.shiftKey then "prev" else "next"
+		_next = subView.$el?[ _nextFn ]?()
+		
+		if _next.hasClass( "add-facet-btn" )
+			setTimeout( =>
+				@addFacet()
+			, 0 )
+			return
+		_nextId = _next?.data( "fctid" )
+		if _nextId?
+			setTimeout( =>
+				@facets[ _nextId ]?.reopen()
+			, 0 )
+		return
+		
 	focusSearch: =>
 		if @$searchBtn?
 			@$searchBtn.focus()

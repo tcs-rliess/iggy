@@ -14,12 +14,14 @@ class FacetSubsBase extends Backbone.View
 		"keydown #{@_getInpSelector()}": "input"
 
 	focus: =>
+		@$el.removeClass( "closed" )
+		@focused = true
 		@$inp.focus()
 		return
 
 	renderResult: ( renderEmpty = false )=>
 		if renderEmpty
-			return "<li></li>"
+			return ""
 		_list = []
 		for model, idx in @result.models
 			_lbl = model.getLabel()
@@ -31,6 +33,7 @@ class FacetSubsBase extends Backbone.View
 		
 		
 	open: =>
+		@$el.removeClass( "closed" )
 		@$el.addClass( "open" )
 		@isOpen = true
 		@trigger( "opened" )
@@ -50,8 +53,9 @@ class FacetSubsBase extends Backbone.View
 		return
 		
 	getTemplateData: =>
-		ret = 
+		ret =
 			cid: @cid
+			#tab_index: ( ( @model?._idx * 10 ) or 1 ) + ( ( @sub?.parent?.idx or 1 ) * 1000 )
 			value: @model?.get( "value" )
 		return ret
 
@@ -62,14 +66,16 @@ class FacetSubsBase extends Backbone.View
 		@$el.removeClass( "closed" )
 		@$el.addClass( "open" )
 		@render()
-		pView.open()
+		pView?.open()
 		return
 	
-	render: =>
+	render: ( initialAdd )=>
 		_tmpl = @template(  @getTemplateData() )
 		@$el.html( _tmpl )
+		if not initialAdd
+			@$el.removeClass( "closed" )
 		@$inp = @$el.find( @_getInpSelector() )
-		$( document ).on @_hasTabEvent(), @_onKey if @_hasTabListener( true )
+		#$( document ).on @_hasTabEvent(), @_onKey if @_hasTabListener( true )
 		return
 	
 	_hasTabEvent: ->
@@ -85,7 +91,8 @@ class FacetSubsBase extends Backbone.View
 		return
 
 	close: ( evnt )=>
-		$( document ).off @_hasTabEvent(), @_onKey if @_hasTabListener( false )
+		@focused = false
+		#$( document ).off @_hasTabEvent(), @_onKey if @_hasTabListener( false )
 		@$el.removeClass( "open" )
 		@$el.addClass( "closed" )
 		@isOpen = false

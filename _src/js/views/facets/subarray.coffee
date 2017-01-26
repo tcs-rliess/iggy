@@ -35,7 +35,30 @@ class FacetSubArray extends require( "../selector" )
 	selectCount: 0
 
 	optColl: StringOptions
+	
+	constructor: ( options )->
+		@loading = false
+		if options.model.get( "count" )?
+			@selectCount = options.model.get( "count" )
+		options.custom = true
+		if options.model.get( "custom" )?
+			options.custom = Boolean( options.model.get( "custom" ) )
+			
+		@collection = @_createOptionCollection( options.model.get( "options" ) )
 		
+		if not options.custom and @selectCount <= 0
+			@selectCount = @collection.length
+			
+		super( options )
+		
+		@result.on "remove", ( mdl, coll )=>
+			if coll.length
+				options.sub.renderResult()
+			@searchcoll.add( mdl )
+			@trigger( "removed", mdl )
+			return
+		return
+	
 	initialize: =>
 		@editMode = false
 		return super
@@ -105,29 +128,7 @@ class FacetSubArray extends require( "../selector" )
 			_list.push @templateResLi( txt: model.getLabel(), id: model.id, custom: model.get( "custom" )  )
 
 		return "<li>" + _list.join( "</li><li>" ) + "</li>"
-	
-	constructor: ( options )->
-		@loading = false
-		if options.model.get( "count" )?
-			@selectCount = options.model.get( "count" )
-		options.custom = true
-		if options.model.get( "custom" )?
-			options.custom = Boolean( options.model.get( "custom" ) )
-			
-		@collection = @_createOptionCollection( options.model.get( "options" ) )
-		
-		if not options.custom and @selectCount <= 0
-			@selectCount = @collection.length
-			
-		super( options )
-		
-		@result.on "remove", ( mdl, coll )=>
-			if coll.length
-				options.sub.renderResult()
-			@searchcoll.add( mdl )
-			@trigger( "removed", mdl )
-			return
-		return
+
 	
 	_isFull: =>
 		if @selectCount <= 0
@@ -155,10 +156,10 @@ class FacetSubArray extends require( "../selector" )
 	
 	reopen: ( pView )=>
 		if @_isFull()
-			if @model.get( "pinned" )
-				_id = @result.last()?.id
-				@rmRes( _id )
-				super
+			# if @model.get( "pinned" )
+			# 	_id = @result.last()?.id
+			# 	@rmRes( _id )
+			super
 			return
 		super
 		return

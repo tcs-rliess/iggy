@@ -9,7 +9,7 @@ class FacetSubString extends require( "./base" )
 	close: ( evnt )=>
 		super
 		try
-			@$inp?.remove()
+			@$inp?.remove?()
 		return
 	
 	reopen: ( pView )=>

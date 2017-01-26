@@ -16,12 +16,20 @@ class ViewSub extends Backbone.View
 		@result = new Backbone.Collection()
 		@$el.on "click", @reopen
 		@parent = options.parent
+		
+		@$el.data( "fctid", @model.id )
+		
+		@parent.on "escape", ( evnt, cb )=>
+			if @_isOpen
+				@selectview?._onTabAction( evnt )
+				cb( evnt, @ ) if cb?
+			return
 		return
 
 	events:
 		"click .rm-facet-btn": "del"
 
-	render: ( optMdl )=>
+	render: ( initialAdd )=>
 		_list = []
 		for model, idx in @result.models
 			try
@@ -42,7 +50,7 @@ class ViewSub extends Backbone.View
 		@$sub = @$( ".subselect" )
 		@$results = @$( ".subresults" )
 
-		@generateSub()
+		@generateSub( initialAdd )
 		return @el
 	
 	reopen: ( evnt )=>
@@ -121,7 +129,7 @@ class ViewSub extends Backbone.View
 			return
 		return
 
-	generateSub: =>
+	generateSub: ( initialAdd )=>
 		if @selectview?
 			@attachSubEvents()
 			return @selectview
@@ -129,14 +137,16 @@ class ViewSub extends Backbone.View
 		@selectview = new @model.SubView( sub: @, model: @model, el: @$sub )
 		@attachSubEvents()
 			
-		@$el.append( @selectview.render() )
+		@$el.append( @selectview.render( initialAdd ) )
 		if @model?.get( "value" )?
 			@selectview.select()
 		return
 		
 	attachSubEvents: =>
 		@selectview.on "closed", ( result )=>
+			#console.log "Sub closed", @selectview.model.id
 			@_isOpen = false
+			
 			if @model.get( "pinned" )
 				return
 			#@selectview.off()
@@ -162,6 +172,9 @@ class ViewSub extends Backbone.View
 
 		@selectview?.focus()
 		@_isOpen = true
+		
+		# @parent.subview = @
+		# @parent.selectview = @selectview
 		return
 
 module.exports = ViewSub

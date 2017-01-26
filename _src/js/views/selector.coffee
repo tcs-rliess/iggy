@@ -53,7 +53,7 @@ class SelectorView extends require( "./facets/base" )
 		@$list.empty()
 
 		_list = []
-		for model, idx in @searchcoll.models
+		for model, idx in @searchcoll.models when not model.get( "pinned" )
 			_lbl = model.getLabel()
 			_tmpl = model.get( "labeltemplate" )
 			if _tmpl?
@@ -232,7 +232,10 @@ class SelectorView extends require( "./facets/base" )
 		return
 
 	selectActive: ( isEnterEvent=false )=>
-		
+		if not @main? and @_isFull()
+			_id = @result.last()?.id
+			@rmRes( _id )
+				
 		_sel = @$el.find( ".typelist a.active" ).removeClass( "active" ).data()
 			
 		_search = @$inp.val()
