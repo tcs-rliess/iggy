@@ -78,7 +78,7 @@ class FacetSubsNumber extends require( "./number_base" )
 		evnt.stopPropagation()
 		if not isNaN( _val )
 			@select()
-		return
+		return true
 		
 	getResults: =>
 		if @$inpOp?

@@ -63,12 +63,23 @@ class FacetSubsRange extends require( "./number_base" )
 		return [ _vFrom, _vTo ]
 	
 	_onTabAction: ( evnt )=>
+		if @$inp.is( evnt.target ) and not evnt.shiftKey
+			@$inpTo.focus()
+			return false
+		
+		if @$inpTo.is( evnt.target ) and evnt.shiftKey
+			@$inp.focus()
+			return false
+			
 		_val = @getValue()
 		if _val?.length >= 2
 			evnt.preventDefault()
 			evnt.stopPropagation()
 			@select()
-		return
+			return true
+			
+		# return false to prevent jump to next facet
+		return true
 
 
 

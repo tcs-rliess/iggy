@@ -88,7 +88,7 @@ class FacetSubsBase extends Backbone.View
 		evnt.preventDefault()
 		evnt.stopPropagation()
 		@select()
-		return
+		return true
 
 	close: ( evnt )=>
 		@focused = false

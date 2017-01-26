@@ -173,9 +173,9 @@ class FacetSubArray extends require( "../selector" )
 		searchContent = @$inp.val()
 		if searchContent?.length
 			@selectActive()
-			return
+			return true
 		@close()
-		return
+		return true
 		
 	_createOptionCollection: ( options )=>
 		if _.isFunction( options )

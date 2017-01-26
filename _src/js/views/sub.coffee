@@ -21,8 +21,8 @@ class ViewSub extends Backbone.View
 		
 		@parent.on "escape", ( evnt, cb )=>
 			if @_isOpen
-				@selectview?._onTabAction( evnt )
-				cb( evnt, @ ) if cb?
+				if @selectview?._onTabAction( evnt )
+					cb( evnt, @ ) if cb?
 			return
 		return
 
