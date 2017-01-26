@@ -144,7 +144,8 @@ jQuery( function( $ ){
 		label: "Array Select Single",
 		count: 1,
 		options: [ "pizza", "pasta", "carne" ],
-		pinned: true
+		pinned: true,
+		active: true
 	},{
 		type: "array",
 		name: "arrayseltwo",
@@ -193,13 +194,13 @@ jQuery( function( $ ){
 		label: "Select Single",
 		options: [ "pizza", "pasta", "carne" ],
 		//value: [ "pasta", "soup" ]
-	},{
-		type: "select",
-		name: "selsingle_pinned",
-		label: "Select Single",
-		options: [ "pizza", "pasta", "carne" ],
-		pinned: true
-		//value: [ "pasta", "soup" ]
+	// },{
+	// 	type: "select",
+	// 	name: "selsingle_pinned",
+	// 	label: "Select Single",
+	// 	options: [ "pizza", "pasta", "carne" ],
+	// 	pinned: true
+	// 	//value: [ "pasta", "soup" ]
 	},{
 		type: "select",
 		name: "multi",
@@ -216,23 +217,23 @@ jQuery( function( $ ){
 			{ value: "k", label: "Köln" },
 			{ value: "s", label: "Stuttgart" }
 		]
-	},{
-		type: "select",
-		name: "multi_pinned",
-		label: "Select Multi",
-		multiple: true,
-		//value: "pizza",
-		opts: {
-			width: 200
-		},
-		options: [
-			{ value: "m", label: "München" },
-			{ value: "hh", label: "Hamburg" },
-			{ value: "b", label: "Berlin" },
-			{ value: "k", label: "Köln" },
-			{ value: "s", label: "Stuttgart" }
-		],
-		pinned: true
+	// },{
+	// 	type: "select",
+	// 	name: "multi_pinned",
+	// 	label: "Select Multi",
+	// 	multiple: true,
+	// 	//value: "pizza",
+	// 	opts: {
+	// 		width: 200
+	// 	},
+	// 	options: [
+	// 		{ value: "m", label: "München" },
+	// 		{ value: "hh", label: "Hamburg" },
+	// 		{ value: "b", label: "Berlin" },
+	// 		{ value: "k", label: "Köln" },
+	// 		{ value: "s", label: "Stuttgart" }
+	// 	],
+	// 	pinned: true
 	},{
 		type: "select",
 		name: "issue45",
@@ -397,13 +398,13 @@ jQuery( function( $ ){
 		type: "daterange",
 		name: "issue55",
 		label: "daterange55",
-		value: [moment().add( -4, "d" ).valueOf(), moment().add( 4, "d" ).valueOf() ],
+		//value: [moment().add( -4, "d" ).valueOf(), moment().add( 4, "d" ).valueOf() ],
 	},{
 		type: "daterange",
 		name: "issue55_frmt",
 		label: "daterange55_frmt",
 		dateformat: "DD [foo] MMM [bar] YY",
-		value: [moment().add( -4, "d" ).format( "DD [foo] MMM [bar] YY" ), moment().add( 4, "d" ).format( "DD [foo] MMM [bar] YY" ) ],
+		//value: [moment().add( -4, "d" ).format( "DD [foo] MMM [bar] YY" ), moment().add( 4, "d" ).format( "DD [foo] MMM [bar] YY" ) ],
 	}]
 
 	var opts1 = {
@@ -411,10 +412,10 @@ jQuery( function( $ ){
 		dir: "asc",
 		sortby: "label",
 		searchButton: {
-			template: "<i class='fa fa-search'></i> Search!",
+			template: "",
 			event: "search",
 			pullright: false,
-			cssclass: "red-search"
+			cssclass: "btn btn-primary fa fa-search"
 		}
 	}
 
@@ -624,10 +625,11 @@ jQuery( function( $ ){
 	}]
 	var opts3 = {
 		searchButton: {
-			template: "<i class='fa fa-search'></i>",
+			template: "",
 			event: "search",
 			pullright: true
 		}
 	}
-	newIggy( facetsPredef, "#iggytest3", opts3 )
+	iggy3 = newIggy( facetsPredef, "#iggytest3", opts3 )
+	iggy3.on( "search", function(){ alert( "Fired Search Event:\n" + JSON.stringify( arguments ) ) } )
 })

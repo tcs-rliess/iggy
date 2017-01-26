@@ -1,5 +1,5 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.IGGY = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Facets, FctArray, FctDateRange, FctEvent, FctNumber, FctRange, FctSelect, FctString, IGGY, MainView, Results,
+var Facets, FctArray, FctDateRange, FctEvent, FctNumber, FctRange, FctSelect, FctString, IGGY, IGGY_IDX, MainView, Results,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -23,6 +23,8 @@ FctDateRange = require("./models/facet_daterange");
 FctEvent = require("./models/facet_event");
 
 Results = require("./models/results");
+
+IGGY_IDX = 1;
 
 IGGY = (function(superClass) {
   extend(IGGY, superClass);
@@ -59,7 +61,8 @@ IGGY = (function(superClass) {
       el: this.$el,
       collection: this.facets,
       results: this.results,
-      searchButton: options.searchButton || {}
+      searchButton: options.searchButton,
+      idx: IGGY_IDX++
     });
     this.view.on("searchbutton", this.triggerEvent);
     return;
@@ -1139,7 +1142,7 @@ buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? 
 }).call(this);
 
 }
-buf.push("</ul><div class=\"subselect\"></div><div class=\"loader\"><i class=\"fa fa-cog fa-spin\"></i></div>");}.call(this,"label" in locals_for_with?locals_for_with.label:typeof label!=="undefined"?label:undefined,"pinned" in locals_for_with?locals_for_with.pinned:typeof pinned!=="undefined"?pinned:undefined,"selected" in locals_for_with?locals_for_with.selected:typeof selected!=="undefined"?selected:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
+buf.push("</ul><div class=\"subselect closed\"></div><div class=\"loader\"><i class=\"fa fa-cog fa-spin\"></i></div>");}.call(this,"label" in locals_for_with?locals_for_with.label:typeof label!=="undefined"?label:undefined,"pinned" in locals_for_with?locals_for_with.pinned:typeof pinned!=="undefined"?pinned:undefined,"selected" in locals_for_with?locals_for_with.selected:typeof selected!=="undefined"?selected:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
 };
 },{"jade/runtime":38}],24:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -1149,8 +1152,8 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 ;var locals_for_with = (locals || {});(function (searchButton) {
-buf.push("<div class=\"add-facet-btn fa fa-plus\"></div>");
-if ( searchButton != undefined && searchButton.template != undefined && searchButton.template.length)
+buf.push("<button class=\"add-facet-btn fa fa-plus\"></button>");
+if ( searchButton != undefined && searchButton.template != undefined && searchButton.template.length >= 0)
 {
 buf.push("<button" + (jade.cls(['search-btn',searchButton.cssclass,{"search-btn-pullright":searchButton.pullright}], [null,true,true])) + ">" + (null == (jade_interp = searchButton.template) ? "" : jade_interp) + "</button>");
 }}.call(this,"searchButton" in locals_for_with?locals_for_with.searchButton:typeof searchButton!=="undefined"?searchButton:undefined));;return buf.join("");
@@ -1221,6 +1224,8 @@ FacetSubsBase = (function(superClass) {
   };
 
   FacetSubsBase.prototype.focus = function() {
+    this.$el.removeClass("closed");
+    this.focused = true;
     this.$inp.focus();
   };
 
@@ -1230,7 +1235,7 @@ FacetSubsBase = (function(superClass) {
       renderEmpty = false;
     }
     if (renderEmpty) {
-      return "<li></li>";
+      return "";
     }
     _list = [];
     ref = this.result.models;
@@ -1248,6 +1253,7 @@ FacetSubsBase = (function(superClass) {
   };
 
   FacetSubsBase.prototype.open = function() {
+    this.$el.removeClass("closed");
     this.$el.addClass("open");
     this.isOpen = true;
     this.trigger("opened");
@@ -1287,17 +1293,19 @@ FacetSubsBase = (function(superClass) {
     this.$el.removeClass("closed");
     this.$el.addClass("open");
     this.render();
-    pView.open();
+    if (pView != null) {
+      pView.open();
+    }
   };
 
-  FacetSubsBase.prototype.render = function() {
+  FacetSubsBase.prototype.render = function(initialAdd) {
     var _tmpl;
     _tmpl = this.template(this.getTemplateData());
     this.$el.html(_tmpl);
-    this.$inp = this.$el.find(this._getInpSelector());
-    if (this._hasTabListener(true)) {
-      $(document).on(this._hasTabEvent(), this._onKey);
+    if (!initialAdd) {
+      this.$el.removeClass("closed");
     }
+    this.$inp = this.$el.find(this._getInpSelector());
   };
 
   FacetSubsBase.prototype._hasTabEvent = function() {
@@ -1312,12 +1320,11 @@ FacetSubsBase = (function(superClass) {
     evnt.preventDefault();
     evnt.stopPropagation();
     this.select();
+    return true;
   };
 
   FacetSubsBase.prototype.close = function(evnt) {
-    if (this._hasTabListener(false)) {
-      $(document).off(this._hasTabEvent(), this._onKey);
-    }
+    this.focused = false;
     this.$el.removeClass("open");
     this.$el.addClass("closed");
     this.isOpen = false;
@@ -1799,6 +1806,45 @@ FacetSubArray = (function(superClass) {
 
   FacetSubArray.prototype.optColl = StringOptions;
 
+  function FacetSubArray(options) {
+    this._createOptionCollection = bind(this._createOptionCollection, this);
+    this._onTabAction = bind(this._onTabAction, this);
+    this.getResults = bind(this.getResults, this);
+    this.reopen = bind(this.reopen, this);
+    this.select = bind(this.select, this);
+    this._isFull = bind(this._isFull, this);
+    this.renderResult = bind(this.renderResult, this);
+    this.getTemplateData = bind(this.getTemplateData, this);
+    this.editRes = bind(this.editRes, this);
+    this.rmRes = bind(this.rmRes, this);
+    this.close = bind(this.close, this);
+    this.events = bind(this.events, this);
+    this.initialize = bind(this.initialize, this);
+    this.loading = false;
+    if (options.model.get("count") != null) {
+      this.selectCount = options.model.get("count");
+    }
+    options.custom = true;
+    if (options.model.get("custom") != null) {
+      options.custom = Boolean(options.model.get("custom"));
+    }
+    this.collection = this._createOptionCollection(options.model.get("options"));
+    if (!options.custom && this.selectCount <= 0) {
+      this.selectCount = this.collection.length;
+    }
+    FacetSubArray.__super__.constructor.call(this, options);
+    this.result.on("remove", (function(_this) {
+      return function(mdl, coll) {
+        if (coll.length) {
+          options.sub.renderResult();
+        }
+        _this.searchcoll.add(mdl);
+        _this.trigger("removed", mdl);
+      };
+    })(this));
+    return;
+  }
+
   FacetSubArray.prototype.initialize = function() {
     this.editMode = false;
     return FacetSubArray.__super__.initialize.apply(this, arguments);
@@ -1895,45 +1941,6 @@ FacetSubArray = (function(superClass) {
     return "<li>" + _list.join("</li><li>") + "</li>";
   };
 
-  function FacetSubArray(options) {
-    this._createOptionCollection = bind(this._createOptionCollection, this);
-    this._onTabAction = bind(this._onTabAction, this);
-    this.getResults = bind(this.getResults, this);
-    this.reopen = bind(this.reopen, this);
-    this.select = bind(this.select, this);
-    this._isFull = bind(this._isFull, this);
-    this.renderResult = bind(this.renderResult, this);
-    this.getTemplateData = bind(this.getTemplateData, this);
-    this.editRes = bind(this.editRes, this);
-    this.rmRes = bind(this.rmRes, this);
-    this.close = bind(this.close, this);
-    this.events = bind(this.events, this);
-    this.initialize = bind(this.initialize, this);
-    this.loading = false;
-    if (options.model.get("count") != null) {
-      this.selectCount = options.model.get("count");
-    }
-    options.custom = true;
-    if (options.model.get("custom") != null) {
-      options.custom = Boolean(options.model.get("custom"));
-    }
-    this.collection = this._createOptionCollection(options.model.get("options"));
-    if (!options.custom && this.selectCount <= 0) {
-      this.selectCount = this.collection.length;
-    }
-    FacetSubArray.__super__.constructor.call(this, options);
-    this.result.on("remove", (function(_this) {
-      return function(mdl, coll) {
-        if (coll.length) {
-          options.sub.renderResult();
-        }
-        _this.searchcoll.add(mdl);
-        _this.trigger("removed", mdl);
-      };
-    })(this));
-    return;
-  }
-
   FacetSubArray.prototype._isFull = function() {
     if (this.selectCount <= 0) {
       return false;
@@ -1969,13 +1976,8 @@ FacetSubArray = (function(superClass) {
   };
 
   FacetSubArray.prototype.reopen = function(pView) {
-    var _id, ref;
     if (this._isFull()) {
-      if (this.model.get("pinned")) {
-        _id = (ref = this.result.last()) != null ? ref.id : void 0;
-        this.rmRes(_id);
-        FacetSubArray.__super__.reopen.apply(this, arguments);
-      }
+      FacetSubArray.__super__.reopen.apply(this, arguments);
       return;
     }
     FacetSubArray.__super__.reopen.apply(this, arguments);
@@ -1994,9 +1996,10 @@ FacetSubArray = (function(superClass) {
     searchContent = this.$inp.val();
     if (searchContent != null ? searchContent.length : void 0) {
       this.selectActive();
-      return;
+      return true;
     }
     this.close();
+    return true;
   };
 
   FacetSubArray.prototype._createOptionCollection = function(options) {
@@ -2181,6 +2184,7 @@ FacetSubsNumber = (function(superClass) {
     if (!isNaN(_val)) {
       this.select();
     }
+    return true;
   };
 
   FacetSubsNumber.prototype.getResults = function() {
@@ -2322,12 +2326,22 @@ FacetSubsRange = (function(superClass) {
 
   FacetSubsRange.prototype._onTabAction = function(evnt) {
     var _val;
+    if (this.$inp.is(evnt.target) && !evnt.shiftKey) {
+      this.$inpTo.focus();
+      return false;
+    }
+    if (this.$inpTo.is(evnt.target) && evnt.shiftKey) {
+      this.$inp.focus();
+      return false;
+    }
     _val = this.getValue();
     if ((_val != null ? _val.length : void 0) >= 2) {
       evnt.preventDefault();
       evnt.stopPropagation();
       this.select();
+      return true;
     }
+    return true;
   };
 
   return FacetSubsRange;
@@ -2501,9 +2515,6 @@ FacetSubsSelect = (function(superClass) {
       })(this));
       this.select2.$container.on("click", this._sel2open);
       this.select2.$element.hide();
-      if (this.model.get("multiple")) {
-        $(document).on(this._hasTabEvent(), this._onKey);
-      }
     }
     return this.select2;
   };
@@ -2710,7 +2721,9 @@ FacetSubString = (function(superClass) {
     FacetSubString.__super__.close.apply(this, arguments);
     try {
       if ((ref = this.$inp) != null) {
-        ref.remove();
+        if (typeof ref.remove === "function") {
+          ref.remove();
+        }
       }
     } catch (error) {}
   };
@@ -2753,6 +2766,8 @@ MainView = (function(superClass) {
     this._onFocusSearch = bind(this._onFocusSearch, this);
     this._onSearch = bind(this._onSearch, this);
     this.focusSearch = bind(this.focusSearch, this);
+    this._nextFacet = bind(this._nextFacet, this);
+    this._keyListen = bind(this._keyListen, this);
     this._outerClickListen = bind(this._outerClickListen, this);
     this._onClosed = bind(this._onClosed, this);
     this._onOpened = bind(this._onOpened, this);
@@ -2761,7 +2776,6 @@ MainView = (function(superClass) {
     this.setFacet = bind(this.setFacet, this);
     this.remFacet = bind(this.remFacet, this);
     this.exit = bind(this.exit, this);
-    this._onKey = bind(this._onKey, this);
     this._addFacet = bind(this._addFacet, this);
     this.render = bind(this.render, this);
     this.templateData = bind(this.templateData, this);
@@ -2781,8 +2795,10 @@ MainView = (function(superClass) {
   MainView.prototype.initialize = function(options) {
     var _cl, _fnSort, _valueFacets, fct, i, len, ref, ref1;
     this.main = options.main;
+    this.idx = options.idx;
     this.results = options.results;
     this.searchButton = options.searchButton;
+    this.facets = {};
     this.collection.on("iggy:rem", this.remFacet);
     _cl = "iggy clearfix";
     if ((ref = this.el.className) != null ? ref.length : void 0) {
@@ -2790,8 +2806,8 @@ MainView = (function(superClass) {
     }
     this.el.className += _cl;
     this.render();
-    $(document).on("keyup", this._onKey);
     this._outerClickListen();
+    this._keyListen();
     _valueFacets = this.collection.filter(function(fct) {
       return ((fct != null ? fct.get("value") : void 0) != null) || (fct != null ? fct.get("pinned") : void 0);
     });
@@ -2809,47 +2825,60 @@ MainView = (function(superClass) {
     ref1 = _valueFacets.sort(_fnSort("_idx"));
     for (i = 0, len = ref1.length; i < len; i++) {
       fct = ref1[i];
-      this.genSub(fct, false);
+      this.genSub(fct, false, true);
     }
     this.collection.on("add", (function(_this) {
       return function() {
         _this.$addBtn.show();
       };
     })(this));
+    setTimeout((function(_this) {
+      return function() {
+        var _active, view;
+        _active = _this.collection.filter(function(fct) {
+          return (fct != null ? fct.get("active") : void 0) && (fct != null ? fct.get("pinned") : void 0);
+        });
+        if (_active.length) {
+          view = _this.facets[_active[0].id];
+          if (view != null) {
+            view.reopen();
+          }
+          if (view != null) {
+            view.focus();
+          }
+        }
+      };
+    })(this), 0);
   };
 
   MainView.prototype.templateData = function() {
     var _ret;
     _ret = {
-      searchButton: {
+      tab_index: (((this.idx || 1) + 1) * 1000) - 10
+    };
+    if (this.searchButton != null) {
+      _ret.searchButton = {
         template: this.searchButton.template || "",
         event: this.searchButton.event || "search",
         pullright: this.searchButton.pullright || false,
-        cssclass: this.searchButton.cssclass
-      }
-    };
+        cssclass: this.searchButton.cssclass || "btn btn-primary fa fa-search"
+      };
+    }
     return _ret;
   };
 
   MainView.prototype.render = function() {
-    var ref;
-    this.$el.html(this.template(this.templateData()));
+    var _tplData;
+    _tplData = this.templateData();
+    this.$el.html(this.template(_tplData));
     this.$addBtn = this.$(".add-facet-btn");
-    if ((ref = this.searchButton.template) != null ? ref.length : void 0) {
+    if (_tplData.searchButton != null) {
       this.$searchBtn = this.$(".search-btn");
     }
   };
 
   MainView.prototype._addFacet = function(evnt) {
     this.addFacet();
-  };
-
-  MainView.prototype._onKey = function(evnt) {
-    var ref;
-    if (evnt.keyCode === KEYCODES.ESC || (ref = evnt.keyCode, indexOf.call(KEYCODES.ESC, ref) >= 0)) {
-      this.exit();
-      return;
-    }
   };
 
   MainView.prototype.exit = function(nextAdd) {
@@ -2889,10 +2918,13 @@ MainView = (function(superClass) {
     }
   };
 
-  MainView.prototype.genSub = function(facetM, addAfter) {
-    var subview;
+  MainView.prototype.genSub = function(facetM, addAfter, initialAdd) {
+    var _self, subview;
     if (addAfter == null) {
       addAfter = true;
+    }
+    if (initialAdd == null) {
+      initialAdd = false;
     }
     subview = new SubView({
       model: facetM,
@@ -2903,6 +2935,7 @@ MainView = (function(superClass) {
       return function(results) {
         var ref;
         if (subview != null ? (ref = subview.model) != null ? ref.get("pinned") : void 0 : void 0) {
+          _this.subview = null;
           return;
         }
         if (!(results != null ? results.length : void 0)) {
@@ -2922,8 +2955,15 @@ MainView = (function(superClass) {
         }
       };
     })(this));
-    subview.on("selected", this.setFacet);
-    this.$addBtn.before(subview.render());
+    _self = this;
+    subview.on("selected", function(facetM, data) {
+      _self.setFacet(facetM, data);
+      if ((this.selectview._isFull == null) || this.selectview._isFull()) {
+        _self._nextFacet(null, this);
+      }
+    });
+    this.$addBtn.before(subview.render(initialAdd));
+    this.facets[facetM.id] = subview;
     return subview;
   };
 
@@ -2987,6 +3027,68 @@ MainView = (function(superClass) {
 
   MainView.prototype._outerClickListen = function() {
     jQuery(document).on("click", this._outerClick);
+  };
+
+  MainView.prototype._keyListen = function() {
+    jQuery(document).on("keydown", (function(_this) {
+      return function(evnt) {
+        var _prevId, ref, ref1, ref2, ref3, ref4, ref5;
+        if (evnt.keyCode === KEYCODES.TAB || (ref = evnt.keyCode, indexOf.call(KEYCODES.TAB, ref) >= 0)) {
+          evnt.preventDefault();
+          if ($(evnt.target).is(".search-btn")) {
+            setTimeout(function() {
+              return _this.addFacet();
+            }, 0);
+            return;
+          }
+          if ((ref1 = _this.selectview) != null ? ref1.isOpen : void 0) {
+            if (evnt != null ? evnt.shiftKey : void 0) {
+              _prevId = (ref2 = _this.$addBtn) != null ? (ref3 = ref2.prevAll(".sub")) != null ? (ref4 = ref3.first()) != null ? ref4.data("fctid") : void 0 : void 0 : void 0;
+              if (_prevId != null) {
+                setTimeout(function() {
+                  var ref5;
+                  return (ref5 = _this.facets[_prevId]) != null ? ref5.reopen() : void 0;
+                }, 0);
+              }
+            } else {
+              _this.selectview.close();
+              _this.focusSearch();
+            }
+            return;
+          }
+          _this.trigger("escape", evnt, _this._nextFacet);
+          return;
+        }
+        if (evnt.keyCode === KEYCODES.ESC || (ref5 = evnt.keyCode, indexOf.call(KEYCODES.ESC, ref5) >= 0)) {
+          _this.exit();
+          _this.trigger("escape", evnt);
+          return;
+        }
+      };
+    })(this));
+  };
+
+  MainView.prototype._nextFacet = function(evnt, subView) {
+    var _next, _nextFn, _nextId, ref;
+    _nextFn = (evnt != null ? evnt.shiftKey : void 0) ? "prev" : "next";
+    _next = (ref = subView.$el) != null ? typeof ref[_nextFn] === "function" ? ref[_nextFn]() : void 0 : void 0;
+    if (_next.hasClass("add-facet-btn")) {
+      setTimeout((function(_this) {
+        return function() {
+          return _this.addFacet();
+        };
+      })(this), 0);
+      return;
+    }
+    _nextId = _next != null ? _next.data("fctid") : void 0;
+    if (_nextId != null) {
+      setTimeout((function(_this) {
+        return function() {
+          var ref1;
+          return (ref1 = _this.facets[_nextId]) != null ? ref1.reopen() : void 0;
+        };
+      })(this), 0);
+    }
   };
 
   MainView.prototype.focusSearch = function() {
@@ -3127,6 +3229,9 @@ SelectorView = (function(superClass) {
     ref = this.searchcoll.models;
     for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
       model = ref[idx];
+      if (!(!model.get("pinned"))) {
+        continue;
+      }
       _lbl = model.getLabel();
       _tmpl = model.get("labeltemplate");
       if (_tmpl != null) {
@@ -3333,9 +3438,13 @@ SelectorView = (function(superClass) {
   SelectorView.prototype.select = function() {};
 
   SelectorView.prototype.selectActive = function(isEnterEvent) {
-    var _search, _sel, ref;
+    var _id, _search, _sel, ref, ref1;
     if (isEnterEvent == null) {
       isEnterEvent = false;
+    }
+    if ((this.main == null) && this._isFull()) {
+      _id = (ref = this.result.last()) != null ? ref.id : void 0;
+      this.rmRes(_id);
     }
     _sel = this.$el.find(".typelist a.active").removeClass("active").data();
     _search = this.$inp.val();
@@ -3349,7 +3458,7 @@ SelectorView = (function(superClass) {
     this.activeIdx = 0;
     if ((_sel != null ? _sel.idx : void 0) >= 0 && this.searchcoll.length) {
       this.selected(this.collection.get(_sel.id));
-    } else if ((ref = this.currQuery) != null ? ref.length : void 0) {
+    } else if ((ref1 = this.currQuery) != null ? ref1.length : void 0) {
       this.selected(new this.collection.model({
         value: this.currQuery,
         custom: true
@@ -3416,13 +3525,26 @@ ViewSub = (function(superClass) {
     this.result = new Backbone.Collection();
     this.$el.on("click", this.reopen);
     this.parent = options.parent;
+    this.$el.data("fctid", this.model.id);
+    this.parent.on("escape", (function(_this) {
+      return function(evnt, cb) {
+        var ref;
+        if (_this._isOpen) {
+          if ((ref = _this.selectview) != null ? ref._onTabAction(evnt) : void 0) {
+            if (cb != null) {
+              cb(evnt, _this);
+            }
+          }
+        }
+      };
+    })(this));
   };
 
   ViewSub.prototype.events = {
     "click .rm-facet-btn": "del"
   };
 
-  ViewSub.prototype.render = function(optMdl) {
+  ViewSub.prototype.render = function(initialAdd) {
     var _err, _errerr, _list, i, idx, len, model, ref;
     _list = [];
     ref = this.result.models;
@@ -3449,7 +3571,7 @@ ViewSub = (function(superClass) {
     }));
     this.$sub = this.$(".subselect");
     this.$results = this.$(".subresults");
-    this.generateSub();
+    this.generateSub(initialAdd);
     return this.el;
   };
 
@@ -3556,7 +3678,7 @@ ViewSub = (function(superClass) {
     }
   };
 
-  ViewSub.prototype.generateSub = function() {
+  ViewSub.prototype.generateSub = function(initialAdd) {
     var ref;
     if (this.selectview != null) {
       this.attachSubEvents();
@@ -3568,7 +3690,7 @@ ViewSub = (function(superClass) {
       el: this.$sub
     });
     this.attachSubEvents();
-    this.$el.append(this.selectview.render());
+    this.$el.append(this.selectview.render(initialAdd));
     if (((ref = this.model) != null ? ref.get("value") : void 0) != null) {
       this.selectview.select();
     }
