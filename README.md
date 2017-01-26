@@ -17,7 +17,7 @@ There are several options to customize the behavior of iggy.
 
 - **sortby** *( `String` optional; default = `name` )*: Sorting is always first done by `sort` (desc). But it's possible to change second sorting element with this option.
 - **dir** *( `String` optional; default = `asc` )*: The sort direction of the sort key configured with option `sortby`. allowed are "asc" and "desc".
-- **searchButton** *( `Object` )*: Optional search button configuration. It will only displayed if `searchButton.template` is defined.
+- **searchButton** *( `Object` )*: Optional search button configuration. It will only displayed if `searchButton.template` is defined. To change the sytle you can use the css class `.search-btn`.
 	- **searchButton.template** *( `String` )*: A html string to display the search button
 	- **searchButton.event** *( `String`; default = `search` )*: A event name to fire when the button was clicked.
 	- **searchButton.pullright** *( `Boolean`; default = `false` )*: Display the search button on the right istead of adding it after the "+" button.
