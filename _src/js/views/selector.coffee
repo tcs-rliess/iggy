@@ -129,6 +129,10 @@ class SelectorView extends require( "./facets/base" )
 		return
 		
 	selected: ( mdl )=>
+		if not @main? and @_isFull()
+			_id = @result.last()?.id
+			@rmRes( _id )
+			
 		try
 			if mdl.onlyExec?
 				mdl?.exec?()

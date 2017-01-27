@@ -138,6 +138,9 @@ class FacetSubArray extends require( "../selector" )
 	select: =>
 		if @loading
 			return
+		
+		if @_isFull()
+			return
 			
 		_vals = @model.get( "value" )
 		if _vals? and not _.isArray( _vals )
