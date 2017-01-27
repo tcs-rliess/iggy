@@ -12,12 +12,19 @@ class FacetSubsDateRange extends require( "./base" )
 				format: @model.get( "dateformat" )
 		
 		if @model.get("value")?[0]?
-			_sd = moment( @model.get("value")[0], @model.get( "dateformat" ) )
+			@model.get("value")?[1]?
+			if _.isNumber( @model.get("value")[0] )
+				_sd = moment( @model.get("value")[0] )
+			else
+				_sd = moment( @model.get("value")[0], @model.get( "dateformat" ) )
 			if _sd.isValid()
 				_opts.startDate = _sd._d
 
 		if @model.get("value")?[1]?
-			_ed = moment( @model.get("value")[1], @model.get( "dateformat" ) )
+			if _.isNumber( @model.get("value")[1] )
+				_ed = moment( @model.get("value")[1] )
+			else
+				_ed = moment( @model.get("value")[1], @model.get( "dateformat" ) )
 			if _ed.isValid()
 				_opts.endDate = _ed._d
 		return _opts
