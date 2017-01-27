@@ -7,7 +7,7 @@ class MainView extends Backbone.View
 	template: require( "../tmpls/wrapper.jade" )
 
 	events:
-		"click .search-btn": "_onSearch"
+		"mousedown .search-btn": "_onSearch"
 		"focus .search-btn": "_onFocusSearch"
 		"click .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
