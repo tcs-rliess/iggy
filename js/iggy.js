@@ -194,7 +194,6 @@ IGGY = (function(superClass) {
   };
 
   IGGY.prototype.triggerChange = function() {
-    console.log(this.nonEmptyResults);
     setTimeout((function(_this) {
       return function() {
         return _this.trigger("change", _this.nonEmptyResults);
@@ -1438,7 +1437,7 @@ FacetSubsDateRange = (function(superClass) {
   FacetSubsDateRange.prototype.template = require("../../tmpls/daterange.jade");
 
   FacetSubsDateRange.prototype.forcedDateRangeOpts = function() {
-    var _ed, _opts, _sd, ref, ref1;
+    var _ed, _opts, _sd, ref, ref1, ref2;
     _opts = {
       opens: "right"
     };
@@ -1448,13 +1447,22 @@ FacetSubsDateRange = (function(superClass) {
       };
     }
     if (((ref = this.model.get("value")) != null ? ref[0] : void 0) != null) {
-      _sd = moment(this.model.get("value")[0], this.model.get("dateformat"));
+      ((ref1 = this.model.get("value")) != null ? ref1[1] : void 0) != null;
+      if (_.isNumber(this.model.get("value")[0])) {
+        _sd = moment(this.model.get("value")[0]);
+      } else {
+        _sd = moment(this.model.get("value")[0], this.model.get("dateformat"));
+      }
       if (_sd.isValid()) {
         _opts.startDate = _sd._d;
       }
     }
-    if (((ref1 = this.model.get("value")) != null ? ref1[1] : void 0) != null) {
-      _ed = moment(this.model.get("value")[1], this.model.get("dateformat"));
+    if (((ref2 = this.model.get("value")) != null ? ref2[1] : void 0) != null) {
+      if (_.isNumber(this.model.get("value")[1])) {
+        _ed = moment(this.model.get("value")[1]);
+      } else {
+        _ed = moment(this.model.get("value")[1], this.model.get("dateformat"));
+      }
       if (_ed.isValid()) {
         _opts.endDate = _ed._d;
       }

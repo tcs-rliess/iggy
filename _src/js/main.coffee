@@ -117,7 +117,6 @@ class IGGY extends Backbone.Events
 		return @nonEmptyResults
 
 	triggerChange: =>
-		console.log @nonEmptyResults
 		setTimeout( =>
 			@trigger( "change", @nonEmptyResults )
 		, 0 )

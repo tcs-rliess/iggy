@@ -622,6 +622,74 @@ jQuery( function( $ ){
 				'Last 90 Days': [moment().subtract(89, 'day'), moment()]
 			}
 		}
+	},{
+		type: "daterange",
+		name: "issue55",
+		label: "daterange55",
+		value: [moment().add( -4, "d" ).valueOf(), moment().add( 4, "d" ).valueOf() ],
+	},{
+		type: "daterange",
+		name: "issue55_frmt_A",
+		label: "daterange55_frmt moment",
+		dateformat: "DD [foo] MMM [bar] YY",
+		value: [moment( moment().subtract(29, 'day').valueOf()), moment( moment().valueOf() )],
+		opts: {
+			//format: "DD [foo] MMM [bar] YY",
+			showWeekNumbers : true,
+			showDropdowns : true,
+			timePicker: false,
+			ranges: {
+				'Today': [moment(), moment()],
+				'Yesterday': [moment().subtract(1, 'day'), moment().subtract(1, 'day')],
+				'This Month': [moment().startOf('month'), moment().endOf('month')],
+				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+				'Last 7 Days': [moment().subtract(6, 'day'), moment()],
+				'Last 30 Days': [moment().subtract(29, 'day'), moment()],
+				'Last 90 Days': [moment().subtract(89, 'day'), moment()]
+			}
+		}
+	},{
+		type: "daterange",
+		name: "issue55_frmt_B",
+		label: "daterange55_frmt number",
+		dateformat: "DD [foo] MMM [bar] YY",
+		value: [moment().subtract(29, 'day').valueOf(), moment().valueOf()],
+		opts: {
+			//format: "DD [foo] MMM [bar] YY",
+			showWeekNumbers : true,
+			showDropdowns : true,
+			timePicker: false,
+			ranges: {
+				'Today': [moment(), moment()],
+				'Yesterday': [moment().subtract(1, 'day'), moment().subtract(1, 'day')],
+				'This Month': [moment().startOf('month'), moment().endOf('month')],
+				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+				'Last 7 Days': [moment().subtract(6, 'day'), moment()],
+				'Last 30 Days': [moment().subtract(29, 'day'), moment()],
+				'Last 90 Days': [moment().subtract(89, 'day'), moment()]
+			}
+		}
+	},{
+		type: "daterange",
+		name: "issue55_frmt_C",
+		label: "daterange55_frmt format",
+		dateformat: "DD [foo] MMM [bar] YY",
+		value: [moment().subtract(29, 'day').format("DD [foo] MMM [bar] YY"), moment().format("DD [foo] MMM [bar] YY")],
+		opts: {
+			//format: "DD [foo] MMM [bar] YY",
+			showWeekNumbers : true,
+			showDropdowns : true,
+			timePicker: false,
+			ranges: {
+				'Today': [moment(), moment()],
+				'Yesterday': [moment().subtract(1, 'day'), moment().subtract(1, 'day')],
+				'This Month': [moment().startOf('month'), moment().endOf('month')],
+				'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+				'Last 7 Days': [moment().subtract(6, 'day'), moment()],
+				'Last 30 Days': [moment().subtract(29, 'day'), moment()],
+				'Last 90 Days': [moment().subtract(89, 'day'), moment()]
+			}
+		}
 	}]
 	var opts3 = {
 		searchButton: {
