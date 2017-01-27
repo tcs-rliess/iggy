@@ -42,6 +42,7 @@ IGGY = (function(superClass) {
     this.triggerEvent = bind(this.triggerEvent, this);
     this.triggerChange = bind(this.triggerChange, this);
     this.getQuery = bind(this.getQuery, this);
+    this._filterEmpty = bind(this._filterEmpty, this);
     this._error = bind(this._error, this);
     this.addFacet = bind(this.addFacet, this);
     this._prepareFacets = bind(this._prepareFacets, this);
@@ -65,6 +66,7 @@ IGGY = (function(superClass) {
       idx: IGGY_IDX++
     });
     this.view.on("searchbutton", this.triggerEvent);
+    this.nonEmptyResults = this.results.sub(this._filterEmpty);
     return;
   }
 
@@ -175,16 +177,37 @@ IGGY = (function(superClass) {
     return _err;
   };
 
+  IGGY.prototype._filterEmpty = function(model) {
+    var _v;
+    _v = model.get("value");
+    if (_v == null) {
+      return false;
+    }
+    if (_v.length <= 0) {
+      return false;
+    }
+    return true;
+  };
+
   IGGY.prototype.getQuery = function() {
-    return this.results;
+    return this.nonEmptyResults;
   };
 
   IGGY.prototype.triggerChange = function() {
-    this.trigger("change", this.results);
+    console.log(this.nonEmptyResults);
+    setTimeout((function(_this) {
+      return function() {
+        return _this.trigger("change", _this.nonEmptyResults);
+      };
+    })(this), 0);
   };
 
   IGGY.prototype.triggerEvent = function(eventName) {
-    this.trigger(eventName, this.results);
+    setTimeout((function(_this) {
+      return function() {
+        return _this.trigger(eventName, _this.nonEmptyResults);
+      };
+    })(this), 0);
   };
 
   IGGY.prototype._initErrors = function() {
@@ -802,12 +825,12 @@ IggyResults = (function(superClass) {
 
   return IggyResults;
 
-})(Backbone.Collection);
+})(require("./backbone_sub"));
 
 module.exports = IggyResults;
 
 
-},{}],13:[function(require,module,exports){
+},{"./backbone_sub":2}],13:[function(require,module,exports){
 var BaseResult, BaseResults,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1953,6 +1976,9 @@ FacetSubArray = (function(superClass) {
     if (this.loading) {
       return;
     }
+    if (this._isFull()) {
+      return;
+    }
     _vals = this.model.get("value");
     if ((_vals != null) && !_.isArray(_vals)) {
       _vals = [_vals];
@@ -2786,7 +2812,7 @@ MainView = (function(superClass) {
   MainView.prototype.template = require("../tmpls/wrapper.jade");
 
   MainView.prototype.events = {
-    "click .search-btn": "_onSearch",
+    "mousedown .search-btn": "_onSearch",
     "focus .search-btn": "_onFocusSearch",
     "click .add-facet-btn": "_addFacet",
     "click": "_addFacet"
@@ -3317,7 +3343,11 @@ SelectorView = (function(superClass) {
   };
 
   SelectorView.prototype.selected = function(mdl) {
-    var _err, _errerr;
+    var _err, _errerr, _id, ref;
+    if ((this.main == null) && this._isFull()) {
+      _id = (ref = this.result.last()) != null ? ref.id : void 0;
+      this.rmRes(_id);
+    }
     try {
       if (mdl.onlyExec != null) {
         if (mdl != null) {

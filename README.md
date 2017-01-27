@@ -27,6 +27,7 @@ There are several options to customize the behavior of iggy.
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.2.2|2017-01-27|#65 fixed search button handling; #66 filter empty elements; array facet respect array max count on click|
 |0.2.1|2017-01-26|#58 Changed style of search button; #63 Optimized display of array facet gui; #61 Fixed pinned facets, added `active` and optimized tab navigation.|
 |0.2.0|2017-01-25|#55 fixed date range picker and added option `dateformat`; #58 added search button; #59 The "+" is hidden if the facet select is open; Facets can be `pinned:true` to be always displayed and be undeletable. |
 |0.1.13|2016-08-11|handle select2 jQuery text option texts #57|
