@@ -5,7 +5,7 @@ class IggyResult extends Backbone.Model
 		name: null
 		value: null
 
-class IggyResults extends Backbone.Collection
+class IggyResults extends require( "./backbone_sub" )
 	model: IggyResult
 	initialize: ( mdls, opts )=>
 		if opts.modifyKey?.length

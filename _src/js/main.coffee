@@ -33,6 +33,8 @@ class IGGY extends Backbone.Events
 		@view = new MainView( main: @, el: @$el, collection: @facets, results: @results, searchButton: options.searchButton, idx: IGGY_IDX++ )
 		
 		@view.on "searchbutton", @triggerEvent
+
+		@nonEmptyResults = @results.sub( @_filterEmpty )
 		return
 
 	_prepareEl: ( el )=>
@@ -102,15 +104,29 @@ class IGGY extends Backbone.Events
 		_err.message = _msg
 		return _err
 
+	_filterEmpty: ( model )=>
+		_v = model.get( "value" )
+		if not _v?
+			return false
+		if _v.length <= 0
+			return false
+		
+		return true
+	
 	getQuery: =>
-		return @results
+		return @nonEmptyResults
 
 	triggerChange: =>
-		@trigger( "change", @results )
+		console.log @nonEmptyResults
+		setTimeout( =>
+			@trigger( "change", @nonEmptyResults )
+		, 0 )
 		return
 	
 	triggerEvent: ( eventName )=>
-		@trigger( eventName, @results )
+		setTimeout( =>
+			@trigger( eventName, @nonEmptyResults )
+		, 0 )
 		return
 		
 	_initErrors: =>
