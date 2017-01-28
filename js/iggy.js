@@ -2821,6 +2821,7 @@ MainView = (function(superClass) {
 
   MainView.prototype.events = {
     "mousedown .search-btn": "_onSearch",
+    "click .search-btn": "_onSearch",
     "focus .search-btn": "_onFocusSearch",
     "click .add-facet-btn": "_addFacet",
     "click": "_addFacet"
@@ -3068,14 +3069,25 @@ MainView = (function(superClass) {
       return function(evnt) {
         var _prevId, ref, ref1, ref2, ref3, ref4, ref5;
         if (evnt.keyCode === KEYCODES.TAB || (ref = evnt.keyCode, indexOf.call(KEYCODES.TAB, ref) >= 0)) {
-          evnt.preventDefault();
-          if ($(evnt.target).is(".search-btn")) {
+          if ($(evnt.target).is(".search-btn") && (evnt != null ? evnt.shiftKey : void 0)) {
+            if (evnt != null) {
+              evnt.preventDefault();
+            }
+            if (evnt != null) {
+              evnt.stopPropagation();
+            }
             setTimeout(function() {
               return _this.addFacet();
             }, 0);
             return;
           }
           if ((ref1 = _this.selectview) != null ? ref1.isOpen : void 0) {
+            if (evnt != null) {
+              evnt.preventDefault();
+            }
+            if (evnt != null) {
+              evnt.stopPropagation();
+            }
             if (evnt != null ? evnt.shiftKey : void 0) {
               _prevId = (ref2 = _this.$addBtn) != null ? (ref3 = ref2.prevAll(".sub")) != null ? (ref4 = ref3.first()) != null ? ref4.data("fctid") : void 0 : void 0 : void 0;
               if (_prevId != null) {
@@ -3107,6 +3119,12 @@ MainView = (function(superClass) {
     _nextFn = (evnt != null ? evnt.shiftKey : void 0) ? "prev" : "next";
     _next = (ref = subView.$el) != null ? typeof ref[_nextFn] === "function" ? ref[_nextFn]() : void 0 : void 0;
     if (_next.hasClass("add-facet-btn")) {
+      if (evnt != null) {
+        evnt.preventDefault();
+      }
+      if (evnt != null) {
+        evnt.stopPropagation();
+      }
       setTimeout((function(_this) {
         return function() {
           return _this.addFacet();
@@ -3116,6 +3134,9 @@ MainView = (function(superClass) {
     }
     _nextId = _next != null ? _next.data("fctid") : void 0;
     if (_nextId != null) {
+      if (evnt != null) {
+        evnt.preventDefault();
+      }
       setTimeout((function(_this) {
         return function() {
           var ref1;

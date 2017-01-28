@@ -27,6 +27,8 @@ There are several options to customize the behavior of iggy.
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.2.4|2017-01-28|#69 Tab fixes and reactivate search button on ENTER|
+|0.2.3|2017-01-27|#67 fixed date range input if used date format option and input as number|
 |0.2.2|2017-01-27|#65 fixed search button handling; #66 filter empty elements; array facet respect array max count on click|
 |0.2.1|2017-01-26|#58 Changed style of search button; #63 Optimized display of array facet gui; #61 Fixed pinned facets, added `active` and optimized tab navigation.|
 |0.2.0|2017-01-25|#55 fixed date range picker and added option `dateformat`; #58 added search button; #59 The "+" is hidden if the facet select is open; Facets can be `pinned:true` to be always displayed and be undeletable. |
