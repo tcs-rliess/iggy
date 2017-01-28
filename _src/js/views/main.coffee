@@ -8,6 +8,7 @@ class MainView extends Backbone.View
 
 	events:
 		"mousedown .search-btn": "_onSearch"
+		"click .search-btn": "_onSearch"
 		"focus .search-btn": "_onFocusSearch"
 		"click .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
@@ -200,9 +201,11 @@ class MainView extends Backbone.View
 	_keyListen: =>
 		jQuery( document ).on "keydown", ( evnt )=>
 			if evnt.keyCode is KEYCODES.TAB or evnt.keyCode in KEYCODES.TAB
-				evnt.preventDefault()
+				#evnt?.preventDefault()
 				
-				if $( evnt.target ).is( ".search-btn" )
+				if $( evnt.target ).is( ".search-btn" ) and evnt?.shiftKey
+					evnt?.preventDefault()
+					evnt?.stopPropagation()
 					setTimeout( =>
 						@addFacet()
 					, 0 )
@@ -210,6 +213,8 @@ class MainView extends Backbone.View
 					
 				# case only the facet selector is open
 				if @selectview?.isOpen
+					evnt?.preventDefault()
+					evnt?.stopPropagation()
 					if evnt?.shiftKey
 						_prevId = @$addBtn?.prevAll( ".sub" )?.first()?.data( "fctid" )
 						if _prevId?
@@ -237,12 +242,15 @@ class MainView extends Backbone.View
 		_next = subView.$el?[ _nextFn ]?()
 		
 		if _next.hasClass( "add-facet-btn" )
+			evnt?.preventDefault()
+			evnt?.stopPropagation()
 			setTimeout( =>
 				@addFacet()
 			, 0 )
 			return
 		_nextId = _next?.data( "fctid" )
 		if _nextId?
+			evnt?.preventDefault()
 			setTimeout( =>
 				@facets[ _nextId ]?.reopen()
 			, 0 )
