@@ -1211,6 +1211,9 @@ FacetSubsBase = (function(superClass) {
     this.select = bind(this.select, this);
     this._checkSelectEmpty = bind(this._checkSelectEmpty, this);
     this.getValue = bind(this.getValue, this);
+    this.isEqualCurrent = bind(this.isEqualCurrent, this);
+    this.getResValue = bind(this.getResValue, this);
+    this.isResultEmpty = bind(this.isResultEmpty, this);
     this.getResults = bind(this.getResults, this);
     this.close = bind(this.close, this);
     this._onTabAction = bind(this._onTabAction, this);
@@ -1350,13 +1353,47 @@ FacetSubsBase = (function(superClass) {
     this.$el.removeClass("open");
     this.$el.addClass("closed");
     this.isOpen = false;
-    this.trigger("closed", this.result);
+    this.trigger("closed", this.result, evnt);
   };
 
   FacetSubsBase.prototype.getResults = function() {
     return {
       value: this.getValue()
     };
+  };
+
+  FacetSubsBase.prototype.isResultEmpty = function(res) {
+    if ((res != null ? res.value : void 0) != null) {
+      return this.isResultEmpty(res.value);
+    }
+    if (res == null) {
+      return true;
+    }
+    if (res === "") {
+      return true;
+    }
+    if (_.isArray(res) && res.length <= 0) {
+      return true;
+    }
+    return false;
+  };
+
+  FacetSubsBase.prototype.getResValue = function() {
+    var ref, ref1, res;
+    res = (ref = this.result) != null ? (ref1 = ref.first()) != null ? ref1.toJSON() : void 0 : void 0;
+    return (res != null ? res.value : void 0) || "";
+  };
+
+  FacetSubsBase.prototype.isEqualCurrent = function(val) {
+    var rv;
+    if (val == null) {
+      val = this.getValue();
+    }
+    rv = this.getResValue();
+    if (rv === val) {
+      return true;
+    }
+    return false;
   };
 
   FacetSubsBase.prototype.getValue = function() {
@@ -1367,24 +1404,24 @@ FacetSubsBase = (function(superClass) {
     return SubResults.prototype.model;
   };
 
-  FacetSubsBase.prototype._checkSelectEmpty = function(_val) {
-    if (_.isEmpty(_val) && !_.isNumber(_val) && !_.isBoolean(_val) && !this.model.get("pinned")) {
-      this.close();
+  FacetSubsBase.prototype._checkSelectEmpty = function(_val, evnt) {
+    if (_.isEmpty(_val) && !_.isNumber(_val) && !_.isBoolean(_val)) {
+      this.close(evnt);
       return true;
     }
     return false;
   };
 
-  FacetSubsBase.prototype.select = function() {
+  FacetSubsBase.prototype.select = function(evnt) {
     var _val;
     _val = this.getValue();
-    if (this._checkSelectEmpty(_val)) {
+    if (this._checkSelectEmpty(_val, evnt)) {
       return;
     }
-    this.set(_val);
+    this.set(_val, evnt);
   };
 
-  FacetSubsBase.prototype.set = function(val) {
+  FacetSubsBase.prototype.set = function(val, evnt) {
     var _ModelConst, _model;
     _model = this.result.first();
     if (_model == null) {
@@ -1398,8 +1435,8 @@ FacetSubsBase = (function(superClass) {
         value: val
       });
     }
-    this.trigger("selected", _model);
-    this.close();
+    this.trigger("selected", _model, evnt);
+    this.close(evnt);
   };
 
   return FacetSubsBase;
@@ -1684,12 +1721,16 @@ FacetNumberBase = (function(superClass) {
   };
 
   FacetNumberBase.prototype.getValue = function() {
-    var _v;
+    var _iv, _v;
     _v = this.$inp.val();
     if (!(_v != null ? _v.length : void 0)) {
       return null;
     }
-    return parseInt(this.valueByDefinition(_v), 10);
+    _iv = parseInt(_v, 10);
+    if (isNaN(_iv)) {
+      return null;
+    }
+    return this.valueByDefinition(_v);
   };
 
   FacetNumberBase.prototype._setNumber = function(_v, el) {
@@ -2120,10 +2161,12 @@ FacetSubsNumber = (function(superClass) {
     var ref;
     FacetSubsNumber.__super__.render.apply(this, arguments);
     if ((ref = this.model.get("operators")) != null ? ref.length : void 0) {
+      this.$elOp = this.$el.find(".operator");
+      this.elOp = this.$elOp.get(0);
       this.$inpOp = this.$el.find("select#" + this.cid + "op");
-      this.$inpOp.select2({
+      this.select2Op = this.$inpOp.select2({
         width: "auto"
-      });
+      }).data("select2");
       this.$inpOp.on("select2:close", this._opSelected);
     }
   };
@@ -2134,7 +2177,7 @@ FacetSubsNumber = (function(superClass) {
       renderEmpty = false;
     }
     if (renderEmpty) {
-      return "<li></li>";
+      return "";
     }
     _res = this.getResults();
     _s = "<li>";
@@ -2156,7 +2199,23 @@ FacetSubsNumber = (function(superClass) {
   };
 
   FacetSubsNumber.prototype.select = function(evnt) {
-    var _posWrp, ref;
+    var _posOpWrp, _posWrp, _val, ref, ref1;
+    _posOpWrp = -1;
+    if (evnt != null ? evnt.relatedTarget : void 0) {
+      _posOpWrp = (ref = this.elOp) != null ? ref.compareDocumentPosition(evnt != null ? evnt.relatedTarget : void 0) : void 0;
+      if (_posOpWrp === 20) {
+        return;
+      }
+    }
+    if ((evnt != null ? evnt.type : void 0) === "focusout" && _posOpWrp !== 20) {
+      _val = this.getValue();
+      if (_val != null) {
+        this.set(_val, evnt);
+        return;
+      }
+      this.close();
+      return;
+    }
     if ((evnt != null ? evnt.relatedTarget : void 0) != null) {
       _posWrp = this.el.compareDocumentPosition(evnt != null ? evnt.relatedTarget : void 0);
       if (!(_posWrp === 0 || _posWrp - 16 >= 0)) {
@@ -2164,7 +2223,7 @@ FacetSubsNumber = (function(superClass) {
         return;
       }
     }
-    if ((evnt != null) && ((evnt != null ? evnt.relatedTarget : void 0) === this.$inp.get(0) || (evnt != null ? evnt.relatedTarget : void 0) === ((ref = this.$inpOp) != null ? ref.get(0) : void 0))) {
+    if ((evnt != null) && ((evnt != null ? evnt.relatedTarget : void 0) === this.$inp.get(0) || (evnt != null ? evnt.relatedTarget : void 0) === ((ref1 = this.$inpOp) != null ? ref1.get(0) : void 0))) {
       evnt.stopPropagation();
       return;
     }
@@ -2190,11 +2249,12 @@ FacetSubsNumber = (function(superClass) {
       return;
     }
     FacetSubsNumber.__super__.focus.apply(this, arguments);
+    this.$inp.select();
   };
 
   FacetSubsNumber.prototype.reopen = function(pView) {
-    var _oldOp, _oldVal;
-    _oldVal = this.result.first().get("value");
+    var _oldOp, _oldVal, ref;
+    _oldVal = (ref = this.result.first()) != null ? ref.get("value") : void 0;
     _oldOp = this.result.first();
     this.model.set({
       value: _oldVal
@@ -2211,22 +2271,36 @@ FacetSubsNumber = (function(superClass) {
   };
 
   FacetSubsNumber.prototype._onTabAction = function(evnt) {
-    var _val;
+    var _val, ref;
+    if ((ref = this.model.get("operators")) != null ? ref.length : void 0) {
+      if (this.$inp.is(evnt.target) && evnt.shiftKey) {
+        evnt.stopPropagation();
+        evnt.preventDefault();
+        this.$inpOp.focus();
+        return false;
+      }
+      if ((this.select2Op.$selection.is(evnt.target) || evnt.target.classList.contains("select2-search__field")) && !evnt.shiftKey) {
+        evnt.stopPropagation();
+        evnt.preventDefault();
+        this.$inp.focus().select();
+        return false;
+      }
+    }
     _val = this.getValue();
     evnt.preventDefault();
     evnt.stopPropagation();
     if (!isNaN(_val)) {
-      this.select();
+      this.select(evnt);
     }
     return true;
   };
 
   FacetSubsNumber.prototype.getResults = function() {
-    var _ret;
-    if (this.$inpOp != null) {
+    var _ret, ref;
+    if ((this.$inpOp != null) || (this.model.get("operator") != null)) {
       _ret = {
         value: this.getValue(),
-        operator: this.$inpOp.val()
+        operator: ((ref = this.$inpOp) != null ? ref.val() : void 0) || this.model.get("operator")
       };
     } else {
       _ret = {
@@ -2259,6 +2333,7 @@ FacetSubsRange = (function(superClass) {
     this.close = bind(this.close, this);
     this.select = bind(this.select, this);
     this.reopen = bind(this.reopen, this);
+    this.clickSel = bind(this.clickSel, this);
     this.focus = bind(this.focus, this);
     this.render = bind(this.render, this);
     this.renderResult = bind(this.renderResult, this);
@@ -2286,6 +2361,8 @@ FacetSubsRange = (function(superClass) {
       obj["keydown " + (this._getInpSelector("_to"))] = "input",
       obj["blur " + (this._getInpSelector())] = "select",
       obj["blur " + (this._getInpSelector("_to"))] = "select",
+      obj["mousedown " + (this._getInpSelector())] = "clickSel",
+      obj["mousedown " + (this._getInpSelector("_to"))] = "clickSel",
       obj
     );
   };
@@ -2296,7 +2373,7 @@ FacetSubsRange = (function(superClass) {
       renderEmpty = false;
     }
     if (renderEmpty) {
-      return "<li></li>";
+      return "";
     }
     _res = this.getResults();
     return "<li>" + _res.value.join(" - ") + "</li>";
@@ -2312,6 +2389,11 @@ FacetSubsRange = (function(superClass) {
       inp = false;
     }
     FacetSubsRange.__super__.focus.apply(this, arguments);
+    this.$inp.select();
+  };
+
+  FacetSubsRange.prototype.clickSel = function(evnt) {
+    evnt.currentTarget.focus();
   };
 
   FacetSubsRange.prototype.reopen = function(pView) {
@@ -2361,11 +2443,16 @@ FacetSubsRange = (function(superClass) {
   FacetSubsRange.prototype._onTabAction = function(evnt) {
     var _val;
     if (this.$inp.is(evnt.target) && !evnt.shiftKey) {
-      this.$inpTo.focus();
+      evnt.stopPropagation();
+      evnt.preventDefault();
+      this.$inpTo.focus().select();
+      console.log("focus next");
       return false;
     }
     if (this.$inpTo.is(evnt.target) && evnt.shiftKey) {
-      this.$inp.focus();
+      evnt.stopPropagation();
+      evnt.preventDefault();
+      this.$inp.focus().select();
       return false;
     }
     _val = this.getValue();
@@ -2520,35 +2607,52 @@ FacetSubsSelect = (function(superClass) {
       if (!this.model.get("multiple")) {
         this.$inp.on("select2:select select2:close", this.select);
       }
-      this.select2.on("results:all", (function(_this) {
-        return function(results) {
-          var ref, ref1, ref2;
-          _this.convertValueToInt = _this._checkIntValue(results != null ? (ref = results.data) != null ? ref.results : void 0 : void 0);
-          if ((ref1 = _this.select2.selection) != null) {
-            if ((ref2 = ref1.$search) != null) {
-              if (typeof ref2.focus === "function") {
-                ref2.focus();
+      if (!this.select2._eventsAdded) {
+        this.select2._eventsAdded = true;
+        this.select2.on("results:all", (function(_this) {
+          return function(results) {
+            var ref, ref1, ref2;
+            _this.convertValueToInt = _this._checkIntValue(results != null ? (ref = results.data) != null ? ref.results : void 0 : void 0);
+            if ((ref1 = _this.select2.selection) != null) {
+              if ((ref2 = ref1.$search) != null) {
+                if (typeof ref2.focus === "function") {
+                  ref2.focus();
+                }
               }
             }
-          }
-        };
-      })(this));
-      this.select2.dataAdapter.current((function(_this) {
-        return function(results) {
-          var _data, i, len, result;
-          if (_this.model.get("waitForAsync")) {
-            _data = [];
-            for (i = 0, len = results.length; i < len; i++) {
-              result = results[i];
-              _data.push(_this._convertValue(result));
+          };
+        })(this));
+        this.select2.dataAdapter.current((function(_this) {
+          return function(results) {
+            var _data, i, len, result;
+            if (_this.model.get("waitForAsync")) {
+              _data = [];
+              for (i = 0, len = results.length; i < len; i++) {
+                result = results[i];
+                _data.push(_this._convertValue(result));
+              }
+              _this._select(_data);
+              _this.close();
             }
-            _this._select(_data);
-            _this.close();
-          }
-        };
-      })(this));
-      this.select2.$container.on("click", this._sel2open);
-      this.select2.$element.hide();
+          };
+        })(this));
+        this.select2.$container.on("click", this._sel2open);
+        this.select2.$element.hide();
+        this.select2.$selection.on("focusout", (function(_this) {
+          return function(evnt) {
+            _this.TMfocusOut = setTimeout(function() {
+              _this.select();
+            }, 150);
+          };
+        })(this));
+        this.select2.$selection.on("focusin", (function(_this) {
+          return function(evnt) {
+            if (_this.TMfocusOut != null) {
+              clearTimeout(_this.TMfocusOut);
+            }
+          };
+        })(this));
+      }
     }
     return this.select2;
   };
@@ -2731,6 +2835,7 @@ FacetSubString = (function(superClass) {
   extend(FacetSubString, superClass);
 
   function FacetSubString() {
+    this.focus = bind(this.focus, this);
     this.reopen = bind(this.reopen, this);
     this.close = bind(this.close, this);
     this.events = bind(this.events, this);
@@ -2770,6 +2875,11 @@ FacetSubString = (function(superClass) {
     });
     pView.$results.empty().html(this.renderResult(true));
     FacetSubString.__super__.reopen.apply(this, arguments);
+  };
+
+  FacetSubString.prototype.focus = function() {
+    FacetSubString.__super__.focus.apply(this, arguments);
+    this.$inp.select();
   };
 
   return FacetSubString;
@@ -2823,7 +2933,7 @@ MainView = (function(superClass) {
     "mousedown .search-btn": "_onSearch",
     "click .search-btn": "_onSearch",
     "focus .search-btn": "_onFocusSearch",
-    "click .add-facet-btn": "_addFacet",
+    "mousedown .add-facet-btn": "_addFacet",
     "click": "_addFacet"
   };
 
@@ -2913,7 +3023,11 @@ MainView = (function(superClass) {
   };
 
   MainView.prototype._addFacet = function(evnt) {
-    this.addFacet();
+    this.TMopenAddFacet = setTimeout((function(_this) {
+      return function() {
+        _this.addFacet();
+      };
+    })(this), 0);
   };
 
   MainView.prototype.exit = function(nextAdd) {
@@ -2967,7 +3081,7 @@ MainView = (function(superClass) {
       parent: this
     });
     subview.on("closed", (function(_this) {
-      return function(results) {
+      return function(results, evnt) {
         var ref;
         if (subview != null ? (ref = subview.model) != null ? ref.get("pinned") : void 0 : void 0) {
           _this.subview = null;
@@ -2977,7 +3091,7 @@ MainView = (function(superClass) {
           subview.remove();
         }
         _this.subview = null;
-        if (addAfter) {
+        if (addAfter && (evnt != null ? evnt.type : void 0) !== "focusout") {
           _this.addFacet();
         }
       };
@@ -2991,12 +3105,13 @@ MainView = (function(superClass) {
       };
     })(this));
     _self = this;
-    subview.on("selected", function(facetM, data) {
+    subview.on("selected", function(facetM, data, evnt) {
       _self.setFacet(facetM, data);
-      if ((this.selectview._isFull == null) || this.selectview._isFull()) {
+      if (((this.selectview._isFull == null) || this.selectview._isFull()) && (evnt != null ? evnt.type : void 0) !== "focusout") {
         _self._nextFacet(null, this);
       }
     });
+    subview.eventsAttached = true;
     this.$addBtn.before(subview.render(initialAdd));
     this.facets[facetM.id] = subview;
     return subview;
@@ -3009,7 +3124,6 @@ MainView = (function(superClass) {
     }
     if (this.subview != null) {
       this.subview.close();
-      return;
     }
     if (!this.collection.length) {
       return;
@@ -3036,7 +3150,7 @@ MainView = (function(superClass) {
       };
     })(this));
     this.selectview.on("selected", (function(_this) {
-      return function(facetM) {
+      return function(facetM, data, evnt) {
         facetM.set("value", null);
         _this.subview = _this.genSub(facetM);
         _this.subview.open();
@@ -3076,7 +3190,7 @@ MainView = (function(superClass) {
             if (evnt != null) {
               evnt.stopPropagation();
             }
-            setTimeout(function() {
+            _this.TMopenAddFacet = setTimeout(function() {
               return _this.addFacet();
             }, 0);
             return;
@@ -3170,7 +3284,9 @@ MainView = (function(superClass) {
 
   MainView.prototype._outerClick = function(evnt) {
     var _posWrp;
-    evnt.stopPropagation();
+    if (this.TMopenAddFacet != null) {
+      clearTimeout(this.TMopenAddFacet);
+    }
     _posWrp = this.el.compareDocumentPosition(evnt.target);
     if (!(_posWrp === 0 || _posWrp - 16 >= 0)) {
       this.exit(false);
@@ -3546,6 +3662,7 @@ ViewSub = (function(superClass) {
 
   function ViewSub() {
     this.open = bind(this.open, this);
+    this.isResultEmpty = bind(this.isResultEmpty, this);
     this.attachSubEvents = bind(this.attachSubEvents, this);
     this.generateSub = bind(this.generateSub, this);
     this.close = bind(this.close, this);
@@ -3582,7 +3699,6 @@ ViewSub = (function(superClass) {
   ViewSub.prototype.initialize = function(options) {
     this._isOpen = false;
     this.result = new Backbone.Collection();
-    this.$el.on("click", this.reopen);
     this.parent = options.parent;
     this.$el.data("fctid", this.model.id);
     this.parent.on("escape", (function(_this) {
@@ -3600,7 +3716,8 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.events = {
-    "click .rm-facet-btn": "del"
+    "mousedown": "reopen",
+    "mousedown .rm-facet-btn": "del"
   };
 
   ViewSub.prototype.render = function(initialAdd) {
@@ -3636,6 +3753,9 @@ ViewSub = (function(superClass) {
 
   ViewSub.prototype.reopen = function(evnt) {
     var ref, ref1;
+    if (this._isOpen) {
+      return;
+    }
     if ((evnt != null) && $(evnt.target).is(".rm-result-btn") && (((ref = this.selectview) != null ? ref.rmRes : void 0) != null)) {
       this.selectview.rmRes(evnt);
       evnt.preventDefault();
@@ -3687,18 +3807,18 @@ ViewSub = (function(superClass) {
     return ViewSub.__super__.remove.apply(this, arguments);
   };
 
-  ViewSub.prototype.selected = function(optMdl) {
+  ViewSub.prototype.selected = function(optMdl, evnt) {
     this.result.add(optMdl, {
       merge: true
     });
     this.renderResult();
-    this.trigger("selected", this.model, this.selectview.getResults());
+    this.trigger("selected", this.model, this.selectview.getResults(), evnt);
   };
 
-  ViewSub.prototype.removed = function(optMdl) {
+  ViewSub.prototype.removed = function(optMdl, evnt) {
     this.result.remove(optMdl);
     this.renderResult();
-    this.trigger("selected", this.model, this.selectview.getResults());
+    this.trigger("selected", this.model, this.selectview.getResults(), evnt);
     if (this.result.length <= 0 && !this.selectview.editMode) {
       this.del();
     }
@@ -3756,35 +3876,45 @@ ViewSub = (function(superClass) {
   };
 
   ViewSub.prototype.attachSubEvents = function() {
-    this.selectview.on("closed", (function(_this) {
-      return function(result) {
-        _this._isOpen = false;
-        if (_this.model.get("pinned")) {
-          return;
-        }
-        if (!result.length) {
-          _this.selectview.remove();
-        }
-        _this.trigger("closed", result);
-        if (!result.length) {
-          _this.remove();
-        }
-      };
-    })(this));
-    this.selectview.on("selected", (function(_this) {
-      return function(mdl) {
-        if (mdl) {
-          _this.selected(mdl);
-        }
-      };
-    })(this));
-    this.selectview.on("removed", (function(_this) {
-      return function(mdl) {
-        if (mdl) {
-          _this.removed(mdl);
-        }
-      };
-    })(this));
+    if (!this.selectview.subEventsAttached) {
+      this.selectview.on("closed", (function(_this) {
+        return function(result, evnt) {
+          _this._isOpen = false;
+          if (_this.model.get("pinned")) {
+            return;
+          }
+          if (!result.length) {
+            _this.selectview.remove();
+          }
+          _this.trigger("closed", result, evnt);
+          if (!result.length) {
+            _this.remove();
+          }
+        };
+      })(this));
+      this.selectview.on("selected", (function(_this) {
+        return function(mdl, evnt) {
+          if (mdl) {
+            _this.selected(mdl, evnt);
+          }
+        };
+      })(this));
+      this.selectview.on("removed", (function(_this) {
+        return function(mdl) {
+          if (mdl) {
+            _this.removed(mdl);
+          }
+        };
+      })(this));
+      this.selectview.subEventsAttached = true;
+    }
+  };
+
+  ViewSub.prototype.isResultEmpty = function(inp) {
+    if (this.selectview != null) {
+      return this.selectview.isResultEmpty(inp);
+    }
+    return true;
   };
 
   ViewSub.prototype.open = function() {

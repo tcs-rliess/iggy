@@ -125,7 +125,8 @@ jQuery( function( $ ){
 		type: "string",
 		name: "simple_pinned",
 		label: "Simple Pinned",
-		pinned: true
+		pinned: true,
+		active: true
 	},{
 		type: "array",
 		name: "arraysel",
@@ -144,8 +145,7 @@ jQuery( function( $ ){
 		label: "Array Select Single",
 		count: 1,
 		options: [ "pizza", "pasta", "carne" ],
-		pinned: true,
-		active: true
+		pinned: true
 	},{
 		type: "array",
 		name: "arrayseltwo",
@@ -449,7 +449,7 @@ jQuery( function( $ ){
 		} );
 	}
 
-	newIggy( facets2, "#iggytest2" )
+	//newIggy( facets2, "#iggytest2" )
 
 	var facetsPredef = [{
 		type: "string",
@@ -698,6 +698,6 @@ jQuery( function( $ ){
 			pullright: true
 		}
 	}
-	iggy3 = newIggy( facetsPredef, "#iggytest3", opts3 )
-	iggy3.on( "search", function(){ alert( "Fired Search Event:\n" + JSON.stringify( arguments ) ) } )
+	// iggy3 = newIggy( facetsPredef, "#iggytest3", opts3 )
+	// iggy3.on( "search", function(){ alert( "Fired Search Event:\n" + JSON.stringify( arguments ) ) } )
 })
