@@ -1415,9 +1415,6 @@ FacetSubsBase = (function(superClass) {
   FacetSubsBase.prototype.select = function(evnt) {
     var _val;
     _val = this.getValue();
-    if (this._checkSelectEmpty(_val, evnt)) {
-      return;
-    }
     this.set(_val, evnt);
   };
 

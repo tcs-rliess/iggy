@@ -145,7 +145,7 @@ class FacetSubsBase extends Backbone.View
 
 	select: ( evnt )=>
 		_val = @getValue()
-		return if @_checkSelectEmpty( _val, evnt )
+		#return if @_checkSelectEmpty( _val, evnt )
 		@set( _val, evnt )
 		return
 
