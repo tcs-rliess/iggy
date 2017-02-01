@@ -96,31 +96,60 @@ class FacetSubsBase extends Backbone.View
 		@$el.removeClass( "open" )
 		@$el.addClass( "closed" )
 		@isOpen = false
-		@trigger( "closed", @result )
+		@trigger( "closed", @result, evnt )
 		return
 
 	getResults: =>
 		value: @getValue()
-
+	
+	isResultEmpty: ( res )=>
+		if res?.value?
+			return @isResultEmpty( res.value )
+		
+		if not res?
+			return true
+		if res is ""
+			return true
+		if _.isArray( res ) and res.length <= 0
+			return true
+		
+		return false
+	
+	getResValue: =>
+		res = @result?.first()?.toJSON()
+		
+		return res?.value or ""
+		
+	isEqualCurrent: ( val = @getValue() )=>
+		rv = @getResValue()
+		if rv is val
+			return true
+		return false
+		
 	getValue: =>
 		return @$inp.val()
 
 	getSelectModel: ->
 		return SubResults.prototype.model
 
-	_checkSelectEmpty: ( _val )=>
-		if _.isEmpty( _val ) and not _.isNumber( _val ) and not _.isBoolean( _val ) and not @model.get( "pinned" )
-			@close()
+	_checkSelectEmpty: ( _val, evnt )=>
+		#debugger
+		# if @isEqualCurrent( _val )
+		# 	@close()
+		# 	return true
+			
+		if _.isEmpty( _val ) and not _.isNumber( _val ) and not _.isBoolean( _val )# and not @model.get( "pinned" )
+			@close( evnt )
 			return true
 		return false
 
-	select: =>
+	select: ( evnt )=>
 		_val = @getValue()
-		return if @_checkSelectEmpty( _val )
-		@set( _val )
+		return if @_checkSelectEmpty( _val, evnt )
+		@set( _val, evnt )
 		return
 
-	set: ( val )=>
+	set: ( val, evnt )=>
 		_model = @result.first()
 		if not _model?
 			_ModelConst = @getSelectModel()
@@ -128,8 +157,8 @@ class FacetSubsBase extends Backbone.View
 			@result.add( _model )
 		else
 			_model.set( value: val )
-		@trigger( "selected", _model )
-		@close()
+		@trigger( "selected", _model, evnt )
+		@close( evnt )
 		return
 
 

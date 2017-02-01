@@ -18,5 +18,10 @@ class FacetSubString extends require( "./base" )
 		pView.$results.empty().html( @renderResult( true ) )
 		super
 		return
+	
+	focus: =>
+		super
+		@$inp.select()
+		return
 				
 module.exports = FacetSubString

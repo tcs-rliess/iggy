@@ -14,7 +14,7 @@ class ViewSub extends Backbone.View
 	initialize: ( options )=>
 		@_isOpen = false
 		@result = new Backbone.Collection()
-		@$el.on "click", @reopen
+		#@$el.on "click", @reopen
 		@parent = options.parent
 		
 		@$el.data( "fctid", @model.id )
@@ -27,7 +27,9 @@ class ViewSub extends Backbone.View
 		return
 
 	events:
-		"click .rm-facet-btn": "del"
+		"mousedown": "reopen"
+		"mousedown .rm-facet-btn": "del"
+		
 
 	render: ( initialAdd )=>
 		_list = []
@@ -54,6 +56,8 @@ class ViewSub extends Backbone.View
 		return @el
 	
 	reopen: ( evnt )=>
+		if @_isOpen
+			return
 		if evnt? and $( evnt.target ).is( ".rm-result-btn" ) and @selectview?.rmRes?
 			@selectview.rmRes( evnt )
 			evnt.preventDefault()
@@ -91,16 +95,16 @@ class ViewSub extends Backbone.View
 		@parent = null
 		return super
 
-	selected: ( optMdl )=>
+	selected: ( optMdl, evnt )=>
 		@result.add( optMdl, { merge: true } )
 		@renderResult()
-		@trigger( "selected", @model, @selectview.getResults() )
+		@trigger( "selected", @model, @selectview.getResults(), evnt )
 		return
 	
-	removed: ( optMdl )=>
+	removed: ( optMdl, evnt  )=>
 		@result.remove( optMdl )
 		@renderResult()
-		@trigger( "selected", @model, @selectview.getResults() )
+		@trigger( "selected", @model, @selectview.getResults(), evnt )
 		
 		# remove facet if content length or the facet is in editMode
 		if @result.length <= 0 and not @selectview.editMode
@@ -143,29 +147,35 @@ class ViewSub extends Backbone.View
 		return
 		
 	attachSubEvents: =>
-		@selectview.on "closed", ( result )=>
-			#console.log "Sub closed", @selectview.model.id
-			@_isOpen = false
-			
-			if @model.get( "pinned" )
+		if not @selectview.subEventsAttached
+			@selectview.on "closed", ( result, evnt )=>
+				@_isOpen = false
+				if @model.get( "pinned" )
+					return
+				#@selectview.off()
+				@selectview.remove() if not result.length
+				#@selectview = null
+				@trigger( "closed", result, evnt )
+				@remove() if not result.length
 				return
-			#@selectview.off()
-			@selectview.remove() if not result.length
-			#@selectview = null
-			@trigger( "closed", result )
-			@remove() if not result.length
-			return
 
-		@selectview.on "selected", ( mdl )=>
-			if mdl
-				@selected( mdl )
-			return
-		
-		@selectview.on "removed", ( mdl )=>
-			if mdl
-				@removed( mdl )
-			return
+			@selectview.on "selected", ( mdl, evnt )=>
+				if mdl
+					@selected( mdl, evnt )
+				return
+			
+			@selectview.on "removed", ( mdl )=>
+				if mdl
+					@removed( mdl )
+				return
+			
+			@selectview.subEventsAttached = true
 		return
+	
+	isResultEmpty: ( inp )=>
+		if @selectview?
+			return @selectview.isResultEmpty( inp )
+		return true
 		
 	open: =>
 		@generateSub()

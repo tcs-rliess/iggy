@@ -83,27 +83,41 @@ class FacetSubsSelect extends require( "./base" )
 			if not @model.get( "multiple" )
 				@$inp.on "select2:select select2:close", @select
 			
-			# after loading try to set the cursor focus
-			@select2.on "results:all", ( results )=>
-				@convertValueToInt = @_checkIntValue( results?.data?.results )
-				@select2.selection?.$search?.focus?()
-				return
-			
-			# listen to async result changes and set the selection
-			@select2.dataAdapter.current ( results )=>
-				if @model.get( "waitForAsync" )
-					_data = []
-					
-					for result in results
-						_data.push @_convertValue( result )
-						
-					# select the active/predefined results
-					@_select( _data )
-					@close()
-				return
+			if not @select2._eventsAdded
+				@select2._eventsAdded = true
+				# after loading try to set the cursor focus
+				@select2.on "results:all", ( results )=>
+					@convertValueToInt = @_checkIntValue( results?.data?.results )
+					@select2.selection?.$search?.focus?()
+					return
 				
-			@select2.$container.on "click", @_sel2open
-			@select2.$element.hide()
+				# listen to async result changes and set the selection
+				@select2.dataAdapter.current ( results )=>
+					if @model.get( "waitForAsync" )
+						_data = []
+						
+						for result in results
+							_data.push @_convertValue( result )
+							
+						# select the active/predefined results
+						@_select( _data )
+						@close()
+					return
+					
+				@select2.$container.on "click", @_sel2open
+				@select2.$element.hide()
+				@select2.$selection.on "focusout", ( evnt )=>
+					@TMfocusOut = setTimeout( =>
+						@select()
+						return
+					, 150 )
+					return
+				
+				@select2.$selection.on "focusin", ( evnt )=>
+					clearTimeout( @TMfocusOut ) if @TMfocusOut?
+					return
+			
+			
 			#$( document ).on @_hasTabEvent(), @_onKey if @model.get( "multiple" )
 		return @select2
 

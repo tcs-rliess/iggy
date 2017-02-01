@@ -11,10 +11,12 @@ class FacetSubsRange extends require( "./number_base" )
 		"keydown #{@_getInpSelector( "_to" )}": "input"
 		"blur #{@_getInpSelector()}": "select"
 		"blur #{@_getInpSelector( "_to" )}": "select"
+		"mousedown #{@_getInpSelector()}": "clickSel"
+		"mousedown #{@_getInpSelector( "_to" )}": "clickSel"
 
 	renderResult: ( renderEmpty = false )=>
 		if renderEmpty
-			return "<li></li>"
+			return ""
 		_res = @getResults()
 		return "<li>" +_res.value.join( " - " ) + "</li>"
 
@@ -25,9 +27,13 @@ class FacetSubsRange extends require( "./number_base" )
 
 	focus: ( inp = false )=>
 		super
+		@$inp.select()
 		return
 	
-	
+	clickSel: ( evnt )=>
+		evnt.currentTarget.focus()
+		return
+		
 	reopen: ( pView )=>
 		_oldVal = @result.first().get( "value" )
 		@model.set( value: _oldVal )
@@ -39,6 +45,10 @@ class FacetSubsRange extends require( "./number_base" )
 		if evnt? and ( evnt?.relatedTarget is @$inp.get(0) or evnt?.relatedTarget is @$inpTo.get(0) )
 			evnt.stopPropagation()
 			return
+			
+		
+		#if @$inp.is( evnt.target ) and not evnt.shiftKey
+			
 		super
 		return
 	
@@ -63,12 +73,18 @@ class FacetSubsRange extends require( "./number_base" )
 		return [ _vFrom, _vTo ]
 	
 	_onTabAction: ( evnt )=>
+		
 		if @$inp.is( evnt.target ) and not evnt.shiftKey
-			@$inpTo.focus()
+			evnt.stopPropagation()
+			evnt.preventDefault()
+			@$inpTo.focus().select()
+			console.log "focus next"
 			return false
 		
 		if @$inpTo.is( evnt.target ) and evnt.shiftKey
-			@$inp.focus()
+			evnt.stopPropagation()
+			evnt.preventDefault()
+			@$inp.focus().select()
 			return false
 			
 		_val = @getValue()

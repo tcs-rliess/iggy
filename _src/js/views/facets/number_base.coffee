@@ -60,7 +60,12 @@ class FacetNumberBase extends require( "./base" )
 		_v = @$inp.val()
 		if not _v?.length
 			return null
-		return parseInt( @valueByDefinition( _v), 10 )
+			
+		_iv = parseInt( _v, 10 )
+		if isNaN( _iv )
+			return null
+			
+		return @valueByDefinition( _v )
 
 	_setNumber: ( _v, el = @$inp )=>
 		if isNaN( _v )

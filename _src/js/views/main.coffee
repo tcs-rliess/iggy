@@ -10,7 +10,7 @@ class MainView extends Backbone.View
 		"mousedown .search-btn": "_onSearch"
 		"click .search-btn": "_onSearch"
 		"focus .search-btn": "_onFocusSearch"
-		"click .add-facet-btn": "_addFacet"
+		"mousedown .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
 
 	initialize: ( options )=>
@@ -82,7 +82,10 @@ class MainView extends Backbone.View
 		return
 
 	_addFacet: ( evnt )=>
-		@addFacet()
+		@TMopenAddFacet = setTimeout( =>
+			@addFacet()
+			return
+		, 0 )
 		return
 
 	exit: ( nextAdd = true )=>
@@ -115,8 +118,7 @@ class MainView extends Backbone.View
 	genSub: ( facetM, addAfter = true, initialAdd=false )=>
 		subview = new SubView( model: facetM, collection: @collection, parent: @ )
 		
-		subview.on "closed", ( results )=>
-			#console.log "genSub - closed", results, subview.model.id
+		subview.on "closed", ( results, evnt )=>
 			if subview?.model?.get( "pinned" )
 				@subview = null
 				return
@@ -124,7 +126,7 @@ class MainView extends Backbone.View
 			#subview.off()
 			subview.remove() if not results?.length
 			@subview = null
-			@addFacet() if addAfter
+			@addFacet() if addAfter and evnt?.type isnt "focusout"
 			return
 		
 		subview.on "reopen", =>
@@ -132,18 +134,21 @@ class MainView extends Backbone.View
 			return
 			
 		_self = @
-		subview.on "selected", ( facetM, data )->
-			#console.log "subview - selected", @
+		subview.on "selected", ( facetM, data, evnt )->
+			#console.log "subview - selected", data, @isResultEmpty( data )
 			_self.setFacet( facetM, data )
-			if not @selectview._isFull? or @selectview._isFull()
+			if ( not @selectview._isFull? or @selectview._isFull() ) and evnt?.type isnt "focusout"
 				_self._nextFacet( null, @ )
 			return
+		
+		subview.eventsAttached = true
 		
 		@$addBtn.before( subview.render( initialAdd ) )
 		@facets[ facetM.id ] = subview
 		return subview
 
 	addFacet: =>
+		#console.error "addFacet", @selectview?, @subview?
 		if @selectview?
 			#console.log "STOP @ SELECT EXIST"
 			@selectview.focus()
@@ -152,7 +157,7 @@ class MainView extends Backbone.View
 		if @subview?
 			#console.log "STOP @ SUB EXIST"
 			@subview.close()
-			return
+			#return
 
 		if not @collection.length
 			#console.log "STOP @ EMPTY COLL"
@@ -176,7 +181,7 @@ class MainView extends Backbone.View
 				@subview = null
 			return
 
-		@selectview.on "selected", ( facetM )=>
+		@selectview.on "selected", ( facetM, data, evnt )=>
 			facetM.set( "value", null )
 			@subview = @genSub( facetM )
 			@subview.open()
@@ -206,7 +211,7 @@ class MainView extends Backbone.View
 				if $( evnt.target ).is( ".search-btn" ) and evnt?.shiftKey
 					evnt?.preventDefault()
 					evnt?.stopPropagation()
-					setTimeout( =>
+					@TMopenAddFacet =setTimeout( =>
 						@addFacet()
 					, 0 )
 					return
@@ -273,7 +278,7 @@ class MainView extends Backbone.View
 		return
 		
 	_outerClick: ( evnt )=>
-		evnt.stopPropagation()
+		clearTimeout( @TMopenAddFacet ) if @TMopenAddFacet?
 		_posWrp = @el.compareDocumentPosition( evnt.target )
 		if not ( _posWrp is 0 or _posWrp - 16 >= 0 )
 			@exit( false )
