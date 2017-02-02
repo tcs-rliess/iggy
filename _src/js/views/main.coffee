@@ -12,13 +12,19 @@ class MainView extends Backbone.View
 		"focus .search-btn": "_onFocusSearch"
 		"mousedown .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
-
+	
+	constructor: ( options )->
+		@searchButton = options.searchButton
+		
+		@_onSearch = _.debounce( @__onSearch, ( @searchButton.debounce or 300 ), { trailing: false, leading: true } )
+		super
+		return
+	
 	initialize: ( options )=>
 		
 		@main = options.main
 		@idx = options.idx
 		@results = options.results
-		@searchButton = options.searchButton
 		
 		@facets = {}
 		
@@ -266,8 +272,8 @@ class MainView extends Backbone.View
 			@$searchBtn.focus()
 		return
 		
-	_onSearch: ( evnt )=>
-		if ( evnt.type is "click" and evnt.detail is 0 ) or evnt.type is "mousedown"
+	__onSearch: ( evnt )=>
+		if ( evnt.type is "click" and evnt.clientX is 0 and evnt.clientY is 0 ) or evnt.type is "mousedown"
 			evnt?.preventDefault()
 			evnt.stopPropagation()
 			@exit()
