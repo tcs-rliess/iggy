@@ -2902,10 +2902,20 @@ KEYCODES = require("../utils/keycodes");
 MainView = (function(superClass) {
   extend(MainView, superClass);
 
-  function MainView() {
+  MainView.prototype.template = require("../tmpls/wrapper.jade");
+
+  MainView.prototype.events = {
+    "mousedown .search-btn": "_onSearch",
+    "click .search-btn": "_onSearch",
+    "focus .search-btn": "_onFocusSearch",
+    "mousedown .add-facet-btn": "_addFacet",
+    "click": "_addFacet"
+  };
+
+  function MainView(options) {
     this._outerClick = bind(this._outerClick, this);
     this._onFocusSearch = bind(this._onFocusSearch, this);
-    this._onSearch = bind(this._onSearch, this);
+    this.__onSearch = bind(this.__onSearch, this);
     this.focusSearch = bind(this.focusSearch, this);
     this._nextFacet = bind(this._nextFacet, this);
     this._keyListen = bind(this._keyListen, this);
@@ -2921,25 +2931,20 @@ MainView = (function(superClass) {
     this.render = bind(this.render, this);
     this.templateData = bind(this.templateData, this);
     this.initialize = bind(this.initialize, this);
-    return MainView.__super__.constructor.apply(this, arguments);
+    this.searchButton = options.searchButton;
+    this._onSearch = _.debounce(this.__onSearch, this.searchButton.debounce || 300, {
+      trailing: false,
+      leading: true
+    });
+    MainView.__super__.constructor.apply(this, arguments);
+    return;
   }
-
-  MainView.prototype.template = require("../tmpls/wrapper.jade");
-
-  MainView.prototype.events = {
-    "mousedown .search-btn": "_onSearch",
-    "click .search-btn": "_onSearch",
-    "focus .search-btn": "_onFocusSearch",
-    "mousedown .add-facet-btn": "_addFacet",
-    "click": "_addFacet"
-  };
 
   MainView.prototype.initialize = function(options) {
     var _cl, _fnSort, _valueFacets, fct, i, len, ref, ref1;
     this.main = options.main;
     this.idx = options.idx;
     this.results = options.results;
-    this.searchButton = options.searchButton;
     this.facets = {};
     this.collection.on("iggy:rem", this.remFacet);
     _cl = "iggy clearfix";
@@ -3263,8 +3268,8 @@ MainView = (function(superClass) {
     }
   };
 
-  MainView.prototype._onSearch = function(evnt) {
-    if ((evnt.type === "click" && evnt.detail === 0) || evnt.type === "mousedown") {
+  MainView.prototype.__onSearch = function(evnt) {
+    if ((evnt.type === "click" && evnt.clientX === 0 && evnt.clientY === 0) || evnt.type === "mousedown") {
       if (evnt != null) {
         evnt.preventDefault();
       }
