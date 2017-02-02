@@ -78,12 +78,16 @@ module.exports = (grunt) ->
 				pretty: true
 			release:
 				src: [ "package.json", "README.md", "LICENSE", "dist/**" ]
-				dest: "milonst/"
+				dest: "iggy_<%= pkg.version %>/"
 				
 		copy:
 			release:
 				src: ['css/iggy.css']
 				dest: 'dist/css/iggy.css'
+			
+			no_uglify:
+				files:
+					'dist/js/iggy.js': "js/iggy.js"
 
 		# karma:
 		# 	local:
@@ -127,6 +131,7 @@ module.exports = (grunt) ->
 
 	grunt.registerTask "build", [ "clear", "build-core"]
 	grunt.registerTask "release", [ "build", "uglify:release", "copy:release", "compress:release" ]
+	grunt.registerTask "release-nouglify", [ "build", "copy:no_uglify", "copy:release", "compress:release" ]
 	
 	# shortcuts
 	grunt.registerTask "w", "watcher"
