@@ -267,9 +267,11 @@ class MainView extends Backbone.View
 		return
 		
 	_onSearch: ( evnt )=>
-		evnt.stopPropagation()
-		@exit()
-		@trigger( "searchbutton", @searchButton.event )
+		if ( evnt.type is "click" and evnt.detail is 0 ) or evnt.type is "mousedown"
+			evnt?.preventDefault()
+			evnt.stopPropagation()
+			@exit()
+			@trigger( "searchbutton", @searchButton.event )
 		return
 	
 	_onFocusSearch: ( evnt )=>
