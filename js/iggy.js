@@ -3264,9 +3264,14 @@ MainView = (function(superClass) {
   };
 
   MainView.prototype._onSearch = function(evnt) {
-    evnt.stopPropagation();
-    this.exit();
-    this.trigger("searchbutton", this.searchButton.event);
+    if ((evnt.type === "click" && evnt.detail === 0) || evnt.type === "mousedown") {
+      if (evnt != null) {
+        evnt.preventDefault();
+      }
+      evnt.stopPropagation();
+      this.exit();
+      this.trigger("searchbutton", this.searchButton.event);
+    }
   };
 
   MainView.prototype._onFocusSearch = function(evnt) {

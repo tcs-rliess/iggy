@@ -422,7 +422,11 @@ jQuery( function( $ ){
 
 	iggy1 = newIggy( facets, "#iggytest1", opts1 )
 	iggy1.on( "run", function(){ alert( "Fired Event:\n" + JSON.stringify( arguments ) ) } )
-	iggy1.on( "search", function(){ alert( "Fired Search Event:\n" + JSON.stringify( arguments ) ) } )
+	idxEvnt = 0
+	iggy1.on( "search", function(){
+		$( "#iggytest1_events" ).append( ++idxEvnt + ": Search Event:\n" + JSON.stringify( arguments ) + "\n" )
+	} )
+
 
 	var facets2 = []
 	var options = []
