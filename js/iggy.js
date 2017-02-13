@@ -2443,7 +2443,6 @@ FacetSubsRange = (function(superClass) {
       evnt.stopPropagation();
       evnt.preventDefault();
       this.$inpTo.focus().select();
-      console.log("focus next");
       return false;
     }
     if (this.$inpTo.is(evnt.target) && evnt.shiftKey) {
@@ -2833,6 +2832,7 @@ FacetSubString = (function(superClass) {
 
   function FacetSubString() {
     this.focus = bind(this.focus, this);
+    this.select = bind(this.select, this);
     this.reopen = bind(this.reopen, this);
     this.close = bind(this.close, this);
     this.events = bind(this.events, this);
@@ -2874,6 +2874,12 @@ FacetSubString = (function(superClass) {
     FacetSubString.__super__.reopen.apply(this, arguments);
   };
 
+  FacetSubString.prototype.select = function(evnt) {
+    var _val;
+    _val = this.getValue();
+    this.set(_val, evnt);
+  };
+
   FacetSubString.prototype.focus = function() {
     FacetSubString.__super__.focus.apply(this, arguments);
     this.$inp.select();
@@ -2913,6 +2919,10 @@ MainView = (function(superClass) {
   };
 
   function MainView(options) {
+    var ref;
+    if (options == null) {
+      options = {};
+    }
     this._outerClick = bind(this._outerClick, this);
     this._onFocusSearch = bind(this._onFocusSearch, this);
     this.__onSearch = bind(this.__onSearch, this);
@@ -2931,8 +2941,8 @@ MainView = (function(superClass) {
     this.render = bind(this.render, this);
     this.templateData = bind(this.templateData, this);
     this.initialize = bind(this.initialize, this);
-    this.searchButton = options.searchButton;
-    this._onSearch = _.debounce(this.__onSearch, this.searchButton.debounce || 300, {
+    this.searchButton = options != null ? options.searchButton : void 0;
+    this._onSearch = _.debounce(this.__onSearch, ((ref = this.searchButton) != null ? ref.debounce : void 0) || 300, {
       trailing: false,
       leading: true
     });

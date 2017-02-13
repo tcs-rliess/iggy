@@ -13,10 +13,10 @@ class MainView extends Backbone.View
 		"mousedown .add-facet-btn": "_addFacet"
 		"click": "_addFacet"
 	
-	constructor: ( options )->
-		@searchButton = options.searchButton
+	constructor: ( options={} )->
+		@searchButton = options?.searchButton
 		
-		@_onSearch = _.debounce( @__onSearch, ( @searchButton.debounce or 300 ), { trailing: false, leading: true } )
+		@_onSearch = _.debounce( @__onSearch, ( @searchButton?.debounce or 300 ), { trailing: false, leading: true } )
 		super
 		return
 	

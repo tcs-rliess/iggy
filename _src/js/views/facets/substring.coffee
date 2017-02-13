@@ -19,6 +19,12 @@ class FacetSubString extends require( "./base" )
 		super
 		return
 	
+	select: ( evnt )=>
+		_val = @getValue()
+		#return if @_checkSelectEmpty( _val, evnt )
+		@set( _val, evnt )
+		return
+	
 	focus: =>
 		super
 		@$inp.select()

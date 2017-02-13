@@ -78,7 +78,6 @@ class FacetSubsRange extends require( "./number_base" )
 			evnt.stopPropagation()
 			evnt.preventDefault()
 			@$inpTo.focus().select()
-			console.log "focus next"
 			return false
 		
 		if @$inpTo.is( evnt.target ) and evnt.shiftKey

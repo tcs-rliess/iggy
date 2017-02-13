@@ -453,7 +453,7 @@ jQuery( function( $ ){
 		} );
 	}
 
-	//newIggy( facets2, "#iggytest2" )
+	newIggy( facets2, "#iggytest2" )
 
 	var facetsPredef = [{
 		type: "string",
@@ -702,6 +702,6 @@ jQuery( function( $ ){
 			pullright: true
 		}
 	}
-	// iggy3 = newIggy( facetsPredef, "#iggytest3", opts3 )
-	// iggy3.on( "search", function(){ alert( "Fired Search Event:\n" + JSON.stringify( arguments ) ) } )
+	iggy3 = newIggy( facetsPredef, "#iggytest3", opts3 )
+	iggy3.on( "search", function(){ alert( "Fired Search Event:\n" + JSON.stringify( arguments ) ) } )
 })

@@ -1,15 +1,14 @@
 iggy
 ============
 
-[![Build Status](https://secure.travis-ci.org/mpneuried/iggy.png?branch=master)](http://travis-ci.org/mpneuried/iggy)
+<!--DOCSSTART-->
+
 [![Build Status](https://david-dm.org/mpneuried/iggy.png)](https://david-dm.org/mpneuried/iggy)
 [![NPM version](https://badge.fury.io/js/iggy.png)](http://badge.fury.io/js/iggy)
 
 Browser search module to use with Backbone.js
 
 [![NPM](https://nodei.co/npm/iggy.png?downloads=true&stars=true)](https://nodei.co/npm/iggy/)
-
-*Docs are under constrcution* 
 
 ## Options
 
@@ -24,10 +23,107 @@ There are several options to customize the behavior of iggy.
 	- **searchButton.debounce** *( `Number`; default = `300` )*: Debounce time on fire of the search event
 	- **searchButton.cssclass** *( `String` )*: You can define a custom class to add to the search button
 
+### Facets
+
+These options are valid for all facets.
+
+##### *General Options*
+
+- **`type`** *(`String`)*: The facet type. See the List below with the types.
+- **`name`** *(`String`)*: The facet name used as`name` for the results.
+- **`label`** *(`String`)*: The label to show as name within the GUI.
+- **`value`** *(`String|Number|Array` optional )*: A predefined value to populate the facet on load. The type is specific top the facet `type`
+- **`sort`** *(`String`)*: The sorting within the facet selector results.
+- **`pinned`** *(`Boolean` optional; default: `false`)*: A pinned facet is always open and displayed to the GUI.
+- **`active`** *(`Boolean` optional; default: `false`)*: With `active` it's possible to define one facet as focused on load.
+- **`labeltemplate`** *(`String` optional)*: It's possible to change the html of the GUI inside the Facet selector result. Probably used to add an icon to the result.
+- **`modify`** *(`Function` optional)*: A function to modify the facet result on selection. Teh function arguments are `value`, `facet` and `raw` and it expects the 
+- **`cssclass`** *(`String`)*: A optional css class added to the selection li to add a custom style.
+
+##### Facet: `string`
+
+Basic string facet to add a string.
+
+- **`type`** *(`== string` )*: the type has to be `string`
+
+
+- **`value`** *(`String` optional )*: A predefined string
+
+##### Facet: `number`
+
+Basic number facet to add a numeric value.
+
+- **`type`** *(`== number` )*: the type has to be `number`
+
+
+- **`value`** *(`Number` optional )*: A predefined number
+- **`min`** *(`Number` optional )*: The minimal value allowed
+- **`max`** *(`Number` optional )*: The maximum value allowed
+- **`step`** *(`Number` optional )*: The numeric steps allowed
+- **`operators`** *(`String[]` optional )*: an Array of operators to select. Something like `>=`, `<=`, ...
+- **`operator`** *(`String` optional )*: Preselected operator
+
+##### Facet: `range`
+
+Define a numeric range.
+
+- **`type`** *(`== range` )*: The type has to be `range`
+- **`value`** *(`[Number,Number]` optional )*: A numeric range defined by an array of two numbers
+- **`min`** *(`Number` optional )*: The minimal value allowed
+- **`max`** *(`Number` optional )*: The maximum value allowed
+- **`step`** *(`Number` optional )*: The numeric steps allowed
+
+##### Facet: `array`
+
+Select a value from a list of options or add custom list elements.
+
+- **`type`** *(`== array` )*: the type has to be `array`
+- **`value`**  *(`String[]` optional )*: The predefined values.
+- **`options`** *(`String[]|Object(value,label)[]|Function`)*: The options to show as selection.
+  Possible options:
+  - Array of elements `[ "pizza", "pasta", "carne" ]`
+  - Array ob objects `[ { label: "Pizza", value: "p" }, { label: "Coke", value: "c" } ]`
+  - A Function to load the data: `function( currSelection, facet, cb ){ cb( [ "a", "b" ] ) }`
+- **`count`** *(`Number` optional)*: The max. allowed number of elements 
+- **`custom`** *(`Boolean` optional; default: `true`)*: If `true` it's allowed to add Options on the fly. Otherwise only values within the options are allowed.
+
+##### Facet: `event`
+
+Define custom actions by using the event facet, catch the event and handle it.
+
+- **`type`** *(`== event` )*: the type has to be `event`
+- **`event`** *(`String` )*: An event name that will be fired on click/select to the IGGY instance.
+
+##### Facet: `daterange`
+
+The daterange facet uses the sub module [Date Range Picker](http://www.daterangepicker.com) to define a date or a date range.
+
+- **`type`** *(`== daterange` )*: the type has to be `daterange`
+- **`value`**  *(`[Date|Number|String,Date|Number|String]` optional )*: The predefined values as two values for start and end date.
+- **`daterange`** *(`String` optional)*: A date format to parse string `values` and display the date within the picker. Numeric values will be treated as timestamps *(ms)*
+- **`opts`** *(`Object` optional)*: An object of options passed directly to the date range picker module. Details see: [Options](http://www.daterangepicker.com/#options)
+
+##### Facet: `select`
+
+A [Select2](https://select2.github.io) interface to use it inside a facet.
+
+- **`type`** *(`== select` )*: the type has to be `select`
+- **`value`**  *(`String[]` optional )*: The predefined values.
+- **`options`** *(`String[]|Object(value,label)[]|Function`, optional)*: The options to show as selection.
+  You could also use the `opts` to pass your options directly to select2 e.g. as [DataAdapter](https://select2.github.io/options.html#data-adapters)
+  Possible options:
+  - Array of elements `[ "pizza", "pasta", "carne" ]`
+  - Array ob objects `[ { label: "Pizza", value: "p" }, { label: "Coke", value: "c" } ]`
+  - A Function to load the data: `function( currSelection, facet, cb ){ cb( [ "a", "b" ] ) }`
+- **`count`** *(`Number` optional)*: The max. allowed number of elements 
+- **`multiple`** *(`Boolean` optional; default `true`)*:Allow multiple selections. This will lead to a tag like view.
+- **`opts`** *(`Object` optional)*: An object of options passed directly to the date range picker module. Details see: [Options](https://select2.github.io/options.html)
+
 
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.2.7|2017-02-02|Fixed load if no options are passed #70|
 |0.2.6|2017-02-02|Fixed doubled search event on mouse click|
 |0.2.5|2017-02-01|#69 tried to reduce jumping ui + optimized ux|
 |0.2.4|2017-01-28|#68 Tab fixes and reactivate search button on ENTER|
@@ -67,6 +163,8 @@ There are several options to customize the behavior of iggy.
 |0.0.3|2015-03-24|added daterange facet and optimized gui and code |
 |0.0.2|2015-03-23|added option `modify`|
 |0.0.1|2015-03-05|Initial commit|
+
+<!--DOCSEND-->
 
 [![NPM](https://nodei.co/npm-dl/iggy.png?months=6)](https://nodei.co/npm/iggy/)
 
