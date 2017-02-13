@@ -39,6 +39,67 @@
 <a href='http://badge.fury.io/js/iggy'><img src='https://badge.fury.io/js/iggy.png' alt='NPM version' /></a></p>
 <p>Browser search module to use with Backbone.js</p>
 <p><a href='https://nodei.co/npm/iggy/'><img src='https://nodei.co/npm/iggy.png?downloads=true&stars=true' alt='NPM' /></a></p>
+
+<h2>Init</h2>
+<pre lang='js'>
+const myIggyInst = new Iggy( $facets, $options )
+</pre>
+<p><strong>Example:</strong></p>
+<pre lang='js'>
+const options = {
+  sortby: &quot;name&quot;
+};
+
+const facets = [
+  {
+    &quot;type&quot;: &quot;string&quot;,
+    &quot;name&quot;: &quot;cmp&quot;,
+    &quot;label&quot;: &quot;Company&quot;
+  },{
+    &quot;type&quot;: &quot;array&quot;,
+    &quot;name&quot;: &quot;tgs&quot;,
+    &quot;label&quot;: &quot;Tags&quot;,
+    &quot;options&quot;: [ &quot;IT&quot;, &quot;Production&quot;, &quot;Management&quot; ]
+  }
+]
+const myIggyInst = new Iggy( facets, options )
+
+// results as event
+myIggyInst.on( &quot;change&quot;, function( coll ){
+  coll.toJSON()
+  /*
+  [
+    {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;name&quot;: &quot;cmp&quot;,
+      &quot;value&quot;: &quot;Acme&quot;
+    },{
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;name&quot;: &quot;tgs&quot;,
+      &quot;value&quot;: [ &quot;IT&quot;, &quot;Production&quot; ]
+    }
+  ]
+  */
+});
+
+// or function call `getQuery`
+myIggyInst.getQuery().toJSON()
+/*
+[
+  {
+	&quot;type&quot;: &quot;string&quot;,
+	&quot;name&quot;: &quot;cmp&quot;,
+	&quot;value&quot;: &quot;Acme&quot;
+  },{
+	&quot;type&quot;: &quot;array&quot;,
+	&quot;name&quot;: &quot;tgs&quot;,
+	&quot;value&quot;: [ &quot;IT&quot;, &quot;Production&quot; ]
+  }
+]
+*/
+</pre>
+<p></p>
+
 <h2>Options</h2>
 <p>There are several options to customize the behavior of iggy.</p>
 <ul><li>
@@ -62,7 +123,7 @@
 </ul>
 </li>
 </ul>
-<h3>Facets</h3>
+<h2>Facets</h2>
 <p>These options are valid for all facets.</p>
 <h5><em>General Options</em></h5>
 <ul><li>
