@@ -35,48 +35,171 @@
 	  <section>
 		<h1>
 <a id="iggy" class="anchor" href="#iggy" aria-hidden="true"><span class="octicon octicon-link"></span></a>IGGY</h1>
-<!--
-<p><a href="http://travis-ci.org/mpneuried/iggy"><img src="https://secure.travis-ci.org/mpneuried/iggy.png?branch=master" alt="Build Status"></a>
-<a href="https://david-dm.org/mpneuried/iggy"><img src="https://david-dm.org/mpneuried/iggy.png" alt="Build Status"></a>
-<a href="http://badge.fury.io/js/iggy"><img src="https://badge.fury.io/js/iggy.png" alt="NPM version"></a></p>
--->
+<p><a href='https://david-dm.org/mpneuried/iggy'><img src='https://david-dm.org/mpneuried/iggy.png' alt='Build Status' /></a>
+<a href='http://badge.fury.io/js/iggy'><img src='https://badge.fury.io/js/iggy.png' alt='NPM version' /></a></p>
 <p>Browser search module to use with Backbone.js</p>
-
-<!--
-<p><a href="https://nodei.co/npm/iggy/"><img src="https://nodei.co/npm/iggy.png?downloads=true&amp;stars=true" alt="NPM"></a></p>
--->
-
-<!--
-<h2>
-<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
-
-<pre><code>  npm install iggy
-</code></pre>
-
-<h2>
-<a id="initialize" class="anchor" href="#initialize" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initialize</h2>
-
-<pre><code>  // TODO init code
-</code></pre>
-
-<p><strong>Options</strong> </p>
-
-<ul>
-<li>
-<strong>foo</strong> : <em>( <code>String</code> required )</em> TODO option description</li>
-<li>
-<strong>bar</strong> : <em>( <code>Number</code> optional: default = <code>123</code> )</em> TODO option description</li>
-</ul>
--->
-<h2>
-<a aria-hidden="true" href="#options" class="anchor" id="options"><span class="octicon octicon-link" aria-hidden="true"></span></a>Options</h2>
+<p><a href='https://nodei.co/npm/iggy/'><img src='https://nodei.co/npm/iggy.png?downloads=true&stars=true' alt='NPM' /></a></p>
+<h2>Options</h2>
 <p>There are several options to customize the behavior of iggy.</p>
-<ul>
+<ul><li>
+<p><strong>sortby</strong> <em>( <code>String</code> optional; default = <code>name</code> )</em>: Sorting is always first done by <code>sort</code> (desc). But it&#39;s possible to change second sorting element with this option.</p>
+</li>
 <li>
-<strong>sortby</strong> : <em>( <code>String</code> optional; default = <code>name</code> )</em> Sorting is always first done by <code>sort</code> (desc). But it's possible to change second sorting element with this option.</li>
+<p><strong>dir</strong> <em>( <code>String</code> optional; default = <code>asc</code> )</em>: The sort direction of the sort key configured with option <code>sortby</code>. allowed are &quot;asc&quot; and &quot;desc&quot;.</p>
+</li>
 <li>
-<strong>dir</strong> : <em>( <code>String</code> optional; default = <code>asc</code> )</em> The sort direction of the sort key configured with option <code>sortby</code>. allowed are "asc" and "desc".</li>
+<p><strong>searchButton</strong> <em>( <code>Object</code> )</em>: Optional search button configuration. It will only displayed if <code>searchButton.template</code> is defined. To change the sytle you can use the css class <code>.search-btn</code>.</p>
+<ul><li>
+<strong>searchButton.template</strong> <em>( <code>String</code> )</em>: A html string to display the search button</li>
+<li>
+<strong>searchButton.event</strong> <em>( <code>String</code>; default = <code>search</code> )</em>: A event name to fire when the button was clicked.</li>
+<li>
+<strong>searchButton.pullright</strong> <em>( <code>Boolean</code>; default = <code>false</code> )</em>: Display the search button on the right istead of adding it after the &quot;+&quot; button.</li>
+<li>
+<strong>searchButton.debounce</strong> <em>( <code>Number</code>; default = <code>300</code> )</em>: Debounce time on fire of the search event</li>
+<li>
+<strong>searchButton.cssclass</strong> <em>( <code>String</code> )</em>: You can define a custom class to add to the search button</li>
 </ul>
+</li>
+</ul>
+<h3>Facets</h3>
+<p>These options are valid for all facets.</p>
+<h5><em>General Options</em></h5>
+<ul><li>
+<strong><code>type</code></strong> <em>(<code>String</code>)</em>: The facet type. See the List below with the types.</li>
+<li>
+<strong><code>name</code></strong> <em>(<code>String</code>)</em>: The facet name used as<code>name</code> for the results.</li>
+<li>
+<strong><code>label</code></strong> <em>(<code>String</code>)</em>: The label to show as name within the GUI.</li>
+<li>
+<strong><code>value</code></strong> <em>(<code>String|Number|Array</code> optional )</em>: A predefined value to populate the facet on load. The type is specific top the facet <code>type</code></li>
+<li>
+<strong><code>sort</code></strong> <em>(<code>String</code>)</em>: The sorting within the facet selector results.</li>
+<li>
+<strong><code>pinned</code></strong> <em>(<code>Boolean</code> optional; default: <code>false</code>)</em>: A pinned facet is always open and displayed to the GUI.</li>
+<li>
+<strong><code>active</code></strong> <em>(<code>Boolean</code> optional; default: <code>false</code>)</em>: With <code>active</code> it&#39;s possible to define one facet as focused on load.</li>
+<li>
+<strong><code>labeltemplate</code></strong> <em>(<code>String</code> optional)</em>: It&#39;s possible to change the html of the GUI inside the Facet selector result. Probably used to add an icon to the result.</li>
+<li>
+<strong><code>modify</code></strong> <em>(<code>Function</code> optional)</em>: A function to modify the facet result on selection. Teh function arguments are <code>value</code>, <code>facet</code> and <code>raw</code> and it expects the </li>
+<li>
+<strong><code>cssclass</code></strong> <em>(<code>String</code>)</em>: A optional css class added to the selection li to add a custom style.</li>
+</ul>
+<h5>Facet: <code>string</code></h5>
+<p>Basic string facet to add a string.</p>
+<ul><li>
+<strong><code>type</code></strong> <em>(<code>== string</code> )</em>: the type has to be <code>string</code></li>
+</ul>
+<ul><li>
+<strong><code>value</code></strong> <em>(<code>String</code> optional )</em>: A predefined string</li>
+</ul>
+<h5>Facet: <code>number</code></h5>
+<p>Basic number facet to add a numeric value.</p>
+<ul><li>
+<strong><code>type</code></strong> <em>(<code>== number</code> )</em>: the type has to be <code>number</code></li>
+</ul>
+<ul><li>
+<strong><code>value</code></strong> <em>(<code>Number</code> optional )</em>: A predefined number</li>
+<li>
+<strong><code>min</code></strong> <em>(<code>Number</code> optional )</em>: The minimal value allowed</li>
+<li>
+<strong><code>max</code></strong> <em>(<code>Number</code> optional )</em>: The maximum value allowed</li>
+<li>
+<strong><code>step</code></strong> <em>(<code>Number</code> optional )</em>: The numeric steps allowed</li>
+<li>
+<strong><code>operators</code></strong> <em>(<code>String[]</code> optional )</em>: an Array of operators to select. Something like <code>&gt;=</code>, <code>&lt;=</code>, ...</li>
+<li>
+<strong><code>operator</code></strong> <em>(<code>String</code> optional )</em>: Preselected operator</li>
+</ul>
+<h5>Facet: <code>range</code></h5>
+<p>Define a numeric range.</p>
+<ul><li>
+<strong><code>type</code></strong> <em>(<code>== range</code> )</em>: The type has to be <code>range</code></li>
+<li>
+<strong><code>value</code></strong> <em>(<code>[Number,Number]</code> optional )</em>: A numeric range defined by an array of two numbers</li>
+<li>
+<strong><code>min</code></strong> <em>(<code>Number</code> optional )</em>: The minimal value allowed</li>
+<li>
+<strong><code>max</code></strong> <em>(<code>Number</code> optional )</em>: The maximum value allowed</li>
+<li>
+<strong><code>step</code></strong> <em>(<code>Number</code> optional )</em>: The numeric steps allowed</li>
+</ul>
+<h5>Facet: <code>array</code></h5>
+<p>Select a value from a list of options or add custom list elements.</p>
+<ul><li>
+<p><strong><code>type</code></strong> <em>(<code>== array</code> )</em>: the type has to be <code>array</code></p>
+</li>
+<li>
+<p><strong><code>value</code></strong>  <em>(<code>String[]</code> optional )</em>: The predefined values.</p>
+</li>
+<li>
+<p><strong><code>options</code></strong> <em>(<code>String[]|Object(value,label)[]|Function</code>)</em>: The options to show as selection.
+Possible options:</p>
+<ul><li>
+Array of elements <code>[ &quot;pizza&quot;, &quot;pasta&quot;, &quot;carne&quot; ]</code></li>
+<li>
+Array ob objects <code>[ { label: &quot;Pizza&quot;, value: &quot;p&quot; }, { label: &quot;Coke&quot;, value: &quot;c&quot; } ]</code></li>
+<li>
+A Function to load the data: <code>function( currSelection, facet, cb ){ cb( [ &quot;a&quot;, &quot;b&quot; ] ) }</code></li>
+</ul>
+</li>
+<li>
+<p><strong><code>count</code></strong> <em>(<code>Number</code> optional)</em>: The max. allowed number of elements </p>
+</li>
+<li>
+<p><strong><code>custom</code></strong> <em>(<code>Boolean</code> optional; default: <code>true</code>)</em>: If <code>true</code> it&#39;s allowed to add Options on the fly. Otherwise only values within the options are allowed.</p>
+</li>
+</ul>
+<h5>Facet: <code>event</code></h5>
+<p>Define custom actions by using the event facet, catch the event and handle it.</p>
+<ul><li>
+<strong><code>type</code></strong> <em>(<code>== event</code> )</em>: the type has to be <code>event</code></li>
+<li>
+<strong><code>event</code></strong> <em>(<code>String</code> )</em>: An event name that will be fired on click/select to the IGGY instance.</li>
+</ul>
+<h5>Facet: <code>daterange</code></h5>
+<p>The daterange facet uses the sub module <a href='http://www.daterangepicker.com'>Date Range Picker</a> to define a date or a date range.</p>
+<ul><li>
+<strong><code>type</code></strong> <em>(<code>== daterange</code> )</em>: the type has to be <code>daterange</code></li>
+<li>
+<strong><code>value</code></strong>  <em>(<code>[Date|Number|String,Date|Number|String]</code> optional )</em>: The predefined values as two values for start and end date.</li>
+<li>
+<strong><code>daterange</code></strong> <em>(<code>String</code> optional)</em>: A date format to parse string <code>values</code> and display the date within the picker. Numeric values will be treated as timestamps <em>(ms)</em></li>
+<li>
+<strong><code>opts</code></strong> <em>(<code>Object</code> optional)</em>: An object of options passed directly to the date range picker module. Details see: <a href='http://www.daterangepicker.com/#options'>Options</a></li>
+</ul>
+<h5>Facet: <code>select</code></h5>
+<p>A <a href='https://select2.github.io'>Select2</a> interface to use it inside a facet.</p>
+<ul><li>
+<p><strong><code>type</code></strong> <em>(<code>== select</code> )</em>: the type has to be <code>select</code></p>
+</li>
+<li>
+<p><strong><code>value</code></strong>  <em>(<code>String[]</code> optional )</em>: The predefined values.</p>
+</li>
+<li>
+<p><strong><code>options</code></strong> <em>(<code>String[]|Object(value,label)[]|Function</code>, optional)</em>: The options to show as selection.
+You could also use the <code>opts</code> to pass your options directly to select2 e.g. as <a href='https://select2.github.io/options.html#data-adapters'>DataAdapter</a>
+Possible options:</p>
+<ul><li>
+Array of elements <code>[ &quot;pizza&quot;, &quot;pasta&quot;, &quot;carne&quot; ]</code></li>
+<li>
+Array ob objects <code>[ { label: &quot;Pizza&quot;, value: &quot;p&quot; }, { label: &quot;Coke&quot;, value: &quot;c&quot; } ]</code></li>
+<li>
+A Function to load the data: <code>function( currSelection, facet, cb ){ cb( [ &quot;a&quot;, &quot;b&quot; ] ) }</code></li>
+</ul>
+</li>
+<li>
+<p><strong><code>count</code></strong> <em>(<code>Number</code> optional)</em>: The max. allowed number of elements </p>
+</li>
+<li>
+<p><strong><code>multiple</code></strong> <em>(<code>Boolean</code> optional; default <code>true</code>)</em>:Allow multiple selections. This will lead to a tag like view.</p>
+</li>
+<li>
+<p><strong><code>opts</code></strong> <em>(<code>Object</code> optional)</em>: An object of options passed directly to the date range picker module. Details see: <a href='https://select2.github.io/options.html'>Options</a></p>
+</li>
+</ul>
+
 
 <h2>
 <a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h2>
@@ -395,185 +518,11 @@
 <li>implement test cases to check for correct template generation.</li>
 </ul>
 
-<h2>
-<a id="release-history" class="anchor" href="#release-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>Release History</h2>
-
+<h2>Release History</h2>
 <table>
 <thead>
-<tr>
-<th align="center">Version</th>
-<th align="center">Date</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-	
-<tr>
-<td align="center">0.1.13</td>
-<td align="center">2016-08-11</td>
-<td align="left">handle select2 jQuery text option texts <a href="https://github.com/mpneuried/iggy/issues/57">#57</a></td>
-</tr>
-<tr>
-<td align="center">0.1.12</td>
-<td align="center">2016-05-06</td>
-<td align="left">Fixed array results editable <a href="https://github.com/mpneuried/iggy/issues/53">#53</a>; Fixed remove of option for non custom options <a href="https://github.com/mpneuried/iggy/issues/56">#56</a></td>
-</tr>	
-<tr>
-<td align="center">0.1.11</td>
-<td align="center">2016-04-01</td>
-<td align="left">fixed date range picker by setting `startDate` and `enDate` <a href="https://github.com/mpneuried/iggy/issues/55">#55</a></td>
-</tr>
-<tr>
-<td align="center">0.1.10</td>
-<td align="center">2016-03-22</td>
-<td align="left">FF bugfix for Select2 facet <a href="https://github.com/mpneuried/iggy/issues/54">#54</a>; Added a sorting option <code>sortby</code> <a href="https://github.com/mpneuried/iggy/issues/52">#52</a>; Made array results editable <a href="https://github.com/mpneuried/iggy/issues/53">#53</a></td>
-</tr>	
-<tr>
-<td align="center">0.1.9</td>
-<td align="center">2016-02-11</td>
-<td align="left">fixed predefined select2 with adapter <a href="https://github.com/mpneuried/iggy/issues/51">#51</a></td>
-</tr>
-<tr>
-<td align="center">0.1.8</td>
-<td align="center">2016-02-09</td>
-<td align="left">fixed deleting facet on empty select2 selection <a href="https://github.com/mpneuried/iggy/issues/49">#49</a>; sort predefined results by facet definition <a href="https://github.com/mpneuried/iggy/issues/50">#50</a></td>
-</tr>
-<tr>
-<td align="center">0.1.7</td>
-<td align="center">2016-01-28</td>
-<td align="left">another fix for <a href="https://github.com/mpneuried/iggy/issues/45">#45</a></td>
-</tr>
-<tr>
-<td align="center">0.1.6</td>
-<td align="center">2016-01-27</td>
-<td align="left">fixed select2 options on edit <a href="https://github.com/mpneuried/iggy/issues/48">#48</a></td>
-</tr>
-<tr>
-<td align="center">0.1.5</td>
-<td align="center">2016-01-25</td>
-<td align="left">Added edit for type array <a href="https://github.com/mpneuried/iggy/issues/46">#46</a>; Fixed select2 display bug <a href="https://github.com/mpneuried/iggy/issues/45">#45</a>;</td>
-</tr>
-<tr>
-<td align="center">0.1.4</td>
-<td align="center">2016-01-14</td>
-<td align="left">fixed outerclick within daterange widget <a href="https://github.com/mpneuried/iggy/issues/44">#44</a></td>
-</tr>
-<tr>
-<td align="center">0.1.3</td>
-<td align="center">2016-01-13</td>
-<td align="left">fixed daterange facet <a href="https://github.com/mpneuried/iggy/issues/41">#41</a><a href="https://github.com/mpneuried/iggy/issues/43">#43</a>; Added two step exit on <code>ESC</code> <a href="https://github.com/mpneuried/iggy/issues/42">#42</a></td>
-</tr>
-<tr>
-<td align="center">0.1.2</td>
-<td align="center">2015-10-29</td>
-<td align="left">added facet sorting <a href="https://github.com/mpneuried/iggy/issues/38">#38</a>; facet type 'select' is now editable <a href="https://github.com/mpneuried/iggy/issues/40">#40</a></td>
-</tr>
-<tr>
-<td align="center">0.1.1</td>
-<td align="center">2015-10-07</td>
-<td align="left">Bugfix select2 and datepicker position <a href="https://github.com/mpneuried/iggy/issues/36">#36</a>; Optimized select2 to handle async DataAdapters <a href="https://github.com/mpneuried/iggy/issues/35">#35</a>; Added <code>labeltemplate</code> setting to design the labels <a href="https://github.com/mpneuried/iggy/issues/34">#34</a>;Type <code>array</code> can now used with async options <a href="https://github.com/mpneuried/iggy/issues/33">#33</a></td>
-</tr>
-<tr>
-<td align="center">0.1.0</td>
-<td align="center">2015-08-07</td>
-<td align="left">Abbiblity to change simple elements or add values to array types (cuurently not availible for select2 types); Added close on outerclick; added array features <code>count:12</code> and <code>custom:false|true;bugfix</code> facet remove render;</td>
-</tr>
-<tr>
-<td align="center">0.0.18</td>
-<td align="center">2015-07-22</td>
-<td align="left">added <code>modelId</code> to handle the id attributes for Backbone <code>1.2.x</code></td>
-</tr>
-<tr>
-<td align="center">0.0.17</td>
-<td align="center">2015-07-22</td>
-<td align="left">fix css bug #27; removed unused tests, updated dependencies</td>
-</tr>
-<tr>
-<td align="center">0.0.16</td>
-<td align="center">2015-06-17</td>
-<td align="left">fixed select of last search element in facet search #26; changed handling of TAB and ENTER #25</td>
-</tr>
-<tr>
-<td align="center">0.0.15</td>
-<td align="center">2015-06-10</td>
-<td align="left">removed console.log + added a bunch of error logs to detect bugs #23 #24</td>
-</tr>
-<tr>
-<td align="center">0.0.14</td>
-<td align="center">2015-05-03</td>
-<td align="left">Fixed selection display bug created with select2 4.0.0</td>
-</tr>
-<tr>
-<td align="center">0.0.13</td>
-<td align="center">2015-05-02</td>
-<td align="left">Every facet can be done by hitting "TAB". Added "event" facet to trigger a event on selection.</td>
-</tr>
-<tr>
-<td align="center">0.0.12</td>
-<td align="center">2015-04-16</td>
-<td align="left">Fixed bug for predefined select type.</td>
-</tr>
-<tr>
-<td align="center">0.0.11</td>
-<td align="center">2015-03-30</td>
-<td align="left">Added facet option <code>modifyKey</code> to be able to change the target key of the modify method. If not set the regular value will be replaced. It also possible to define the default by setting the IGGI-option <code>modifyKey</code>.</td>
-</tr>
-<tr>
-<td align="center">0.0.10</td>
-<td align="center">2015-03-30</td>
-<td align="left">Optimized array selection result.</td>
-</tr>
-<tr>
-<tr>
-<td align="center">0.0.9</td>
-<td align="center">2015-03-30</td>
-<td align="left">Optimized select2 selection result. Nicer multi result design.</td>
-</tr>
-<tr>
-<td align="center">0.0.8</td>
-<td align="center">2015-03-30</td>
-<td align="left">Automatic add of new facet after finished a selection. Style changes. Added distribution files. Added bower draft.</td>
-</tr>
-<tr>
-<td align="center">0.0.7</td>
-<td align="center">2015-03-27</td>
-<td align="left">Optimized modify arguments by passing the raw attributes as third argement; Optimized build.</td>
-</tr>
-<tr>
-<tr>
-<td align="center">0.0.6</td>
-<td align="center">2015-03-27</td>
-<td align="left">Optimized select2 groups</td>
-</tr>
-<tr>
-<tr>
-<td align="center">0.0.5</td>
-<td align="center">2015-03-26</td>
-<td align="left">Added optional value config to predefine the facets</td>
-</tr>
-<tr>
-<td align="center">0.0.4</td>
-<td align="center">2015-03-26</td>
-<td align="left">general changes. Added select2, range, switch to font-awsome, ...</td>
-</tr>
-<tr>
-<tr>
-<td align="center">0.0.3</td>
-<td align="center">2015-03-24</td>
-<td align="left">added daterange facet and optimized gui and code</td>
-</tr>
-<tr>
-<tr>
-<td align="center">0.0.2</td>
-<td align="center">2015-03-23</td>
-<td align="left">added option <code>modify</code></td>
-</tr>
-<tr>
-<td align="center">0.0.1</td>
-<td align="center">2015-03-05</td>
-<td align="left">Initial commit</td>
-</tr>
-</tbody>
+<tr><th style='text-align:center;' >Version</th><th style='text-align:center;' >Date</th><th style='text-align:left;' >Description</th></tr></thead>
+<tbody><tr><td style='text-align:center;' >0.2.7</td><td style='text-align:center;' >2017-02-02</td><td style='text-align:left;' >Fixed load if no options are passed #70</td></tr><tr><td style='text-align:center;' >0.2.6</td><td style='text-align:center;' >2017-02-02</td><td style='text-align:left;' >Fixed doubled search event on mouse click</td></tr><tr><td style='text-align:center;' >0.2.5</td><td style='text-align:center;' >2017-02-01</td><td style='text-align:left;' >#69 tried to reduce jumping ui + optimized ux</td></tr><tr><td style='text-align:center;' >0.2.4</td><td style='text-align:center;' >2017-01-28</td><td style='text-align:left;' >#68 Tab fixes and reactivate search button on ENTER</td></tr><tr><td style='text-align:center;' >0.2.3</td><td style='text-align:center;' >2017-01-27</td><td style='text-align:left;' >#67 fixed date range input if used date format option and input as number</td></tr><tr><td style='text-align:center;' >0.2.2</td><td style='text-align:center;' >2017-01-27</td><td style='text-align:left;' >#65 fixed search button handling; #66 filter empty elements; array facet respect array max count on click</td></tr><tr><td style='text-align:center;' >0.2.1</td><td style='text-align:center;' >2017-01-26</td><td style='text-align:left;' >#58 Changed style of search button; #63 Optimized display of array facet gui; #61 Fixed pinned facets, added <code>active</code> and optimized tab navigation.</td></tr><tr><td style='text-align:center;' >0.2.0</td><td style='text-align:center;' >2017-01-25</td><td style='text-align:left;' >#55 fixed date range picker and added option <code>dateformat</code>; #58 added search button; #59 The &quot;+&quot; is hidden if the facet select is open; Facets can be <code>pinned:true</code> to be always displayed and be undeletable.</td></tr><tr><td style='text-align:center;' >0.1.13</td><td style='text-align:center;' >2016-08-11</td><td style='text-align:left;' >handle select2 jQuery text option texts #57</td></tr><tr><td style='text-align:center;' >0.1.12</td><td style='text-align:center;' >2016-05-06</td><td style='text-align:left;' >fixed array results editable #53; fixed remove of option for non custom options #56</td></tr><tr><td style='text-align:center;' >0.1.11</td><td style='text-align:center;' >2016-04-01</td><td style='text-align:left;' >fixed date range picker by setting <code>startDate</code> and <code>enDate</code> #55</td></tr><tr><td style='text-align:center;' >0.1.10</td><td style='text-align:center;' >2016-03-22</td><td style='text-align:left;' >FF bugfix for Select2 facet #54; Added a sorting option <code>sortby</code> #52; Made array results editable #53</td></tr><tr><td style='text-align:center;' >0.1.9</td><td style='text-align:center;' >2016-02-11</td><td style='text-align:left;' >fixed predefined select2 with adapter #51</td></tr><tr><td style='text-align:center;' >0.1.8</td><td style='text-align:center;' >2016-02-09</td><td style='text-align:left;' >fixed deleting facet on empty select2 selection #49; sort predefined results by facet definition #50</td></tr><tr><td style='text-align:center;' >0.1.7</td><td style='text-align:center;' >2016-01-28</td><td style='text-align:left;' >another fix for #45</td></tr><tr><td style='text-align:center;' >0.1.6</td><td style='text-align:center;' >2016-01-27</td><td style='text-align:left;' >fixed select2 options on edit #48</td></tr><tr><td style='text-align:center;' >0.1.5</td><td style='text-align:center;' >2016-01-25</td><td style='text-align:left;' >added edit for type array #46,fixed select2 display bug #45</td></tr><tr><td style='text-align:center;' >0.1.4</td><td style='text-align:center;' >2016-01-14</td><td style='text-align:left;' >fixed outerclick within daterange widget #44</td></tr><tr><td style='text-align:center;' >0.1.3</td><td style='text-align:center;' >2016-01-13</td><td style='text-align:left;' >fixed daterange facet #41, #42; Added two step exit on <code>ESC</code> #42</td></tr><tr><td style='text-align:center;' >0.1.2</td><td style='text-align:center;' >2015-10-29</td><td style='text-align:left;' >added facet sorting #38; facet type &#39;select&#39; is now editable #40</td></tr><tr><td style='text-align:center;' >0.1.1</td><td style='text-align:center;' >2015-10-07</td><td style='text-align:left;' >Bugfix select2 and datepicker position #36; Optimized select2 to handle async DataAdapters #35; Added <code>labeltemplate</code> setting to design the labels #34;Type <code>array</code> can now used with async options #33</td></tr><tr><td style='text-align:center;' >0.1.0</td><td style='text-align:center;' >2015-08-07</td><td style='text-align:left;' >Abbiblity to change simple elements or add values to array types (cuurently not availible for select2 types); Added close on outerclick; added array features <code>count:12</code> and <code>custom:false|true</code>;bugfix facet remove render;</td></tr><tr><td style='text-align:center;' >0.0.18</td><td style='text-align:center;' >2015-07-22</td><td style='text-align:left;' >added <code>modelId</code> to handle the id attributes for Backbone <code>1.2.x</code></td></tr><tr><td style='text-align:center;' >0.0.17</td><td style='text-align:center;' >2015-07-22</td><td style='text-align:left;' >fix css bug #27; removed unused tests, updated dependencies</td></tr><tr><td style='text-align:center;' >0.0.16</td><td style='text-align:center;' >2015-06-17</td><td style='text-align:left;' >fixed select of last search element in facet search #26; changed handling of TAB and ENTER #25</td></tr><tr><td style='text-align:center;' >0.0.15</td><td style='text-align:center;' >2015-06-10</td><td style='text-align:left;' >removed console.log + added a bunch of error logs to detect bugs #23 #24</td></tr><tr><td style='text-align:center;' >0.0.14</td><td style='text-align:center;' >2015-05-03</td><td style='text-align:left;' >Fixed selection display bug created with select2 4.0.0.</td></tr><tr><td style='text-align:center;' >0.0.13</td><td style='text-align:center;' >2015-05-02</td><td style='text-align:left;' >Every facet can be done by hitting &quot;TAB&quot;. Added &quot;event&quot; facet to trigger a event on selection.</td></tr><tr><td style='text-align:center;' >0.0.12</td><td style='text-align:center;' >2015-04-16</td><td style='text-align:left;' >Fixed bug for predefined select type</td></tr><tr><td style='text-align:center;' >0.0.11</td><td style='text-align:center;' >2015-03-30</td><td style='text-align:left;' >Added facet option <code>modifyKey</code> to be able to change the target key of the modify method. If not set the regular value will be replaced. It also possible to define the default by setting the IGGI-option <code>modifyKey</code>.</td></tr><tr><td style='text-align:center;' >0.0.10</td><td style='text-align:center;' >2015-03-30</td><td style='text-align:left;' >Optimized array selection result.</td></tr><tr><td style='text-align:center;' >0.0.9</td><td style='text-align:center;' >2015-03-30</td><td style='text-align:left;' >Optimized select2 selection result. Nicer multi result design</td></tr><tr><td style='text-align:center;' >0.0.8</td><td style='text-align:center;' >2015-03-30</td><td style='text-align:left;' >Automatic add of new facet after finished a selection. Style changes. Added distribution files</td></tr><tr><td style='text-align:center;' >0.0.7</td><td style='text-align:center;' >2015-03-27</td><td style='text-align:left;' >Optimized modify arguments by passing the raw attributes as third argement; Optimized build.</td></tr><tr><td style='text-align:center;' >0.0.6</td><td style='text-align:center;' >2015-03-27</td><td style='text-align:left;' >Optimized select2 groups</td></tr><tr><td style='text-align:center;' >0.0.5</td><td style='text-align:center;' >2015-03-26</td><td style='text-align:left;' >Added optional value config to predefine the facets</td></tr><tr><td style='text-align:center;' >0.0.4</td><td style='text-align:center;' >2015-03-26</td><td style='text-align:left;' >general changes. Added select2, range, switch to font-awsome, ...</td></tr><tr><td style='text-align:center;' >0.0.3</td><td style='text-align:center;' >2015-03-24</td><td style='text-align:left;' >added daterange facet and optimized gui and code</td></tr><tr><td style='text-align:center;' >0.0.2</td><td style='text-align:center;' >2015-03-23</td><td style='text-align:left;' >added option <code>modify</code></td></tr><tr><td style='text-align:center;' >0.0.1</td><td style='text-align:center;' >2015-03-05</td><td style='text-align:left;' >Initial commit</td></tr></tbody>
 </table>
 <!--
 <p><a href="https://nodei.co/npm/iggy/"><img src="https://nodei.co/npm-dl/iggy.png?months=6" alt="NPM"></a></p>
