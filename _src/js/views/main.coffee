@@ -145,12 +145,12 @@ class MainView extends Backbone.View
 			#console.log "subview - selected", data, @isResultEmpty( data )
 			_self.setFacet( facetM, data )
 			if ( not @selectview._isFull? or @selectview._isFull() ) and evnt?.type isnt "focusout"
-				_self._nextFacet( null, @ )
+				_self._nextFacet( evnt, @ )
 			return
 		
 		subview.eventsAttached = true
 		
-		@$addBtn.before( subview.render( initialAdd ) )
+		@appendFacetEl( subview.render( initialAdd ) )
 		@facets[ facetM.id ] = subview
 		return subview
 
@@ -194,8 +194,13 @@ class MainView extends Backbone.View
 			@subview.open()
 			return
 	
-		@$addBtn.before( @selectview.render() )
+		#@$addBtn.before( @selectview.render() )
+		@appendFacetEl( @selectview.render() )
 		@selectview.focus()
+		return
+	
+	appendFacetEl: ( el )=>
+		( @$searchBtn or @$addBtn ).before( el )
 		return
 	
 	_onOpened: =>
@@ -210,34 +215,56 @@ class MainView extends Backbone.View
 		jQuery( document ).on "click", @_outerClick
 		return
 	
+		
 	_keyListen: =>
 		jQuery( document ).on "keydown", ( evnt )=>
+			$tgrt = $( evnt.target )
+			
+			if evnt.keyCode is KEYCODES.ENTER and $tgrt.is( ".add-facet-btn" )
+				evnt?.preventDefault()
+				evnt?.stopPropagation()
+				setTimeout( =>
+					@addFacet()
+				, 0 )
+				
 			if evnt.keyCode is KEYCODES.TAB or evnt.keyCode in KEYCODES.TAB
 				#evnt?.preventDefault()
 				
-				if $( evnt.target ).is( ".search-btn" ) and evnt?.shiftKey
+				if @$searchBtn? and $tgrt.is( ".add-facet-btn" ) and evnt?.shiftKey
 					evnt?.preventDefault()
 					evnt?.stopPropagation()
-					@TMopenAddFacet =setTimeout( =>
-						@addFacet()
+					@TMopenAddFacet = setTimeout( =>
+						@focusSearch()
 					, 0 )
 					return
-					
+				
 				# case only the facet selector is open
-				if @selectview?.isOpen
+				if not @$searchBtn? and @selectview?.isOpen
 					evnt?.preventDefault()
 					evnt?.stopPropagation()
 					if evnt?.shiftKey
-						_prevId = @$addBtn?.prevAll( ".sub" )?.first()?.data( "fctid" )
-						if _prevId?
-							setTimeout( =>
-								@facets[ _prevId ]?.reopen()
-							, 0 )
+						@openLastFacet()
 					else
 						@selectview.close()
 						@focusSearch()
 					return
+
+				if @$searchBtn? and $tgrt.is( ".search-btn" ) and evnt?.shiftKey
+					evnt?.preventDefault()
+					evnt?.stopPropagation()
+					@openLastFacet()
+					return
 				
+				if @$searchBtn? and @selectview?.isOpen
+					if evnt?.shiftKey
+						evnt?.preventDefault()
+						evnt?.stopPropagation()
+						@focusSearch()
+					else
+						setTimeout( =>
+							@selectview?.close()
+						, 0 )
+						#return
 				
 				# otherwise trigger escape event and listen for the response of the open facet
 				@trigger "escape", evnt, @_nextFacet
@@ -246,26 +273,42 @@ class MainView extends Backbone.View
 				@exit()
 				@trigger( "escape", evnt )
 				return
+			
+			# if evnt.keyCode is KEYCODES.ENTER
+			# 	return
 			return
+		return
+	
+	openLastFacet: =>
+		_prevId = @$addBtn?.prevAll( ".sub" )?.first()?.data( "fctid" )
+		if _prevId?
+			setTimeout( =>
+				@facets[ _prevId ]?.reopen()
+			, 0 )
 		return
 	
 	_nextFacet: ( evnt, subView )=>
 		_nextFn = if evnt?.shiftKey then "prev" else "next"
 		_next = subView.$el?[ _nextFn ]?()
-		
-		if _next.hasClass( "add-facet-btn" )
-			evnt?.preventDefault()
-			evnt?.stopPropagation()
-			setTimeout( =>
-				@addFacet()
-			, 0 )
+
+		if _next.hasClass( "search-btn" )
+			if _nextFn is "prev"
+				@openLastFacet()
+			else if @$searchBtn?
+				@focusSearch()
 			return
+
 		_nextId = _next?.data( "fctid" )
 		if _nextId?
 			evnt?.preventDefault()
+			evnt?.stopPropagation()
 			setTimeout( =>
 				@facets[ _nextId ]?.reopen()
 			, 0 )
+			return
+		
+		if @$searchBtn? and _nextFn is "next"
+			@focusSearch()
 		return
 		
 	focusSearch: =>
@@ -275,10 +318,15 @@ class MainView extends Backbone.View
 		
 	__onSearch: ( evnt )=>
 		if ( evnt.type is "click" and evnt.clientX is 0 and evnt.clientY is 0 ) or evnt.type is "mousedown"
-			evnt?.preventDefault()
-			evnt.stopPropagation()
-			@exit()
-			@trigger( "searchbutton", @searchButton.event )
+			@trigger( "escape", evnt )
+			setTimeout( =>
+				evnt?.preventDefault()
+				evnt.stopPropagation()
+				@exit()
+				@trigger( "searchbutton", @searchButton.event )
+				return
+			, 0 )
+			return
 		return
 	
 	_onFocusSearch: ( evnt )=>

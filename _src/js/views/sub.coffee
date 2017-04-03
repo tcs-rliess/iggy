@@ -21,9 +21,8 @@ class ViewSub extends Backbone.View
 		@$el.data( "fctid", @model.id )
 		
 		@parent.on "escape", ( evnt, cb )=>
-			if @_isOpen
-				if @selectview?._onTabAction( evnt )
-					cb( evnt, @ ) if cb?
+			if @_isOpen and @selectview?._onTabAction( evnt ) and cb?
+				cb( evnt, @ )
 			return
 		return
 

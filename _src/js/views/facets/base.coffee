@@ -86,9 +86,7 @@ class FacetSubsBase extends Backbone.View
 		return true
 	
 	_onTabAction: ( evnt )=>
-		evnt.preventDefault()
-		evnt.stopPropagation()
-		@select()
+		@select( evnt )
 		return true
 
 	close: ( evnt )=>
