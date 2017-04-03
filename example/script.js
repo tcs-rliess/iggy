@@ -641,6 +641,9 @@ jQuery( function( $ ){
 			//format: "DD [foo] MMM [bar] YY",
 			showWeekNumbers : true,
 			showDropdowns : true,
+			locale: {
+				firstDay : 1
+			},
 			timePicker: false,
 			ranges: {
 				'Today': [moment(), moment()],
@@ -663,6 +666,9 @@ jQuery( function( $ ){
 			showWeekNumbers : true,
 			showDropdowns : true,
 			timePicker: false,
+			locale: {
+				firstDay : 3
+			},
 			ranges: {
 				'Today': [moment(), moment()],
 				'Yesterday': [moment().subtract(1, 'day'), moment().subtract(1, 'day')],

@@ -186,6 +186,7 @@ A [Select2](https://select2.github.io) interface to use it inside a facet.
 
 | Version |    Date    | Description                              |
 | :-----: | :--------: | :--------------------------------------- |
+|  0.2.8  | 2017-04-03 | Fixed daterange facet locale option overwrite #71  |
 |  0.2.7  | 2017-02-02 | Fixed load if no options are passed #70  |
 |  0.2.6  | 2017-02-02 | Fixed doubled search event on mouse click |
 |  0.2.5  | 2017-02-01 | #69 tried to reduce jumping ui + optimized ux |

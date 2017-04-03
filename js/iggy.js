@@ -31,6 +31,8 @@ IGGY = (function(superClass) {
 
   IGGY.prototype.$ = jQuery;
 
+  IGGY.prototype.jQuery = jQuery;
+
   function IGGY(el, facets, options) {
     if (facets == null) {
       facets = [];
@@ -1235,6 +1237,7 @@ FacetSubsBase = (function(superClass) {
 
   FacetSubsBase.prototype.initialize = function(options) {
     this.sub = options.sub;
+    this.jQuery = this.sub.jQuery;
     this.result = new SubResults();
   };
 
@@ -1509,7 +1512,7 @@ FacetSubsDateRange = (function(superClass) {
   FacetSubsDateRange.prototype.focus = function() {
     var _opts, ref;
     if (this.daterangepicker == null) {
-      _opts = _.extend({}, this.model.get("opts"), this.forcedDateRangeOpts());
+      _opts = this.jQuery.extend(true, {}, this.model.get("opts"), this.forcedDateRangeOpts());
       this.$inp.daterangepicker(_opts, this._dateReturn);
       this.daterangepicker = this.$inp.data("daterangepicker");
       if ((ref = this.daterangepicker.container) != null) {
@@ -2953,6 +2956,7 @@ MainView = (function(superClass) {
   MainView.prototype.initialize = function(options) {
     var _cl, _fnSort, _valueFacets, fct, i, len, ref, ref1;
     this.main = options.main;
+    this.jQuery = this.main.jQuery;
     this.idx = options.idx;
     this.results = options.results;
     this.facets = {};
@@ -3717,6 +3721,7 @@ ViewSub = (function(superClass) {
     this._isOpen = false;
     this.result = new Backbone.Collection();
     this.parent = options.parent;
+    this.jQuery = this.parent.jQuery;
     this.$el.data("fctid", this.model.id);
     this.parent.on("escape", (function(_this) {
       return function(evnt, cb) {
