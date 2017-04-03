@@ -240,16 +240,21 @@ class MainView extends Backbone.View
 				
 				# case only the facet selector is open
 				if not @$searchBtn? and @selectview?.isOpen
-					evnt?.preventDefault()
-					evnt?.stopPropagation()
 					if evnt?.shiftKey
+						evnt?.preventDefault()
+						evnt?.stopPropagation()
 						@openLastFacet()
 					else
 						@selectview.close()
-						@focusSearch()
 					return
 
 				if @$searchBtn? and $tgrt.is( ".search-btn" ) and evnt?.shiftKey
+					evnt?.preventDefault()
+					evnt?.stopPropagation()
+					@openLastFacet()
+					return
+					
+				if not @$searchBtn? and $tgrt.is( ".add-facet-btn" ) and evnt?.shiftKey
 					evnt?.preventDefault()
 					evnt?.stopPropagation()
 					@openLastFacet()
@@ -309,6 +314,9 @@ class MainView extends Backbone.View
 		
 		if @$searchBtn? and _nextFn is "next"
 			@focusSearch()
+		if not @$searchBtn? and _nextFn is "next"
+			@$addBtn.focus()
+			@addFacet()
 		return
 		
 	focusSearch: =>
