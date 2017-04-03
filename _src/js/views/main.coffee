@@ -23,6 +23,7 @@ class MainView extends Backbone.View
 	initialize: ( options )=>
 		
 		@main = options.main
+		@jQuery = @main.jQuery
 		@idx = options.idx
 		@results = options.results
 		

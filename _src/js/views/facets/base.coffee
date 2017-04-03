@@ -6,6 +6,7 @@ class FacetSubsBase extends Backbone.View
 
 	initialize: ( options )=>
 		@sub = options.sub
+		@jQuery = @sub.jQuery
 		@result = new SubResults()
 		return
 

@@ -16,6 +16,7 @@ class ViewSub extends Backbone.View
 		@result = new Backbone.Collection()
 		#@$el.on "click", @reopen
 		@parent = options.parent
+		@jQuery = @parent.jQuery
 		
 		@$el.data( "fctid", @model.id )
 		

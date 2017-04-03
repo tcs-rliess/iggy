@@ -13,6 +13,7 @@ IGGY_IDX = 1
 
 class IGGY extends Backbone.Events
 	$: jQuery
+	jQuery: jQuery
 	constructor: ( el, facets = [], options = {} )->
 		_.extend @, Backbone.Events
 		@_initErrors()

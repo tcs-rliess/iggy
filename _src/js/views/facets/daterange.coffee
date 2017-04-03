@@ -34,7 +34,7 @@ class FacetSubsDateRange extends require( "./base" )
 
 	focus: ()=>
 		if not @daterangepicker?
-			_opts = _.extend( {}, @model.get( "opts" ), @forcedDateRangeOpts() )
+			_opts = @jQuery.extend( true, {}, @model.get( "opts" ), @forcedDateRangeOpts() )
 			@$inp.daterangepicker( _opts, @_dateReturn )
 			@daterangepicker = @$inp.data( "daterangepicker" )
 			@daterangepicker.container?.addClass( "daterange-iggy" )
