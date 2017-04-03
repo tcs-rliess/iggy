@@ -1176,11 +1176,11 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 ;var locals_for_with = (locals || {});(function (searchButton) {
-buf.push("<button class=\"add-facet-btn fa fa-plus\"></button>");
 if ( searchButton != undefined && searchButton.template != undefined && searchButton.template.length >= 0)
 {
 buf.push("<button" + (jade.cls(['search-btn',searchButton.cssclass,{"search-btn-pullright":searchButton.pullright}], [null,true,true])) + ">" + (null == (jade_interp = searchButton.template) ? "" : jade_interp) + "</button>");
-}}.call(this,"searchButton" in locals_for_with?locals_for_with.searchButton:typeof searchButton!=="undefined"?searchButton:undefined));;return buf.join("");
+}
+buf.push("<button class=\"add-facet-btn fa fa-plus\"></button>");}.call(this,"searchButton" in locals_for_with?locals_for_with.searchButton:typeof searchButton!=="undefined"?searchButton:undefined));;return buf.join("");
 };
 },{"jade/runtime":38}],25:[function(require,module,exports){
 module.exports = {
@@ -1236,8 +1236,9 @@ FacetSubsBase = (function(superClass) {
   FacetSubsBase.prototype.resultTemplate = require("../../tmpls/result_base.jade");
 
   FacetSubsBase.prototype.initialize = function(options) {
+    var ref, ref1;
     this.sub = options.sub;
-    this.jQuery = this.sub.jQuery;
+    this.jQuery = ((ref = this.sub) != null ? ref.jQuery : void 0) || (options != null ? (ref1 = options.main) != null ? ref1.jQuery : void 0 : void 0);
     this.result = new SubResults();
   };
 
@@ -1345,9 +1346,7 @@ FacetSubsBase = (function(superClass) {
   };
 
   FacetSubsBase.prototype._onTabAction = function(evnt) {
-    evnt.preventDefault();
-    evnt.stopPropagation();
-    this.select();
+    this.select(evnt);
     return true;
   };
 
@@ -2931,10 +2930,12 @@ MainView = (function(superClass) {
     this.__onSearch = bind(this.__onSearch, this);
     this.focusSearch = bind(this.focusSearch, this);
     this._nextFacet = bind(this._nextFacet, this);
+    this.openLastFacet = bind(this.openLastFacet, this);
     this._keyListen = bind(this._keyListen, this);
     this._outerClickListen = bind(this._outerClickListen, this);
     this._onClosed = bind(this._onClosed, this);
     this._onOpened = bind(this._onOpened, this);
+    this.appendFacetEl = bind(this.appendFacetEl, this);
     this.addFacet = bind(this.addFacet, this);
     this.genSub = bind(this.genSub, this);
     this.setFacet = bind(this.setFacet, this);
@@ -3124,11 +3125,11 @@ MainView = (function(superClass) {
     subview.on("selected", function(facetM, data, evnt) {
       _self.setFacet(facetM, data);
       if (((this.selectview._isFull == null) || this.selectview._isFull()) && (evnt != null ? evnt.type : void 0) !== "focusout") {
-        _self._nextFacet(null, this);
+        _self._nextFacet(evnt, this);
       }
     });
     subview.eventsAttached = true;
-    this.$addBtn.before(subview.render(initialAdd));
+    this.appendFacetEl(subview.render(initialAdd));
     this.facets[facetM.id] = subview;
     return subview;
   };
@@ -3172,8 +3173,12 @@ MainView = (function(superClass) {
         _this.subview.open();
       };
     })(this));
-    this.$addBtn.before(this.selectview.render());
+    this.appendFacetEl(this.selectview.render());
     this.selectview.focus();
+  };
+
+  MainView.prototype.appendFacetEl = function(el) {
+    (this.$searchBtn || this.$addBtn).before(el);
   };
 
   MainView.prototype._onOpened = function() {
@@ -3197,9 +3202,21 @@ MainView = (function(superClass) {
   MainView.prototype._keyListen = function() {
     jQuery(document).on("keydown", (function(_this) {
       return function(evnt) {
-        var _prevId, ref, ref1, ref2, ref3, ref4, ref5;
+        var $tgrt, ref, ref1, ref2, ref3;
+        $tgrt = $(evnt.target);
+        if (evnt.keyCode === KEYCODES.ENTER && $tgrt.is(".add-facet-btn")) {
+          if (evnt != null) {
+            evnt.preventDefault();
+          }
+          if (evnt != null) {
+            evnt.stopPropagation();
+          }
+          setTimeout(function() {
+            return _this.addFacet();
+          }, 0);
+        }
         if (evnt.keyCode === KEYCODES.TAB || (ref = evnt.keyCode, indexOf.call(KEYCODES.TAB, ref) >= 0)) {
-          if ($(evnt.target).is(".search-btn") && (evnt != null ? evnt.shiftKey : void 0)) {
+          if ((_this.$searchBtn != null) && $tgrt.is(".add-facet-btn") && (evnt != null ? evnt.shiftKey : void 0)) {
             if (evnt != null) {
               evnt.preventDefault();
             }
@@ -3207,35 +3224,64 @@ MainView = (function(superClass) {
               evnt.stopPropagation();
             }
             _this.TMopenAddFacet = setTimeout(function() {
-              return _this.addFacet();
+              return _this.focusSearch();
             }, 0);
             return;
           }
-          if ((ref1 = _this.selectview) != null ? ref1.isOpen : void 0) {
+          if ((_this.$searchBtn == null) && ((ref1 = _this.selectview) != null ? ref1.isOpen : void 0)) {
+            if (evnt != null ? evnt.shiftKey : void 0) {
+              if (evnt != null) {
+                evnt.preventDefault();
+              }
+              if (evnt != null) {
+                evnt.stopPropagation();
+              }
+              _this.openLastFacet();
+            } else {
+              _this.selectview.close();
+            }
+            return;
+          }
+          if ((_this.$searchBtn != null) && $tgrt.is(".search-btn") && (evnt != null ? evnt.shiftKey : void 0)) {
             if (evnt != null) {
               evnt.preventDefault();
             }
             if (evnt != null) {
               evnt.stopPropagation();
             }
-            if (evnt != null ? evnt.shiftKey : void 0) {
-              _prevId = (ref2 = _this.$addBtn) != null ? (ref3 = ref2.prevAll(".sub")) != null ? (ref4 = ref3.first()) != null ? ref4.data("fctid") : void 0 : void 0 : void 0;
-              if (_prevId != null) {
-                setTimeout(function() {
-                  var ref5;
-                  return (ref5 = _this.facets[_prevId]) != null ? ref5.reopen() : void 0;
-                }, 0);
-              }
-            } else {
-              _this.selectview.close();
-              _this.focusSearch();
-            }
+            _this.openLastFacet();
             return;
+          }
+          if ((_this.$searchBtn == null) && $tgrt.is(".add-facet-btn") && (evnt != null ? evnt.shiftKey : void 0)) {
+            if (evnt != null) {
+              evnt.preventDefault();
+            }
+            if (evnt != null) {
+              evnt.stopPropagation();
+            }
+            _this.openLastFacet();
+            return;
+          }
+          if ((_this.$searchBtn != null) && ((ref2 = _this.selectview) != null ? ref2.isOpen : void 0)) {
+            if (evnt != null ? evnt.shiftKey : void 0) {
+              if (evnt != null) {
+                evnt.preventDefault();
+              }
+              if (evnt != null) {
+                evnt.stopPropagation();
+              }
+              _this.focusSearch();
+            } else {
+              setTimeout(function() {
+                var ref3;
+                return (ref3 = _this.selectview) != null ? ref3.close() : void 0;
+              }, 0);
+            }
           }
           _this.trigger("escape", evnt, _this._nextFacet);
           return;
         }
-        if (evnt.keyCode === KEYCODES.ESC || (ref5 = evnt.keyCode, indexOf.call(KEYCODES.ESC, ref5) >= 0)) {
+        if (evnt.keyCode === KEYCODES.ESC || (ref3 = evnt.keyCode, indexOf.call(KEYCODES.ESC, ref3) >= 0)) {
           _this.exit();
           _this.trigger("escape", evnt);
           return;
@@ -3244,11 +3290,33 @@ MainView = (function(superClass) {
     })(this));
   };
 
+  MainView.prototype.openLastFacet = function() {
+    var _prevId, ref, ref1, ref2;
+    _prevId = (ref = this.$addBtn) != null ? (ref1 = ref.prevAll(".sub")) != null ? (ref2 = ref1.first()) != null ? ref2.data("fctid") : void 0 : void 0 : void 0;
+    if (_prevId != null) {
+      setTimeout((function(_this) {
+        return function() {
+          var ref3;
+          return (ref3 = _this.facets[_prevId]) != null ? ref3.reopen() : void 0;
+        };
+      })(this), 0);
+    }
+  };
+
   MainView.prototype._nextFacet = function(evnt, subView) {
     var _next, _nextFn, _nextId, ref;
     _nextFn = (evnt != null ? evnt.shiftKey : void 0) ? "prev" : "next";
     _next = (ref = subView.$el) != null ? typeof ref[_nextFn] === "function" ? ref[_nextFn]() : void 0 : void 0;
-    if (_next.hasClass("add-facet-btn")) {
+    if (_next.hasClass("search-btn")) {
+      if (_nextFn === "prev") {
+        this.openLastFacet();
+      } else if (this.$searchBtn != null) {
+        this.focusSearch();
+      }
+      return;
+    }
+    _nextId = _next != null ? _next.data("fctid") : void 0;
+    if (_nextId != null) {
       if (evnt != null) {
         evnt.preventDefault();
       }
@@ -3257,22 +3325,18 @@ MainView = (function(superClass) {
       }
       setTimeout((function(_this) {
         return function() {
-          return _this.addFacet();
-        };
-      })(this), 0);
-      return;
-    }
-    _nextId = _next != null ? _next.data("fctid") : void 0;
-    if (_nextId != null) {
-      if (evnt != null) {
-        evnt.preventDefault();
-      }
-      setTimeout((function(_this) {
-        return function() {
           var ref1;
           return (ref1 = _this.facets[_nextId]) != null ? ref1.reopen() : void 0;
         };
       })(this), 0);
+      return;
+    }
+    if ((this.$searchBtn != null) && _nextFn === "next") {
+      this.focusSearch();
+    }
+    if ((this.$searchBtn == null) && _nextFn === "next") {
+      this.$addBtn.focus();
+      this.addFacet();
     }
   };
 
@@ -3284,12 +3348,18 @@ MainView = (function(superClass) {
 
   MainView.prototype.__onSearch = function(evnt) {
     if ((evnt.type === "click" && evnt.clientX === 0 && evnt.clientY === 0) || evnt.type === "mousedown") {
-      if (evnt != null) {
-        evnt.preventDefault();
-      }
-      evnt.stopPropagation();
-      this.exit();
-      this.trigger("searchbutton", this.searchButton.event);
+      this.trigger("escape", evnt);
+      setTimeout((function(_this) {
+        return function() {
+          if (evnt != null) {
+            evnt.preventDefault();
+          }
+          evnt.stopPropagation();
+          _this.exit();
+          _this.trigger("searchbutton", _this.searchButton.event);
+        };
+      })(this), 0);
+      return;
     }
   };
 
@@ -3726,12 +3796,8 @@ ViewSub = (function(superClass) {
     this.parent.on("escape", (function(_this) {
       return function(evnt, cb) {
         var ref;
-        if (_this._isOpen) {
-          if ((ref = _this.selectview) != null ? ref._onTabAction(evnt) : void 0) {
-            if (cb != null) {
-              cb(evnt, _this);
-            }
-          }
+        if (_this._isOpen && ((ref = _this.selectview) != null ? ref._onTabAction(evnt) : void 0) && (cb != null)) {
+          cb(evnt, _this);
         }
       };
     })(this));
