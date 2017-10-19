@@ -15,6 +15,7 @@ class MainView extends Backbone.View
 	
 	constructor: ( options={} )->
 		@searchButton = options?.searchButton
+		@buttonsFirst = options?.buttonsFirst or false
 		
 		@_onSearch = _.debounce( @__onSearch, ( @searchButton?.debounce or 300 ), { trailing: false, leading: true } )
 		super
@@ -200,15 +201,22 @@ class MainView extends Backbone.View
 		return
 	
 	appendFacetEl: ( el )=>
-		( @$searchBtn or @$addBtn ).before( el )
+		if @buttonsFirst
+			@$el.append( el )
+		else
+			( @$searchBtn or @$addBtn ).before( el )
 		return
 	
 	_onOpened: =>
-		@$addBtn?.hide()
+		# do not hide/show if the buttons are before the results
+		if not @buttonsFirst
+			@$addBtn?.hide()
 		return
 	
 	_onClosed: =>
-		@$addBtn?.show()
+		# do not hide/show if the buttons are before the results
+		if not @buttonsFirst
+			@$addBtn?.show()
 		return
 	
 	_outerClickListen: =>
@@ -220,7 +228,7 @@ class MainView extends Backbone.View
 		jQuery( document ).on "keydown", ( evnt )=>
 			$tgrt = $( evnt.target )
 			
-			if evnt.keyCode is KEYCODES.ENTER and $tgrt.is( ".add-facet-btn" )
+			if evnt.keyCode is KEYCODES.ENTER and @$addBtn.is( $tgrt )
 				evnt?.preventDefault()
 				evnt?.stopPropagation()
 				setTimeout( =>
@@ -228,16 +236,20 @@ class MainView extends Backbone.View
 				, 0 )
 				
 			if evnt.keyCode is KEYCODES.TAB or evnt.keyCode in KEYCODES.TAB
+				#console.log('key', $tgrt, evnt?.shiftKey, @selectview?.isOpen)
 				#evnt?.preventDefault()
 				
-				if @$searchBtn? and $tgrt.is( ".add-facet-btn" ) and evnt?.shiftKey
+				if @$searchBtn? and @$addBtn.is( $tgrt ) and evnt?.shiftKey
 					evnt?.preventDefault()
 					evnt?.stopPropagation()
 					@TMopenAddFacet = setTimeout( =>
 						@focusSearch()
 					, 0 )
 					return
-				
+
+				if @$addBtn.is( $tgrt ) and not evnt?.shiftKey and @buttonsFirst
+					@openFirstFacet()
+
 				# case only the facet selector is open
 				if not @$searchBtn? and @selectview?.isOpen
 					if evnt?.shiftKey
@@ -248,17 +260,19 @@ class MainView extends Backbone.View
 						@selectview.close()
 					return
 
-				if @$searchBtn? and $tgrt.is( ".search-btn" ) and evnt?.shiftKey
+				if @$searchBtn? and @$searchBtn.is( $tgrt ) and evnt?.shiftKey and not @buttonsFirst
+					
 					evnt?.preventDefault()
 					evnt?.stopPropagation()
 					@openLastFacet()
 					return
 					
-				if not @$searchBtn? and $tgrt.is( ".add-facet-btn" ) and evnt?.shiftKey
-					evnt?.preventDefault()
-					evnt?.stopPropagation()
-					@openLastFacet()
-					return
+				if not @$searchBtn? and @$addBtn.is( $tgrt ) and evnt?.shiftKey
+					if not @buttonsFirst
+						evnt?.preventDefault()
+						evnt?.stopPropagation()
+						@openLastFacet()
+						return
 				
 				if @$searchBtn? and @selectview?.isOpen
 					if evnt?.shiftKey
@@ -267,7 +281,7 @@ class MainView extends Backbone.View
 						@focusSearch()
 					else
 						setTimeout( =>
-							@selectview?.close()
+							@selectview.close()
 						, 0 )
 						#return
 				
@@ -285,14 +299,23 @@ class MainView extends Backbone.View
 		return
 	
 	openLastFacet: =>
-		_prevId = @$addBtn?.prevAll( ".sub" )?.first()?.data( "fctid" )
-		if _prevId?
+		_id = @$addBtn?.prevAll( ".sub" )?.first()?.data( "fctid" )
+		if _id?
 			setTimeout( =>
-				@facets[ _prevId ]?.reopen()
+				@facets[ _id ]?.reopen()
+			, 0 )
+		return
+
+	openFirstFacet: =>
+		_id = @$el.find( ".sub" )?.first()?.data( "fctid" )
+		if _id?
+			setTimeout( =>
+				@facets[ _id ]?.reopen()
 			, 0 )
 		return
 	
 	_nextFacet: ( evnt, subView )=>
+		# console.log('_nextFacet', evnt)
 		_nextFn = if evnt?.shiftKey then "prev" else "next"
 		_next = subView.$el?[ _nextFn ]?()
 
@@ -304,6 +327,7 @@ class MainView extends Backbone.View
 			return
 
 		_nextId = _next?.data( "fctid" )
+		# console.log('_nextId', _nextId)
 		if _nextId?
 			evnt?.preventDefault()
 			evnt?.stopPropagation()
@@ -312,8 +336,10 @@ class MainView extends Backbone.View
 			, 0 )
 			return
 		
+		# console.log('check dir', _nextFn)
 		if @$searchBtn? and _nextFn is "next"
-			@focusSearch()
+			if not @buttonsFirst
+				@focusSearch()
 		if not @$searchBtn? and _nextFn is "next"
 			@$addBtn.focus()
 			@addFacet()

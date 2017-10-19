@@ -31,7 +31,7 @@ class IGGY extends Backbone.Events
 		@results.on "remove", @triggerChange
 		@results.on "change", @triggerChange
 
-		@view = new MainView( main: @, el: @$el, collection: @facets, results: @results, searchButton: options.searchButton, idx: IGGY_IDX++ )
+		@view = new MainView( { main: @, el: @$el, collection: @facets, results: @results, buttonsFirst: ( options.buttonsFirst or false ), searchButton: options.searchButton, idx: IGGY_IDX++ } )
 		
 		@view.on "searchbutton", @triggerEvent
 
