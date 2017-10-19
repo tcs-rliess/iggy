@@ -64,6 +64,7 @@ IGGY = (function(superClass) {
       el: this.$el,
       collection: this.facets,
       results: this.results,
+      buttonsFirst: options.buttonsFirst || false,
       searchButton: options.searchButton,
       idx: IGGY_IDX++
     });
@@ -879,7 +880,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 ;var locals_for_with = (locals || {});(function (custom, id, txt) {
-buf.push("<span class=\"txt\">" + (jade.escape(null == (jade_interp = txt) ? "" : jade_interp)) + "</span><span class=\"btn-wrp\"><i" + (jade.attr("data-id", id, true, false)) + " class=\"rm-result-btn fa fa-remove\"></i>");
+buf.push("<span class=\"txt\">" + (jade.escape(null == (jade_interp = txt) ? "" : jade_interp)) + "</span><span class=\"btn-wrp\"><i" + (jade.attr("data-id", id, true, false)) + " class=\"rm-result-btn fa fa-times\"></i>");
 if ( custom)
 {
 buf.push("<i" + (jade.attr("data-id", id, true, false)) + " class=\"edit-result-btn fa fa-pencil\"></i>");
@@ -1138,7 +1139,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (label, pinned, selected, undefined) {
 if ( !pinned)
 {
-buf.push("<div class=\"rm-facet-btn fa fa-remove\"></div>");
+buf.push("<i class=\"rm-facet-btn fa fa-times\"></i>");
 }
 buf.push("<span class=\"sublabel\">" + (jade.escape((jade_interp = label) == null ? '' : jade_interp)) + ":</span><ul class=\"subresults\">");
 if ( selected && selected.length)
@@ -1151,7 +1152,7 @@ if ( selected && selected.length)
     for (var idx = 0, $$l = $$obj.length; idx < $$l; idx++) {
       var el = $$obj[idx];
 
-buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) + "</span><i class=\"rm-facet-btn fa fa-remove\"></i></li>");
+buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) + "</span><i class=\"rm-facet-btn fa fa-times\"></i></li>");
     }
 
   } else {
@@ -1159,7 +1160,7 @@ buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? 
     for (var idx in $$obj) {
       $$l++;      var el = $$obj[idx];
 
-buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) + "</span><i class=\"rm-facet-btn fa fa-remove\"></i></li>");
+buf.push("<li><span class=\"txt\">" + (jade.escape(null == (jade_interp = el) ? "" : jade_interp)) + "</span><i class=\"rm-facet-btn fa fa-times\"></i></li>");
     }
 
   }
@@ -1180,7 +1181,7 @@ if ( searchButton != undefined && searchButton.template != undefined && searchBu
 {
 buf.push("<button" + (jade.cls(['search-btn',searchButton.cssclass,{"search-btn-pullright":searchButton.pullright}], [null,true,true])) + ">" + (null == (jade_interp = searchButton.template) ? "" : jade_interp) + "</button>");
 }
-buf.push("<button class=\"add-facet-btn fa fa-plus\"></button>");}.call(this,"searchButton" in locals_for_with?locals_for_with.searchButton:typeof searchButton!=="undefined"?searchButton:undefined));;return buf.join("");
+buf.push("<button class=\"add-facet-btn\"><i class=\"fa fa-plus\"></i></button>");}.call(this,"searchButton" in locals_for_with?locals_for_with.searchButton:typeof searchButton!=="undefined"?searchButton:undefined));;return buf.join("");
 };
 },{"jade/runtime":38}],25:[function(require,module,exports){
 module.exports = {
@@ -2930,6 +2931,7 @@ MainView = (function(superClass) {
     this.__onSearch = bind(this.__onSearch, this);
     this.focusSearch = bind(this.focusSearch, this);
     this._nextFacet = bind(this._nextFacet, this);
+    this.openFirstFacet = bind(this.openFirstFacet, this);
     this.openLastFacet = bind(this.openLastFacet, this);
     this._keyListen = bind(this._keyListen, this);
     this._outerClickListen = bind(this._outerClickListen, this);
@@ -2946,6 +2948,7 @@ MainView = (function(superClass) {
     this.templateData = bind(this.templateData, this);
     this.initialize = bind(this.initialize, this);
     this.searchButton = options != null ? options.searchButton : void 0;
+    this.buttonsFirst = (options != null ? options.buttonsFirst : void 0) || false;
     this._onSearch = _.debounce(this.__onSearch, ((ref = this.searchButton) != null ? ref.debounce : void 0) || 300, {
       trailing: false,
       leading: true
@@ -3020,10 +3023,10 @@ MainView = (function(superClass) {
     };
     if (this.searchButton != null) {
       _ret.searchButton = {
-        template: this.searchButton.template || "",
+        template: this.searchButton.template || "<i class=\"fa fa-search\"></i>",
         event: this.searchButton.event || "search",
         pullright: this.searchButton.pullright || false,
-        cssclass: this.searchButton.cssclass || "btn btn-primary fa fa-search"
+        cssclass: this.searchButton.cssclass || "btn btn-primary"
       };
     }
     return _ret;
@@ -3178,20 +3181,28 @@ MainView = (function(superClass) {
   };
 
   MainView.prototype.appendFacetEl = function(el) {
-    (this.$searchBtn || this.$addBtn).before(el);
+    if (this.buttonsFirst) {
+      this.$el.append(el);
+    } else {
+      (this.$searchBtn || this.$addBtn).before(el);
+    }
   };
 
   MainView.prototype._onOpened = function() {
     var ref;
-    if ((ref = this.$addBtn) != null) {
-      ref.hide();
+    if (!this.buttonsFirst) {
+      if ((ref = this.$addBtn) != null) {
+        ref.hide();
+      }
     }
   };
 
   MainView.prototype._onClosed = function() {
     var ref;
-    if ((ref = this.$addBtn) != null) {
-      ref.show();
+    if (!this.buttonsFirst) {
+      if ((ref = this.$addBtn) != null) {
+        ref.show();
+      }
     }
   };
 
@@ -3204,7 +3215,7 @@ MainView = (function(superClass) {
       return function(evnt) {
         var $tgrt, ref, ref1, ref2, ref3;
         $tgrt = $(evnt.target);
-        if (evnt.keyCode === KEYCODES.ENTER && $tgrt.is(".add-facet-btn")) {
+        if (evnt.keyCode === KEYCODES.ENTER && _this.$addBtn.is($tgrt)) {
           if (evnt != null) {
             evnt.preventDefault();
           }
@@ -3216,7 +3227,7 @@ MainView = (function(superClass) {
           }, 0);
         }
         if (evnt.keyCode === KEYCODES.TAB || (ref = evnt.keyCode, indexOf.call(KEYCODES.TAB, ref) >= 0)) {
-          if ((_this.$searchBtn != null) && $tgrt.is(".add-facet-btn") && (evnt != null ? evnt.shiftKey : void 0)) {
+          if ((_this.$searchBtn != null) && _this.$addBtn.is($tgrt) && (evnt != null ? evnt.shiftKey : void 0)) {
             if (evnt != null) {
               evnt.preventDefault();
             }
@@ -3227,6 +3238,9 @@ MainView = (function(superClass) {
               return _this.focusSearch();
             }, 0);
             return;
+          }
+          if (_this.$addBtn.is($tgrt) && !(evnt != null ? evnt.shiftKey : void 0) && _this.buttonsFirst) {
+            _this.openFirstFacet();
           }
           if ((_this.$searchBtn == null) && ((ref1 = _this.selectview) != null ? ref1.isOpen : void 0)) {
             if (evnt != null ? evnt.shiftKey : void 0) {
@@ -3242,7 +3256,7 @@ MainView = (function(superClass) {
             }
             return;
           }
-          if ((_this.$searchBtn != null) && $tgrt.is(".search-btn") && (evnt != null ? evnt.shiftKey : void 0)) {
+          if ((_this.$searchBtn != null) && _this.$searchBtn.is($tgrt) && (evnt != null ? evnt.shiftKey : void 0) && !_this.buttonsFirst) {
             if (evnt != null) {
               evnt.preventDefault();
             }
@@ -3252,15 +3266,17 @@ MainView = (function(superClass) {
             _this.openLastFacet();
             return;
           }
-          if ((_this.$searchBtn == null) && $tgrt.is(".add-facet-btn") && (evnt != null ? evnt.shiftKey : void 0)) {
-            if (evnt != null) {
-              evnt.preventDefault();
+          if ((_this.$searchBtn == null) && _this.$addBtn.is($tgrt) && (evnt != null ? evnt.shiftKey : void 0)) {
+            if (!_this.buttonsFirst) {
+              if (evnt != null) {
+                evnt.preventDefault();
+              }
+              if (evnt != null) {
+                evnt.stopPropagation();
+              }
+              _this.openLastFacet();
+              return;
             }
-            if (evnt != null) {
-              evnt.stopPropagation();
-            }
-            _this.openLastFacet();
-            return;
           }
           if ((_this.$searchBtn != null) && ((ref2 = _this.selectview) != null ? ref2.isOpen : void 0)) {
             if (evnt != null ? evnt.shiftKey : void 0) {
@@ -3273,8 +3289,7 @@ MainView = (function(superClass) {
               _this.focusSearch();
             } else {
               setTimeout(function() {
-                var ref3;
-                return (ref3 = _this.selectview) != null ? ref3.close() : void 0;
+                return _this.selectview.close();
               }, 0);
             }
           }
@@ -3291,13 +3306,26 @@ MainView = (function(superClass) {
   };
 
   MainView.prototype.openLastFacet = function() {
-    var _prevId, ref, ref1, ref2;
-    _prevId = (ref = this.$addBtn) != null ? (ref1 = ref.prevAll(".sub")) != null ? (ref2 = ref1.first()) != null ? ref2.data("fctid") : void 0 : void 0 : void 0;
-    if (_prevId != null) {
+    var _id, ref, ref1, ref2;
+    _id = (ref = this.$addBtn) != null ? (ref1 = ref.prevAll(".sub")) != null ? (ref2 = ref1.first()) != null ? ref2.data("fctid") : void 0 : void 0 : void 0;
+    if (_id != null) {
       setTimeout((function(_this) {
         return function() {
           var ref3;
-          return (ref3 = _this.facets[_prevId]) != null ? ref3.reopen() : void 0;
+          return (ref3 = _this.facets[_id]) != null ? ref3.reopen() : void 0;
+        };
+      })(this), 0);
+    }
+  };
+
+  MainView.prototype.openFirstFacet = function() {
+    var _id, ref, ref1;
+    _id = (ref = this.$el.find(".sub")) != null ? (ref1 = ref.first()) != null ? ref1.data("fctid") : void 0 : void 0;
+    if (_id != null) {
+      setTimeout((function(_this) {
+        return function() {
+          var ref2;
+          return (ref2 = _this.facets[_id]) != null ? ref2.reopen() : void 0;
         };
       })(this), 0);
     }
@@ -3332,7 +3360,9 @@ MainView = (function(superClass) {
       return;
     }
     if ((this.$searchBtn != null) && _nextFn === "next") {
-      this.focusSearch();
+      if (!this.buttonsFirst) {
+        this.focusSearch();
+      }
     }
     if ((this.$searchBtn == null) && _nextFn === "next") {
       this.$addBtn.focus();

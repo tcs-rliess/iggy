@@ -188,7 +188,17 @@ jQuery( function( $ ){
 			}, 1000 )
 
 		}
-	},{
+	}, {
+		type: "array",
+		name: "arraylongtxts",
+		label: "Array with long text",
+		options: [
+			"Consectetur nulla pariatur sunt nulla esse consectetur ullamco ipsum ullamco.",
+			"Consequat eiusmod exercitation pariatur id aliquip id aliqua laboris excepteur.",
+			"Minim veniam velit laboris amet anim excepteur laborum occaecat eu est eu ea."
+		]
+	}, {
+
 		type: "select",
 		name: "selsingle",
 		label: "Select Single",
@@ -412,10 +422,10 @@ jQuery( function( $ ){
 		dir: "asc",
 		sortby: "label",
 		searchButton: {
-			template: "",
+			template: '<i class="fa fa-search"></i>',
 			event: "search",
 			pullright: false,
-			cssclass: "btn btn-primary fa fa-search"
+			cssclass: "btn btn-primary"
 		}
 	}
 
@@ -425,6 +435,16 @@ jQuery( function( $ ){
 	idxEvnt = 0
 	iggy1.on( "search", function(){
 		$( "#iggytest1_events" ).append( ++idxEvnt + ": Search Event:\n" + JSON.stringify( arguments ) + "\n" )
+	} )
+
+	opts1b = opts1;
+	opts1b.buttonsFirst = true;
+
+	iggy1b = newIggy( facets, "#iggytest1b", opts1 )
+	iggy1b.on( "run", function(){ alert( "Fired Event:\n" + JSON.stringify( arguments ) ) } )
+	idxEvnt = 0
+	iggy1b.on( "search", function(){
+		$( "#iggytest1b_events" ).append( ++idxEvnt + ": Search Event:\n" + JSON.stringify( arguments ) + "\n" )
 	} )
 
 
@@ -454,6 +474,9 @@ jQuery( function( $ ){
 	}
 
 	newIggy( facets2, "#iggytest2" )
+
+	newIggy(facets2, "#iggytest2b", { buttonsFirst: true });
+
 
 	var facetsPredef = [{
 		type: "string",

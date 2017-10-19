@@ -77,6 +77,7 @@ myIggyInst.getQuery().toJSON()
 
 There are several options to customize the behavior of iggy.
 
+- **`buttonsFirst`** *( `Boolean` optional; default = `false` )*: Move the buttons `+` and `search` to the left side.
 - **`sortby`** *( `String` optional; default = `name` )*: Sorting is always first done by `sort` (desc). But it's possible to change second sorting element with this option.
 - **`dir`** *( `String` optional; default = `asc` )*: The sort direction of the sort key configured with option `sortby`. allowed are "asc" and "desc".
 - **`searchButton`** *( `Object` )*: Optional search button configuration. It will only displayed if `searchButton.template` is defined. To change the sytle you can use the css class `.search-btn`.
@@ -186,6 +187,7 @@ A [Select2](https://select2.github.io) interface to use it inside a facet.
 
 | Version |    Date    | Description                              |
 | :-----: | :--------: | :--------------------------------------- |
+|  0.4.0  | 2017-10-19 | Added option `buttonsFirst` to move the buttons to the left side #73; fixed handling of very long array elements #72; fixed compatibility with font-awesome 5 #74  |
 |  0.3.0  | 2017-04-03 | The search Button is now before the add "+" button. So the order is now ( facet_1, facet_2, ... , facet_n, search_btn, add_btn )  |
 |  0.2.8  | 2017-04-03 | Fixed daterange facet locale option overwrite #71  |
 |  0.2.7  | 2017-02-02 | Fixed load if no options are passed #70  |
