@@ -73,10 +73,10 @@ class MainView extends Backbone.View
 			tab_index: ( ( ( @idx or 1 ) + 1 ) * 1000 ) - 10
 		if  @searchButton?
 			_ret.searchButton =
-				template: @searchButton.template or ""
+				template: @searchButton.template or "<i class=\"fa fa-search\"></i>"
 				event: @searchButton.event or "search"
 				pullright: @searchButton.pullright or false
-				cssclass: @searchButton.cssclass or "btn btn-primary fa fa-search"
+				cssclass: @searchButton.cssclass or "btn btn-primary"
 		
 		return _ret
 	
