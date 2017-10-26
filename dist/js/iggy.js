@@ -1,5 +1,5 @@
 /*
- * IGGY 0.4.0 ( 2017-10-19 )
+ * IGGY 0.4.1 ( 2017-10-26 )
  * http://mpneuried.github.io/iggy/
  *
  * Released under the MIT license

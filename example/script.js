@@ -195,6 +195,14 @@ jQuery( function( $ ){
 		options: [
 			"Consectetur nulla pariatur sunt nulla esse consectetur ullamco ipsum ullamco.",
 			"Consequat eiusmod exercitation pariatur id aliquip id aliqua laboris excepteur.",
+			"Short A",
+			"Minim veniam velit laboris amet anim excepteur laborum occaecat eu est eu ea.",
+			"Mollit consequat exercitation qui excepteur sunt qui consequat minim cillum",
+			"velit excepteur aute aliquip. Eiusmod eiusmod veniam occaecat non nulla",
+			"Short B",
+			"Cupidatat ad laboris. Aliquip in sit laborum elit sunt",
+			"Irure elit mollit. Anim elit ex non deserunt nostrud.",
+			"Short C",
 			"Minim veniam velit laboris amet anim excepteur laborum occaecat eu est eu ea."
 		]
 	}, {
