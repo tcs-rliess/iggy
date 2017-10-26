@@ -187,6 +187,7 @@ A [Select2](https://select2.github.io) interface to use it inside a facet.
 
 | Version |    Date    | Description                              |
 | :-----: | :--------: | :--------------------------------------- |
+|  0.4.1  | 2017-10-26 | Fixed long selections by wrapping lines #75 |
 |  0.4.0  | 2017-10-19 | Added option `buttonsFirst` to move the buttons to the left side #73; fixed handling of very long array elements #72; fixed compatibility with font-awesome 5 #74  |
 |  0.3.0  | 2017-04-03 | The search Button is now before the add "+" button. So the order is now ( facet_1, facet_2, ... , facet_n, search_btn, add_btn )  |
 |  0.2.8  | 2017-04-03 | Fixed daterange facet locale option overwrite #71  |
